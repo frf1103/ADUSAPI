@@ -34,7 +34,7 @@ namespace FarmPlannerAPI.Services
             Talhao.uid = dados.uid;
             Talhao.datains = DateTime.Now;
             await _context.AddAsync(Talhao);
-            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now });
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now, idconta = dados.idconta });
             await _context.SaveChangesAsync();
             return new EditarTalhaoViewModel
             {
@@ -63,7 +63,7 @@ namespace FarmPlannerAPI.Services
                 Talhao.dataup = DateTime.Now;
                 Talhao.uid = dados.uid;
                 _context.Update(Talhao);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new EditarTalhaoViewModel
                 {
@@ -91,7 +91,7 @@ namespace FarmPlannerAPI.Services
                 };
                 _excluirTalhaoValidator.ValidateAndThrow(dados);
                 _context.talhoes.Remove(Talhao);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão do Talhão " + Talhao.Descricao.Trim(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new EditarTalhaoViewModel
                 {
@@ -108,7 +108,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<EditarTalhaoViewModel>? ListarTalhaoById(int id, string idconta)
         {
-            var Talhao = _context.talhoes.Where(t=>t.Id == id && t.idconta==idconta).FirstOrDefault();
+            var Talhao = _context.talhoes.Where(t => t.Id == id && t.idconta == idconta).FirstOrDefault();
             if (Talhao != null)
             {
                 return new EditarTalhaoViewModel

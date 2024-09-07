@@ -13,6 +13,8 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(x => x.uid);
             builder.Property(x => x.transacao);
             builder.Property(x => x.datalog);
+            builder.Property(x => x.idconta);
+            builder.HasIndex(p => new { p.idconta, p.datalog });
         }
     }
 }

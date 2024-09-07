@@ -27,7 +27,7 @@ namespace FarmPlannerAPI.Validators.PrincipioAtivo
         {
             RuleFor(c => c).Custom((principio, validateContext) =>
             {
-                var princ = context.produtos.FirstOrDefault(c => c.IdPrincipioAtivo == principio.Id);
+                var princ = context.produtosprincipio.FirstOrDefault(c => c.idprincipio == principio.Id);
                 if (princ != null)
                 {
                     validateContext.AddFailure("Principio ativo com produtos");

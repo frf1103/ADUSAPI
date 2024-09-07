@@ -7,6 +7,7 @@ namespace FarmPlannerAPI.Validators.OrcamentoProduto
     public class ProdutoOrcamentoValidator : AbstractValidator<ProdutoOrcamentoViewModel>
     {
         private readonly FarmPlannerContext _context;
+
         public ProdutoOrcamentoValidator(FarmPlannerContext context)
         {
             _context = context;
@@ -17,19 +18,18 @@ namespace FarmPlannerAPI.Validators.OrcamentoProduto
             RuleFor(c => c).Custom((orc, validateContext) =>
             {
                 var conf = _context.produtos.Where(c => c.Id == orc.IdProduto).FirstOrDefault();
-                if (conf != null && conf.IdPrincipioAtivo != orc.IdPrincipioAtivo)
-                {
-                    validateContext.AddFailure("Produto e principio ativo incompatíveis");
-                }
+                /*                if (conf != null && conf.IdPrincipioAtivo != orc.IdPrincipioAtivo)
+                                {
+                                    validateContext.AddFailure("Produto e principio ativo incompatíveis");
+                                } */
             });
-
-
         }
     }
 
     public class ExcluirProdutoOrcamentoValidator : AbstractValidator<ProdutoOrcamentoViewModel>
     {
         private readonly FarmPlannerContext _context;
+
         public ExcluirProdutoOrcamentoValidator(FarmPlannerContext context)
         {
             _context = context;
@@ -37,10 +37,6 @@ namespace FarmPlannerAPI.Validators.OrcamentoProduto
             RuleFor(c => c).Custom((orc, validateContext) =>
             {
             });
-
         }
-
-
     }
-
 }

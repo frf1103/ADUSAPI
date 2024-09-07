@@ -61,7 +61,10 @@ namespace FarmPlannerAPI.Context
         public DbSet<FinanceiroConta> financeiroContas => Set<FinanceiroConta>();
         public DbSet<AssinaturaConta> assinaturaContas => Set<AssinaturaConta>();
         public DbSet<OrganizacaoUsuario> organizacaoUsuarios => Set<OrganizacaoUsuario>();
+        public DbSet<Unidade> unidades => Set<Unidade>();
         public DbSet<FarmPlannerLog> farmPlannerLogs => Set<FarmPlannerLog>();
+
+        public DbSet<ProdutoPrincipioAtivo> produtosprincipio => Set<ProdutoPrincipioAtivo>();
 
         public DbSet<PreferUsu> preferUsus => Set<PreferUsu>();
 
@@ -118,6 +121,8 @@ namespace FarmPlannerAPI.Context
             modelBuilder.ApplyConfiguration(new AssinaturaContaConfiguration());
             modelBuilder.ApplyConfiguration(new OrganizacaoUsuarioConfiguration());
             modelBuilder.ApplyConfiguration(new PreferUsuConfiguration());
+            modelBuilder.ApplyConfiguration(new UnidadeConfiguration());
+            modelBuilder.ApplyConfiguration(new ProdutoPrincipioConfiguration());
         }
     }
 }

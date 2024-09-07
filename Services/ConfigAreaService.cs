@@ -52,7 +52,7 @@ namespace FarmPlannerAPI.Services
                 ConfigArea.datains = DateTime.Now;
 
                 await _context.AddAsync(ConfigArea);
-                await _context.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now });
+                await _context.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now,idconta=dados.idconta });
                 await _context.SaveChangesAsync();
                 return (new ConfigAreaViewModel
                 {
@@ -129,7 +129,7 @@ namespace FarmPlannerAPI.Services
                 ConfigArea.uid = dados.uid;
 
                 _context.Update(ConfigArea);
-                await _context.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now });
+                await _context.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now,idconta=dados.idconta });
                 await _context.SaveChangesAsync();
                 return new ConfigAreaViewModel
                 {
@@ -163,7 +163,7 @@ namespace FarmPlannerAPI.Services
                 };
                 _excluirConfigAreaValidator.ValidateAndThrow(dados);
                 _context.configareas.Remove(ConfigArea);
-                await _context.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now });
+                await _context.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Talhao/Variedade/area " + ConfigArea.IdTalhao.ToString() + "/" + ConfigArea.IdVariedade.ToString() + "/" + ConfigArea.Area.ToString(), datalog = DateTime.Now,idconta=dados.idconta });
                 await _context.SaveChangesAsync();
                 return new ConfigAreaViewModel
                 {

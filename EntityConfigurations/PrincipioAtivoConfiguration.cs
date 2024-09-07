@@ -9,14 +9,14 @@ namespace FarmPlannerAPI.EntityConfigurations
         public void Configure(EntityTypeBuilder<PrincipioAtivo> builder)
         {
             builder.ToTable("PrincipiosAtivos");
-            builder.Property(x => x.Id).UseIdentityColumn();
+            builder.HasKey(x => x.Id);
             builder.Property(x => x.Descricao).IsRequired().HasMaxLength(100);
-            builder.Property(x => x.idconta).IsRequired();
+
             builder.Property(x => x.datains).IsRequired(false);
             builder.Property(x => x.uid).IsRequired(false);
             builder.Property(x => x.dataup).IsRequired(false);
 
-            builder.HasKey(x => new { x.idconta, x.Id });
+            builder.HasMany(x => x.produtosprincipio).WithOne(x => x.principioAtivo).HasForeignKey(x => new { x.idprincipio }).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

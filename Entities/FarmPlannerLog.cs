@@ -4,6 +4,7 @@ namespace FarmPlannerAPI.Entities
 {
     public class FarmPlannerLog
     {
+        public string idconta { get; set; }
         public int id { get; set; }
         public string uid { get; set; }
         public DateTime datalog { get; set; }

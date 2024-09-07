@@ -22,7 +22,7 @@ namespace FarmPlannerAPI.Controllers
             var (conta, erros) = await _ConfigAreaservice.AdicionarConfigArea(dados);
             if (erros == null)
             {
-                return Ok(new { success = true, msg = "Registro adicionado" });
+                return Ok(conta);
             }
             else
             {

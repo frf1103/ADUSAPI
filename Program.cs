@@ -26,6 +26,7 @@ using FarmPlannerAPI.Validators.Safra;
 using FarmPlannerAPI.Validators.Talhao;
 using FarmPlannerAPI.Validators.Tecnologia;
 using FarmPlannerAPI.Validators.TipoOperacao;
+using FarmPlannerAPI.Validators.Unidade;
 using FarmPlannerAPI.Validators.Variedade;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
@@ -168,6 +169,11 @@ builder.Services.AddTransient<EntregaContratoValidator>();
 builder.Services.AddTransient<ExcluirEntregaContratoValidator>();
 builder.Services.AddTransient<EntregaContratoService>();
 
+builder.Services.AddTransient<UnidadeService>();
+builder.Services.AddTransient<UnidadeValidator>();
+builder.Services.AddTransient<ExcluirUnidadeValidator>();
+
+builder.Services.AddTransient<ProdutoPrincipioValidator>();
 builder.Services.AddTransient<PreferUsuService>();
 
 builder.Services.AddCors(options =>

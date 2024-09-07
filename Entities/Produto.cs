@@ -13,11 +13,7 @@ namespace FarmPlannerAPI.Entities
         public int IdGrupoProduto { get; set; }
 
         public int IdFabricante { get; set; }
-        public int unidadeBasica { get; set; }
-        public int IdPrincipioAtivo { get; set; }
-
-        [ForeignKey("IdPrincipioAtivo,idconta")]
-        public PrincipioAtivo principioAtivo { get; set; }
+        public int idunidade { get; set; }
 
         [ForeignKey("IdGrupoProduto")]
         public GrupoProduto grupoProduto { get; set; }
@@ -34,5 +30,10 @@ namespace FarmPlannerAPI.Entities
         public string? uid { get; set; }
         public DateTime? datains { get; set; }
         public DateTime? dataup { get; set; }
+
+        [ForeignKey("idunidade")]
+        public Unidade unidade { get; set; }
+
+        public ICollection<ProdutoPrincipioAtivo> produtosprincipio { get; set; }
     }
 }

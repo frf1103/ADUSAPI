@@ -18,8 +18,15 @@ namespace FarmPlannerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AdicionarPlanejamentoOperacao(PlanejamentoOperacaoViewModel dados)
         {
-            var conta = await _PlanejamentoOperacaoservice.AdicionarPlanejamentoOperacao(dados);
-            return Ok(conta);
+            var (conta, erros) = await _PlanejamentoOperacaoservice.AdicionarPlanejamentoOperacao(dados);
+            if (erros == null)
+            {
+                return Ok(conta);
+            }
+            else
+            {
+                return BadRequest(new { success = false, erros });
+            }
         }
 
         [HttpPut("{id}/{idconta}")]
@@ -37,9 +44,9 @@ namespace FarmPlannerAPI.Controllers
         }
 
         [HttpGet("Listar/{idorganizacao}/{idfazenda}/{idano}/{idsafra}/{idtalhao}/{idoperacao}/{idconta}/{idvariedade}/{ini}/{fim}")]
-        public async Task<IActionResult> ListarPlanejamentoOperacao(int idorganizacao,int idfazenda, int idano, int idsafra, int idtalhao, int idoperacao, string idconta, int idvariedade, DateTime ini, DateTime fim)
+        public async Task<IActionResult> ListarPlanejamentoOperacao(int idorganizacao, int idfazenda, int idano, int idsafra, int idtalhao, int idoperacao, string idconta, int idvariedade, DateTime ini, DateTime fim)
         {
-            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao,idsafra, idano, idfazenda, idvariedade, idtalhao, idconta, idoperacao, ini, fim);
+            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao, idsafra, idano, idfazenda,idoperacao,  idtalhao, idconta, idvariedade, ini, fim);
             return Ok(conta);
         }
 
@@ -48,6 +55,14 @@ namespace FarmPlannerAPI.Controllers
         {
             var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacaoById(id, idconta);
             return Ok(conta);
+        }
+
+        [HttpPost("assistente/{idconta}/{uid}")]
+        public async Task<IActionResult> GravarAssistente(string idconta, string uid, List<AssistentePlanejOperViewModel> dados)
+        {
+            var (success, listerros) = await _PlanejamentoOperacaoservice.AdicionarPlanejOperAreaAssistente(idconta, uid, dados);
+            if (success) { return Ok(); }
+            else { return BadRequest(new { success = false, listerros }); }
         }
     }
 }

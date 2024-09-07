@@ -1,4 +1,5 @@
-﻿using FarmPlannerAPI.Services;
+﻿using FarmPlannerAPI.Entities;
+using FarmPlannerAPI.Services;
 using FarmPlannerAPICore.Models.ProdutoPlanejado;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +19,9 @@ namespace FarmPlannerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AdicionarProdutoPlanejado(ProdutoPlanejadoViewModel dados)
         {
-            var conta = await _ProdutoPlanejadoservice.AdicionarProdutoPlanejado(dados);
-            return Ok(conta);
+            var (conta, erros) = await _ProdutoPlanejadoservice.AdicionarProdutoPlanejado(dados);
+            if (erros == null) { return Ok(conta); }
+            else { return BadRequest(new { success = false, erros }); }
         }
 
         [HttpPut("{id}")]
@@ -29,24 +31,24 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult>? ExcluirProdutoPlanejado(int id, ProdutoPlanejadoViewModel dados)
+        [HttpDelete("{id}/{idconta}/{uid}")]
+        public async Task<IActionResult>? ExcluirProdutoPlanejado(int id, string idconta, string uid)
         {
-            var conta = await _ProdutoPlanejadoservice.ExcluirProdutoPlanejado(id, dados);
+            var conta = await _ProdutoPlanejadoservice.ExcluirProdutoPlanejado(id, uid, idconta);
             return Ok(conta);
         }
 
-        [HttpGet("Listar/{idplanejamento}")]
-        public async Task<IActionResult> ListarProdutoPlanejado(int idplanejamento)
+        [HttpGet("Listar/{idplanejamento}/{idconta}")]
+        public async Task<IActionResult> ListarProdutoPlanejado(int idplanejamento, string idconta)
         {
-            var conta = await _ProdutoPlanejadoservice.ListarProdutoPlanejadoByPlanejamento(idplanejamento);
+            var conta = await _ProdutoPlanejadoservice.ListarProdutoPlanejadoByPlanejamento(idplanejamento, idconta);
             return Ok(conta);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> ListarProdutoPlanejadoById(int id)
+        [HttpGet("{id}/{idconta}")]
+        public async Task<IActionResult> ListarProdutoPlanejadoById(int id, string idconta)
         {
-            var conta = await _ProdutoPlanejadoservice.ListarProdutoPlanejadoById(id);
+            var conta = await _ProdutoPlanejadoservice.ListarProdutoPlanejadoById(id, idconta);
             return Ok(conta);
         }
     }

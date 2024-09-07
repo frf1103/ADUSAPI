@@ -22,31 +22,31 @@ namespace FarmPlannerAPI.Controllers
             return Ok(PrincipioAtivo);
         }
 
-        [HttpPut("{id}/{idconta}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult>? EditarPrincipioAtivo(int id, string idconta, PrincipioAtivoViewModel dados)
         {
-            var PrincipioAtivo = await _PrincipioAtivoservice.SalvarPrincipioAtivo(id, idconta, dados);
+            var PrincipioAtivo = await _PrincipioAtivoservice.SalvarPrincipioAtivo(id, dados);
             return Ok(PrincipioAtivo);
         }
 
-        [HttpDelete("{id}/{idconta}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult>? ExcluirPrincipioAtivo(int id, string idconta)
         {
-            var PrincipioAtivo = await _PrincipioAtivoservice.ExcluirPrincipioAtivo(id, idconta);
+            var PrincipioAtivo = await _PrincipioAtivoservice.ExcluirPrincipioAtivo(id);
             return Ok(PrincipioAtivo);
         }
 
-        [HttpGet("{idconta}")]
-        public async Task<IActionResult> ListarPrincipioAtivo(string idconta, string? filtro)
+        [HttpGet]
+        public async Task<IActionResult> ListarPrincipioAtivo(string? filtro)
         {
-            var PrincipioAtivo = await _PrincipioAtivoservice.ListarPrincipioAtivo(idconta, filtro);
+            var PrincipioAtivo = await _PrincipioAtivoservice.ListarPrincipioAtivo(filtro);
             return Ok(PrincipioAtivo);
         }
 
-        [HttpGet("{id}/{idconta}")]
-        public async Task<IActionResult> ListarPrincipioAtivoById(string idconta, int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ListarPrincipioAtivoById(int id)
         {
-            var PrincipioAtivo = await _PrincipioAtivoservice.ListarPrincipioAtivoById(id, idconta);
+            var PrincipioAtivo = await _PrincipioAtivoservice.ListarPrincipioAtivoById(id);
             return Ok(PrincipioAtivo);
         }
     }

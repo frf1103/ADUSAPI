@@ -39,7 +39,6 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.HasMany(x => x.financeiroContas).WithOne(c => c.conta).HasForeignKey(x => x.idconta).OnDelete(DeleteBehavior.NoAction);
             builder.HasMany(x => x.assinaturaContas).WithOne(c => c.conta).HasForeignKey(x => x.idconta).OnDelete(DeleteBehavior.NoAction);
             builder.HasMany(x => x.parceiros).WithOne(c => c.conta).HasForeignKey(x => x.idconta).OnDelete(DeleteBehavior.NoAction);
-            builder.HasMany(x => x.principioAtivos).WithOne(c => c.conta).HasForeignKey(x => x.idconta).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -100,7 +100,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<AdicionarAnoAgricolaViewModel>? ListarAnoAgricolaById(string idconta, int id)
         {
-            var AnoAgricola = _context.anosagricolas.Find(id);
+            var AnoAgricola = _context.anosagricolas.Where(a => a.Id == id && a.idconta == idconta).FirstOrDefault();
             if (AnoAgricola != null)
             {
                 return new AdicionarAnoAgricolaViewModel

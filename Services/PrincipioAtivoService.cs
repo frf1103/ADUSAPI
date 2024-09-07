@@ -26,7 +26,6 @@ namespace FarmPlannerAPI.Services
             _adicionarPrincipioAtivoValidator.ValidateAndThrow(dados);
             var PrincipioAtivo = new PrincipioAtivo();
             PrincipioAtivo.Descricao = dados.Descricao;
-            PrincipioAtivo.idconta = dados.idconta;
 
             await _context.AddAsync(PrincipioAtivo);
             await _context.SaveChangesAsync();
@@ -35,13 +34,12 @@ namespace FarmPlannerAPI.Services
                 Descricao = PrincipioAtivo.Descricao,
 
                 Id = PrincipioAtivo.Id,
-                idconta = PrincipioAtivo.idconta
             };
         }
 
-        public async Task<PrincipioAtivoViewModel>? SalvarPrincipioAtivo(int id, string idconta, PrincipioAtivoViewModel dados)
+        public async Task<PrincipioAtivoViewModel>? SalvarPrincipioAtivo(int id, PrincipioAtivoViewModel dados)
         {
-            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id && p.idconta == idconta).FirstOrDefault();
+            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id).FirstOrDefault();
             if (PrincipioAtivo != null)
             {
                 PrincipioAtivo.Descricao = dados.Descricao;
@@ -51,16 +49,15 @@ namespace FarmPlannerAPI.Services
                 return new PrincipioAtivoViewModel
                 {
                     Descricao = PrincipioAtivo.Descricao,
-                    Id = PrincipioAtivo.Id,
-                    idconta = PrincipioAtivo.idconta
+                    Id = PrincipioAtivo.Id
                 };
             }
             else return null;
         }
 
-        public async Task<PrincipioAtivoViewModel>? ExcluirPrincipioAtivo(int id, string idconta)
+        public async Task<PrincipioAtivoViewModel>? ExcluirPrincipioAtivo(int id)
         {
-            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id && p.idconta == idconta).FirstOrDefault();
+            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id).FirstOrDefault();
             if (PrincipioAtivo != null)
             {
                 PrincipioAtivoViewModel dados = new PrincipioAtivoViewModel
@@ -74,38 +71,35 @@ namespace FarmPlannerAPI.Services
                 return new PrincipioAtivoViewModel
                 {
                     Descricao = dados.Descricao,
-                    Id = dados.Id,
-                    idconta = PrincipioAtivo.idconta
+                    Id = dados.Id
                 };
             }
             else return null;
         }
 
-        public async Task<PrincipioAtivoViewModel>? ListarPrincipioAtivoById(int id, string idconta)
+        public async Task<PrincipioAtivoViewModel>? ListarPrincipioAtivoById(int id)
         {
-            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id && p.idconta == idconta).FirstOrDefault();
+            var PrincipioAtivo = _context.principioAtivos.Where(p => p.Id == id).FirstOrDefault();
             if (PrincipioAtivo != null)
             {
                 return new PrincipioAtivoViewModel
                 {
                     Descricao = PrincipioAtivo.Descricao,
-                    Id = PrincipioAtivo.Id,
-                    idconta = PrincipioAtivo.idconta
+                    Id = PrincipioAtivo.Id
                 };
             }
             else return null;
         }
 
-        public async Task<IEnumerable<PrincipioAtivoViewModel>> ListarPrincipioAtivo(string idconta, string? filtro)
+        public async Task<IEnumerable<PrincipioAtivoViewModel>> ListarPrincipioAtivo(string? filtro)
         {
-            var condicao = (PrincipioAtivo m) => m.idconta == idconta && (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
+            var condicao = (PrincipioAtivo m) => (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
             var query = _context.principioAtivos.AsQueryable();
             var PrincipioAtivos = query.Where(condicao)
                 .Select(c => new PrincipioAtivoViewModel
                 {
                     Id = c.Id,
-                    Descricao = c.Descricao,
-                    idconta = c.idconta
+                    Descricao = c.Descricao
                 }
                 ).ToList();
             return (PrincipioAtivos);

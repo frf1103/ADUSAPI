@@ -51,6 +51,7 @@ namespace FarmPlannerAPI.Entities
         public ICollection<AssinaturaConta> assinaturaContas { get; set; }
 
         public ICollection<Parceiro> parceiros { get; set; }
-        public ICollection<PrincipioAtivo> principioAtivos { get; set; }
+
+        public ICollection<ProdutoPrincipioAtivo> produtoPrincipios { get; set; }
     }
 }

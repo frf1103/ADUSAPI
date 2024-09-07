@@ -2,8 +2,10 @@
 using FarmPlannerAPI.Entities;
 using FarmPlannerAPI.Validators.PlanejamentoOperacao;
 using FarmPlannerAPICore.Models.PlanejamentoOperacao;
+using FarmPlannerAPICore.Models.ProdutoPlanejado;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace FarmPlannerAPI.Services
 {
@@ -12,51 +14,64 @@ namespace FarmPlannerAPI.Services
         private readonly FarmPlannerContext _context;
         private readonly PlanejamentoOperacaoValidator _adicionarPlanejamentoOperacaoValidator;
         private readonly ExcluirPlanejamentoOperacaoValidator _excluirPlanejamentoOperacaoValidator;
+        private readonly ProdutoPlanejadoService _produtoplan;
 
-        public PlanejamentoOperacaoService(FarmPlannerContext context, PlanejamentoOperacaoValidator adicionarPlanejamentoOperacaoValidator, ExcluirPlanejamentoOperacaoValidator excluirPlanejamentoOperacaoValidator)
+        public PlanejamentoOperacaoService(FarmPlannerContext context, PlanejamentoOperacaoValidator adicionarPlanejamentoOperacaoValidator, ExcluirPlanejamentoOperacaoValidator excluirPlanejamentoOperacaoValidator, ProdutoPlanejadoService produtoplan)
         {
             _context = context;
             _adicionarPlanejamentoOperacaoValidator = adicionarPlanejamentoOperacaoValidator;
             _excluirPlanejamentoOperacaoValidator = excluirPlanejamentoOperacaoValidator;
+            _produtoplan = produtoplan;
         }
 
-        public async Task<PlanejamentoOperacaoViewModel> AdicionarPlanejamentoOperacao(PlanejamentoOperacaoViewModel dados)
+        public async Task<(PlanejamentoOperacaoViewModel, List<string> listerros)> AdicionarPlanejamentoOperacao(PlanejamentoOperacaoViewModel dados)
         {
+            var validationErrors = new List<ValidationResult>();
             _adicionarPlanejamentoOperacaoValidator.ValidateAndThrow(dados);
-            var PlanejamentoOperacao = new PlanejamentoOperacao();
-            PlanejamentoOperacao.DAE = dados.DAE;
-            PlanejamentoOperacao.Status = dados.Status;
-            PlanejamentoOperacao.Area = dados.Area;
-            PlanejamentoOperacao.CustoOperacao = dados.CustoOperacao;
-            PlanejamentoOperacao.DataPrevista = dados.DataPrevista;
-            PlanejamentoOperacao.IdConfigArea = dados.IdConfigArea;
-            PlanejamentoOperacao.IdOperacao = dados.IdOperacao;
-            // PlanejamentoOperacao.IdOrcamento = dados.IdOrcamento;
-            PlanejamentoOperacao.QCombustivelEstimado = dados.QCombustivelEstimado;
-            PlanejamentoOperacao.QHorasEstimadas = dados.QHorasEstimadas;
-            PlanejamentoOperacao.IdOperacao = dados.IdOperacao;
-            PlanejamentoOperacao.idconta = dados.idconta;
-            PlanejamentoOperacao.uid = dados.uid;
-            PlanejamentoOperacao.datains = DateTime.Now;
-
-            await _context.AddAsync(PlanejamentoOperacao);
-            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now });
-            await _context.SaveChangesAsync();
-            return new PlanejamentoOperacaoViewModel
+            var errorMessages = validationErrors.Select(e => e.ErrorMessage).ToList();
+            if (errorMessages.Count == 0)
             {
-                Id = PlanejamentoOperacao.Id,
-                DAE = PlanejamentoOperacao.DAE,
-                Status = PlanejamentoOperacao.Status,
-                Area = PlanejamentoOperacao.Area,
-                CustoOperacao = PlanejamentoOperacao.CustoOperacao,
-                DataPrevista = PlanejamentoOperacao.DataPrevista,
-                IdConfigArea = PlanejamentoOperacao.IdConfigArea,
-                IdOperacao = PlanejamentoOperacao.IdOperacao,
-                //                IdOrcamento=PlanejamentoOperacao.IdOrcamento,
-                Plantio = PlanejamentoOperacao.Plantio,
-                QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
-                QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
-            };
+                var PlanejamentoOperacao = new PlanejamentoOperacao();
+                PlanejamentoOperacao.DAE = dados.DAE;
+                PlanejamentoOperacao.Status = dados.Status;
+                PlanejamentoOperacao.Area = dados.Area;
+                PlanejamentoOperacao.CustoOperacao = dados.CustoOperacao;
+                PlanejamentoOperacao.DataPrevista = dados.DataPrevista;
+                PlanejamentoOperacao.IdConfigArea = dados.IdConfigArea;
+                PlanejamentoOperacao.IdOperacao = dados.IdOperacao;
+                // PlanejamentoOperacao.IdOrcamento = dados.IdOrcamento;
+                PlanejamentoOperacao.QCombustivelEstimado = dados.QCombustivelEstimado;
+                PlanejamentoOperacao.QHorasEstimadas = dados.QHorasEstimadas;
+                PlanejamentoOperacao.IdOperacao = dados.IdOperacao;
+                PlanejamentoOperacao.idconta = dados.idconta;
+                PlanejamentoOperacao.uid = dados.uid;
+                PlanejamentoOperacao.datains = DateTime.Now;
+                PlanejamentoOperacao.Plantio = dados.Plantio;
+
+                await _context.AddAsync(PlanejamentoOperacao);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+                await _context.SaveChangesAsync();
+                return (new PlanejamentoOperacaoViewModel
+                {
+                    Id = PlanejamentoOperacao.Id,
+                    DAE = PlanejamentoOperacao.DAE,
+                    Status = PlanejamentoOperacao.Status,
+                    Area = PlanejamentoOperacao.Area,
+                    CustoOperacao = PlanejamentoOperacao.CustoOperacao,
+                    DataPrevista = PlanejamentoOperacao.DataPrevista,
+                    IdConfigArea = PlanejamentoOperacao.IdConfigArea,
+                    IdOperacao = PlanejamentoOperacao.IdOperacao,
+                    //                IdOrcamento=PlanejamentoOperacao.IdOrcamento,
+                    Plantio = PlanejamentoOperacao.Plantio,
+                    QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
+                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
+                }, null);
+            }
+            else
+            {
+                errorMessages = validationErrors.Select(e => e.ErrorMessage).ToList();
+                return (null, errorMessages);
+            }
         }
 
         public async Task<PlanejamentoOperacaoViewModel>? SalvarPlanejamentoOperacao(int id, string idconta, PlanejamentoOperacaoViewModel dados)
@@ -79,7 +94,7 @@ namespace FarmPlannerAPI.Services
                 PlanejamentoOperacao.dataup = DateTime.Now;
 
                 _context.Update(PlanejamentoOperacao);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new PlanejamentoOperacaoViewModel
                 {
@@ -111,7 +126,7 @@ namespace FarmPlannerAPI.Services
                 };
                 _excluirPlanejamentoOperacaoValidator.ValidateAndThrow(dados);
                 _context.planejoperacoes.Remove(PlanejamentoOperacao);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new PlanejamentoOperacaoViewModel
                 {
@@ -156,7 +171,7 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<IEnumerable<ListPlanejamentoOperacaoViewModel>> ListarPlanejamentoOperacao(int idorganizacao,int idsafra, int idano, int idfazenda, int idoperacao, int idtalhao, string idconta, int idvariedade, DateTime ini, DateTime fim)
+        public async Task<IEnumerable<ListPlanejamentoOperacaoViewModel>> ListarPlanejamentoOperacao(int idorganizacao, int idsafra, int idano, int idfazenda, int idoperacao, int idtalhao, string idconta, int idvariedade, DateTime ini, DateTime fim)
         {
             //            var condicao = (PlanejamentoOperacao m) => (idfazenda == 0 || m.IdFazenda == idfazenda) &&
             //           (idsafra == 0 || m.IdSafra == idsafra) &&
@@ -167,7 +182,7 @@ namespace FarmPlannerAPI.Services
                 (idfazenda == 0 || m.configArea.talhao.IdFazenda == idfazenda) &&
                 (m.configArea.IdSafra == idsafra || idsafra == 0) && (m.IdOperacao == idoperacao || idoperacao == 0))
                 && (idvariedade == 0 || m.configArea.IdVariedade == idvariedade) && m.DataPrevista >= ini && m.DataPrevista <= fim &&
-                m.configArea.talhao.IdAnoAgricola == idano && m.configArea.talhao.fazenda.IdOrganizacao==idorganizacao
+                m.configArea.talhao.IdAnoAgricola == idano && m.configArea.talhao.fazenda.IdOrganizacao == idorganizacao
                 );
             var PlanejamentoOperacaos = query
                 .Select(c => new ListPlanejamentoOperacaoViewModel
@@ -192,6 +207,70 @@ namespace FarmPlannerAPI.Services
                 }
                 ).ToList();
             return (PlanejamentoOperacaos);
+        }
+
+        public async Task<(bool success, List<string> erros)> AdicionarPlanejOperAreaAssistente(string idconta, string uid, List<AssistentePlanejOperViewModel> dados)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            foreach (var c in dados)
+            {
+                try
+                {
+                    PlanejamentoOperacaoViewModel pl = new PlanejamentoOperacaoViewModel
+                    {
+                        Area = c.area,
+                        DAE = c.dae,
+                        IdConfigArea = c.idconfig,
+                        Plantio = c.plantio,
+                        IdOperacao = c.operacao,
+                        idconta = idconta,
+                        QCombustivelEstimado = 0,
+                        Status = 0,
+                        CustoOperacao = 0,
+                        uid = uid,
+                        QHorasEstimadas = 0,
+                        DataPrevista = c.dataprevista
+                    };
+                    var (x, success) = await AdicionarPlanejamentoOperacao(pl);
+                    if (success != null)
+                    {
+                        await transaction.RollbackAsync();
+                        return (false, success);
+                    }
+                    foreach (var prod in c.produtos)
+                    {
+                        ProdutoPlanejadoViewModel pr = new ProdutoPlanejadoViewModel
+                        {
+                            idconta = idconta,
+                            uid = uid,
+                            IdPlanejamento = x.Id,
+                            IdConfigArea = c.idconfig,
+                            AreaPercent = prod.percent,
+                            Dosagem = prod.dosagem,
+                            IdPrincipioAtivo = (prod.idprincipio == 0) ? null : prod.idprincipio,
+                            IdProduto = (prod.idproduto == 0) ? null : prod.idproduto,
+                            Tamanho = prod.tamanho,
+                            TotalProduto = prod.tamanho * prod.dosagem * prod.percent / 100
+                        };
+                        var (xp, successp) = await _produtoplan.AdicionarProdutoPlanejado(pr);
+                        if (success != null)
+                        {
+                            await transaction.RollbackAsync();
+                            return (false, success);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Revertendo a transação em caso de erro
+                    await transaction.RollbackAsync();
+                    List<string> errorMessages = new List<string> { ex.Message.ToString() };
+                    return (false, errorMessages);
+                }
+            }
+            await transaction.CommitAsync();
+            return (true, null);
         }
     }
 }

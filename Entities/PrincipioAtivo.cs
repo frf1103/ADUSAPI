@@ -8,12 +8,8 @@ namespace FarmPlannerAPI.Entities
         public int Id { get; set; }
 
         public string Descricao { get; set; }
-        public string idconta { get; set; }
 
-        [ForeignKey("idconta")]
-        public Conta conta { get; set; }
-
-        public ICollection<Produto> Produtos { get; set; }
+        public ICollection<ProdutoPrincipioAtivo> produtosprincipio { get; set; }
 
         public ICollection<ProdutoOrcamento>? produtoorcamento { get; set; }
         public ICollection<ProdutoPlanejado> produtosplanejados { get; set; }
