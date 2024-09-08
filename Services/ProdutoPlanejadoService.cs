@@ -31,7 +31,7 @@ namespace FarmPlannerAPI.Services
             {
                 var ProdutoPlanejado = new ProdutoPlanejado();
 
-                ProdutoPlanejado.IdProduto = dados.IdProduto;
+                ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
                 ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
                 ProdutoPlanejado.AreaPercent = dados.AreaPercent;
@@ -64,12 +64,12 @@ namespace FarmPlannerAPI.Services
             }
         }
 
-        public async Task<ProdutoPlanejadoViewModel>? SalvarProdutoPlanejado(int id, ProdutoPlanejadoViewModel dados)
+        public async Task<ProdutoPlanejadoViewModel>? SalvarProdutoPlanejado(int id, string idconta, ProdutoPlanejadoViewModel dados)
         {
-            var ProdutoPlanejado = _context.produtoplanejados.Find(id);
+            var ProdutoPlanejado = _context.produtoplanejados.Where(x => x.Id == id && x.idconta == idconta).FirstOrDefault();
             if (ProdutoPlanejado != null)
             {
-                ProdutoPlanejado.IdProduto = dados.IdProduto;
+                ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
                 ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
                 ProdutoPlanejado.AreaPercent = dados.AreaPercent;
@@ -108,7 +108,7 @@ namespace FarmPlannerAPI.Services
                 };
                 _excluirProdutoPlanejadoValidator.ValidateAndThrow(dados);
                 _context.produtoplanejados.Remove(ProdutoPlanejado);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exlusão do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdPrincipioAtivo ?? 0.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exlusão do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdPrincipioAtivo ?? 0.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new ProdutoPlanejadoViewModel
                 {

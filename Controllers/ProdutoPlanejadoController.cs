@@ -24,10 +24,10 @@ namespace FarmPlannerAPI.Controllers
             else { return BadRequest(new { success = false, erros }); }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarProdutoPlanejado(int id, ProdutoPlanejadoViewModel dados)
+        [HttpPut("{id}/{idconta}")]
+        public async Task<IActionResult>? EditarProdutoPlanejado(int id, string idconta, ProdutoPlanejadoViewModel dados)
         {
-            var conta = await _ProdutoPlanejadoservice.SalvarProdutoPlanejado(id, dados);
+            var conta = await _ProdutoPlanejadoservice.SalvarProdutoPlanejado(id, idconta, dados);
             return Ok(conta);
         }
 
