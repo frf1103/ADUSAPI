@@ -1,6 +1,7 @@
 ﻿using FarmPlannerAPI.Context;
 using FarmPlannerAPI.Entities;
 using FarmPlannerAPI.Validators.PlanejamentoOperacao;
+using FarmPlannerAPICore.Models.MaquinaPlanejada;
 using FarmPlannerAPICore.Models.PlanejamentoOperacao;
 using FarmPlannerAPICore.Models.ProdutoPlanejado;
 using FluentValidation;
@@ -15,13 +16,15 @@ namespace FarmPlannerAPI.Services
         private readonly PlanejamentoOperacaoValidator _adicionarPlanejamentoOperacaoValidator;
         private readonly ExcluirPlanejamentoOperacaoValidator _excluirPlanejamentoOperacaoValidator;
         private readonly ProdutoPlanejadoService _produtoplan;
+        private readonly MaquinaPlanejadaService _maquinaplan;
 
-        public PlanejamentoOperacaoService(FarmPlannerContext context, PlanejamentoOperacaoValidator adicionarPlanejamentoOperacaoValidator, ExcluirPlanejamentoOperacaoValidator excluirPlanejamentoOperacaoValidator, ProdutoPlanejadoService produtoplan)
+        public PlanejamentoOperacaoService(FarmPlannerContext context, PlanejamentoOperacaoValidator adicionarPlanejamentoOperacaoValidator, ExcluirPlanejamentoOperacaoValidator excluirPlanejamentoOperacaoValidator, ProdutoPlanejadoService produtoplan, MaquinaPlanejadaService maquinaplan)
         {
             _context = context;
             _adicionarPlanejamentoOperacaoValidator = adicionarPlanejamentoOperacaoValidator;
             _excluirPlanejamentoOperacaoValidator = excluirPlanejamentoOperacaoValidator;
             _produtoplan = produtoplan;
+            _maquinaplan = maquinaplan;
         }
 
         public async Task<(PlanejamentoOperacaoViewModel, List<string> listerros)> AdicionarPlanejamentoOperacao(PlanejamentoOperacaoViewModel dados)
@@ -209,6 +212,39 @@ namespace FarmPlannerAPI.Services
             return (PlanejamentoOperacaos);
         }
 
+        public async Task<(decimal rendimento, decimal consumo)> BuscaParametros(string idconta, int idmodelo, int idmaquina, int idconfigarea, int idcultura, int idoperacao)
+        {
+            var ca = _context.configareas.Where(x => x.idconta == idconta && x.Id == idconfigarea).FirstOrDefault();
+            if (c != null)
+            {
+                if (idmaquina != 0)
+                {
+                    var maqp = _context.maquinasparametro.Where(m => m.idconta == idconta && m.IdMaquina == idmaquina && m.IdOperacao == idoperacao && m.IdCultura == idcultura).FirstOrDefault();
+                    if (maqp != null)
+                    {
+                        return (maqp.Rendimento, maqp.Consumo);
+                    }
+                    else
+                    {
+                        var modp = _context.modelosparametros.Where(m => m.idconta == idconta && m.IdModeloMaquina == idmodelo && m.IdOperacao == idoperacao && m.IdCultura == idcultura).FirstOrDefault();
+                        if (modp != null)
+                        {
+                            return (modp.Rendimento, modp.Consumo);
+                        }
+                        else
+                        {
+                            var op = _context.operacoes.Where(m => m.idconta == idconta && m.IdTipoOperacao == idoperacao).FirstOrDefault();
+                            if (modp != null)
+                            {
+                                return (modp.Rendimento, modp.Consumo);
+                            }
+                        }
+                    }
+                }
+            }
+            return (0, 0);
+        }
+
         public async Task<(bool success, List<string> erros)> AdicionarPlanejOperAreaAssistente(string idconta, string uid, List<AssistentePlanejOperViewModel> dados)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -217,6 +253,8 @@ namespace FarmPlannerAPI.Services
             {
                 try
                 {
+                    decimal tothoras, totcomb;
+                    tothoras = 0; totcomb = 0;
                     PlanejamentoOperacaoViewModel pl = new PlanejamentoOperacaoViewModel
                     {
                         Area = c.area,
@@ -260,6 +298,35 @@ namespace FarmPlannerAPI.Services
                             return (false, success);
                         }
                     }
+
+                    foreach (var maq in c.maquinas)
+                    {
+                        var (rend, cons) = await BuscaParametros(idconta, maq.idmodelo, maq.idmaquina, c.idconfig, 0, c.operacao);
+                        decimal horas = (c.perc * c.area / 100) / rend;
+                        decimal comb = horas * cons;
+                        MaquinaPlanejadaViewModel mq = new MaquinaPlanejadaViewModel
+                        {
+                            idconta = idconta,
+                            uid = uid,
+                            IdPlanejamento = x.Id,
+                            IdMaquina = maq.idmaquina,
+                            IdModeloMaquina = maq.idmodelo,
+                            Consumo = cons,
+                            Rendimento = rend,
+                            QtdHoraEstimada = horas,
+                            QtdCombEstimado = comb
+                        };
+                        var (xm, successm) = await _maquinaplan.AdicionarMaquinaPlanejada(mq);
+                        if (successm != null)
+                        {
+                            await transaction.RollbackAsync();
+                            return (false, success);
+                        }
+                        tothoras = tothoras + horas;
+                        totcomb = totcomb + comb;
+                    }
+                    pl.QCombustivelEstimado = totcomb;
+                    pl.QHorasEstimadas = tothoras;
                 }
                 catch (Exception ex)
                 {

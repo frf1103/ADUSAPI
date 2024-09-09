@@ -18,8 +18,9 @@ namespace FarmPlannerAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> AdicionarMaquinaPlanejada(MaquinaPlanejadaViewModel dados)
         {
-            var conta = await _MaquinaPlanejadaservice.AdicionarMaquinaPlanejada(dados);
-            return Ok(conta);
+            var (success, listerros) = await _MaquinaPlanejadaservice.AdicionarMaquinaPlanejada(dados);
+            if (success) { return Ok(); }
+            else { return BadRequest(new { success = false, listerros }); }
         }
 
         [HttpPut("{id}")]
@@ -29,7 +30,7 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
-        [HttpDelete("id")]
+        [HttpDelete("{id}/{idconta}/{uid}")]
         public async Task<IActionResult>? ExcluirMaquinaPlanejada(int id, MaquinaPlanejadaViewModel dados)
         {
             var conta = await _MaquinaPlanejadaservice.ExcluirMaquinaPlanejada(id, dados);

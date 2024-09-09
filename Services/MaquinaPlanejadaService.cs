@@ -20,7 +20,7 @@ namespace FarmPlannerAPI.Services
             _excluirMaquinaPlanejadaValidator = excluirMaquinaPlanejadaValidator;
         }
 
-        public async Task<MaquinaPlanejadaViewModel> AdicionarMaquinaPlanejada(MaquinaPlanejadaViewModel dados)
+        public async Task<(bool sucess, MaquinaPlanejadaViewModel maq)> AdicionarMaquinaPlanejada(MaquinaPlanejadaViewModel dados)
         {
             _adicionarMaquinaPlanejadaValidator.ValidateAndThrow(dados);
             var MaquinaPlanejada = new MaquinaPlanejada();
@@ -35,7 +35,7 @@ namespace FarmPlannerAPI.Services
 
             await _context.AddAsync(MaquinaPlanejada);
             await _context.SaveChangesAsync();
-            return new MaquinaPlanejadaViewModel
+            return (true, new MaquinaPlanejadaViewModel
             {
                 Id = MaquinaPlanejada.Id,
                 IdMaquina = MaquinaPlanejada.IdMaquina,
@@ -45,7 +45,7 @@ namespace FarmPlannerAPI.Services
                 IdPlanejamento = MaquinaPlanejada.IdPlanejamento,
                 QtdCombEstimado = MaquinaPlanejada.QtdCombEstimado,
                 QtdHoraEstimada = MaquinaPlanejada.QtdHoraEstimada
-            };
+            });
         }
 
         public async Task<MaquinaPlanejadaViewModel>? SalvarMaquinaPlanejada(int id, MaquinaPlanejadaViewModel dados)
