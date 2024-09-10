@@ -24,6 +24,11 @@ namespace FarmPlannerAPI.Services
         {
             _adicionarMaquinaPlanejadaValidator.ValidateAndThrow(dados);
             var MaquinaPlanejada = new MaquinaPlanejada();
+
+            var p = _context.planejoperacoes.Where(x => x.idconta == dados.idconta && x.Id == dados.IdPlanejamento).FirstOrDefault();
+            p.QCombustivelEstimado = p.QCombustivelEstimado + (dados.QtdCombEstimado);
+            p.QHorasEstimadas = p.QHorasEstimadas + (dados.QtdHoraEstimada);
+
             MaquinaPlanejada.IdMaquina = (dados.IdMaquina == 0) ? null : dados.IdMaquina;
             MaquinaPlanejada.IdModeloMaquina = dados.IdModeloMaquina;
             MaquinaPlanejada.Consumo = dados.Consumo;
@@ -36,6 +41,7 @@ namespace FarmPlannerAPI.Services
             MaquinaPlanejada.datains = DateTime.Now;
 
             await _context.AddAsync(MaquinaPlanejada);
+            _context.Update(p);
             await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Maquina Planejada " + MaquinaPlanejada.Id.ToString() + "/" + MaquinaPlanejada.IdPlanejamento.ToString() + "/" + MaquinaPlanejada.IdMaquina.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
             await _context.SaveChangesAsync();
             return (new MaquinaPlanejadaViewModel
@@ -56,6 +62,9 @@ namespace FarmPlannerAPI.Services
             var MaquinaPlanejada = _context.maquinasplanejadas.Where(x => x.idconta == idconta && x.Id == id).FirstOrDefault();
             if (MaquinaPlanejada != null)
             {
+                var p = _context.planejoperacoes.Where(x => x.idconta == idconta && x.Id == dados.IdPlanejamento).FirstOrDefault();
+                p.QCombustivelEstimado = p.QCombustivelEstimado + (dados.QtdCombEstimado - MaquinaPlanejada.QtdCombEstimado);
+                p.QHorasEstimadas = p.QHorasEstimadas + (dados.QtdHoraEstimada - MaquinaPlanejada.QtdHoraEstimada);
                 MaquinaPlanejada.IdMaquina = dados.IdMaquina;
                 MaquinaPlanejada.IdModeloMaquina = dados.IdModeloMaquina;
                 MaquinaPlanejada.Consumo = dados.Consumo;
@@ -65,7 +74,9 @@ namespace FarmPlannerAPI.Services
                 MaquinaPlanejada.QtdHoraEstimada = dados.QtdHoraEstimada;
 
                 _context.Update(MaquinaPlanejada);
+                _context.Update(p);
                 await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Maquina Planejada " + MaquinaPlanejada.Id.ToString() + "/" + MaquinaPlanejada.IdPlanejamento.ToString() + "/" + MaquinaPlanejada.IdMaquina.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+
                 await _context.SaveChangesAsync();
                 return new MaquinaPlanejadaViewModel
                 {
@@ -91,8 +102,13 @@ namespace FarmPlannerAPI.Services
                 {
                     Id = id
                 };
+                var p = _context.planejoperacoes.Where(x => x.idconta == idconta && x.Id == MaquinaPlanejada.IdPlanejamento).FirstOrDefault();
+                p.QCombustivelEstimado = p.QCombustivelEstimado - MaquinaPlanejada.QtdCombEstimado;
+                p.QHorasEstimadas = p.QHorasEstimadas - MaquinaPlanejada.QtdHoraEstimada;
+
                 _excluirMaquinaPlanejadaValidator.ValidateAndThrow(dados);
                 _context.maquinasplanejadas.Remove(MaquinaPlanejada);
+                _context.Update(p);
                 await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Maquina Planejada " + MaquinaPlanejada.Id.ToString() + "/" + MaquinaPlanejada.IdPlanejamento.ToString() + "/" + MaquinaPlanejada.IdMaquina.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new MaquinaPlanejadaViewModel

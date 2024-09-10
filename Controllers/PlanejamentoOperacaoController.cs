@@ -43,10 +43,10 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
-        [HttpGet("Listar/{idorganizacao}/{idfazenda}/{idano}/{idsafra}/{idtalhao}/{idoperacao}/{idconta}/{idvariedade}/{ini}/{fim}")]
-        public async Task<IActionResult> ListarPlanejamentoOperacao(int idorganizacao, int idfazenda, int idano, int idsafra, int idtalhao, int idoperacao, string idconta, int idvariedade, DateTime ini, DateTime fim)
+        [HttpGet("Listar/{idorganizacao}/{idfazenda}/{idano}/{idsafra}/{idtalhao}/{idoperacao}/{idconta}/{idvariedade}/{idprincipio}/{idproduto}/{ini}/{fim}")]
+        public async Task<IActionResult> ListarPlanejamentoOperacao(int idorganizacao, int idfazenda, int idano, int idsafra, int idtalhao, int idoperacao, string idconta, int idvariedade, int idprincipio, int idproduto, DateTime ini, DateTime fim)
         {
-            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao, idsafra, idano, idfazenda, idoperacao, idtalhao, idconta, idvariedade, ini, fim);
+            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao, idsafra, idano, idfazenda, idoperacao, idtalhao, idconta, idvariedade, idprincipio, idproduto, ini, fim);
             return Ok(conta);
         }
 

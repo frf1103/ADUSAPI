@@ -181,7 +181,7 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<IEnumerable<ListPlanejamentoOperacaoViewModel>> ListarPlanejamentoOperacao(int idorganizacao, int idsafra, int idano, int idfazenda, int idoperacao, int idtalhao, string idconta, int idvariedade, DateTime ini, DateTime fim)
+        public async Task<IEnumerable<ListPlanejamentoOperacaoViewModel>> ListarPlanejamentoOperacao(int idorganizacao, int idsafra, int idano, int idfazenda, int idoperacao, int idtalhao, string idconta, int idvariedade, int idprincipio, int idproduto, DateTime ini, DateTime fim)
         {
             //            var condicao = (PlanejamentoOperacao m) => (idfazenda == 0 || m.IdFazenda == idfazenda) &&
             //           (idsafra == 0 || m.IdSafra == idsafra) &&
@@ -193,7 +193,8 @@ namespace FarmPlannerAPI.Services
                 (m.configArea.IdSafra == idsafra || idsafra == 0) && (m.IdOperacao == idoperacao || idoperacao == 0))
                 && (idvariedade == 0 || m.configArea.IdVariedade == idvariedade) && m.DataPrevista >= ini && m.DataPrevista <= fim &&
                 m.configArea.talhao.IdAnoAgricola == idano && m.configArea.talhao.fazenda.IdOrganizacao == idorganizacao
-                );
+                && m.produtosplanejados.Any(p => p.IdPlanejamento == m.Id && (idprincipio == 0 || p.IdPrincipioAtivo == idprincipio) &&
+                (idproduto == 0 || p.IdProduto == idproduto)));
             var PlanejamentoOperacaos = query
                 .Select(c => new ListPlanejamentoOperacaoViewModel
                 {
@@ -326,7 +327,13 @@ namespace FarmPlannerAPI.Services
                     foreach (var maq in c.maquinas)
                     {
                         var (rend, cons) = await BuscaParametros(idconta, maq.idmodelo, maq.idmaquina, c.idconfig, 0, c.operacao);
-                        decimal horas = (c.perc * c.area / 100) / rend;
+                        decimal horas = 0;
+                        if (rend != 0)
+                        {
+                            horas = (c.perc * c.area / 100) / rend;
+                        }
+                        
+
                         decimal comb = horas * cons;
                         MaquinaPlanejadaViewModel mq = new MaquinaPlanejadaViewModel
                         {
@@ -349,8 +356,6 @@ namespace FarmPlannerAPI.Services
                         tothoras = tothoras + horas;
                         totcomb = totcomb + comb;
                     }
-                    pl.QCombustivelEstimado = totcomb;
-                    pl.QHorasEstimadas = tothoras;
                 }
                 catch (Exception ex)
                 {
