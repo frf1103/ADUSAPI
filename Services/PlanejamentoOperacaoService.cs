@@ -7,6 +7,7 @@ using FarmPlannerAPICore.Models.ProdutoPlanejado;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
 namespace FarmPlannerAPI.Services
 {
@@ -36,6 +37,7 @@ namespace FarmPlannerAPI.Services
             {
                 var PlanejamentoOperacao = new PlanejamentoOperacao();
                 PlanejamentoOperacao.DAE = dados.DAE;
+                PlanejamentoOperacao.Percentual = dados.Percentual;
                 PlanejamentoOperacao.Status = dados.Status;
                 PlanejamentoOperacao.Area = dados.Area;
                 PlanejamentoOperacao.CustoOperacao = dados.CustoOperacao;
@@ -67,7 +69,8 @@ namespace FarmPlannerAPI.Services
                     //                IdOrcamento=PlanejamentoOperacao.IdOrcamento,
                     Plantio = PlanejamentoOperacao.Plantio,
                     QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
-                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
+                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas,
+                    Percentual = PlanejamentoOperacao.Percentual
                 }, null);
             }
             else
@@ -95,6 +98,7 @@ namespace FarmPlannerAPI.Services
                 PlanejamentoOperacao.IdOperacao = dados.IdOperacao;
                 PlanejamentoOperacao.uid = dados.uid;
                 PlanejamentoOperacao.dataup = DateTime.Now;
+                PlanejamentoOperacao.Percentual = dados.Percentual;
 
                 _context.Update(PlanejamentoOperacao);
                 await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Planejamento de operacoes " + PlanejamentoOperacao.Id.ToString() + "/" + PlanejamentoOperacao.IdOperacao.ToString(), datalog = DateTime.Now, idconta = idconta });
@@ -112,7 +116,8 @@ namespace FarmPlannerAPI.Services
                     //                IdOrcamento = PlanejamentoOperacao.IdOrcamento,
                     Plantio = PlanejamentoOperacao.Plantio,
                     QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
-                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
+                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas,
+                    Percentual = PlanejamentoOperacao.Percentual
                 };
             }
             else return null;
@@ -144,7 +149,8 @@ namespace FarmPlannerAPI.Services
                     //              IdOrcamento = PlanejamentoOperacao.IdOrcamento,
                     Plantio = PlanejamentoOperacao.Plantio,
                     QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
-                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
+                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas,
+                    Percentual = PlanejamentoOperacao.Percentual
                 };
             }
             else return null;
@@ -168,7 +174,8 @@ namespace FarmPlannerAPI.Services
                     //            IdOrcamento = PlanejamentoOperacao.IdOrcamento,
                     Plantio = PlanejamentoOperacao.Plantio,
                     QCombustivelEstimado = PlanejamentoOperacao.QCombustivelEstimado,
-                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas
+                    QHorasEstimadas = PlanejamentoOperacao.QHorasEstimadas,
+                    Percentual = PlanejamentoOperacao.Percentual
                 };
             }
             else return null;
@@ -206,6 +213,7 @@ namespace FarmPlannerAPI.Services
                     Desctalhao = c.configArea.talhao.Descricao,
                     //   DescOrcamento=c.orcamentoProduto.Descricao,
                     DescSafra = c.configArea.safra.Descricao,
+                    Percentual = c.Percentual,
                     descconfig = c.configArea.talhao.fazenda.Descricao.Trim() + "/" + c.configArea.talhao.Descricao.Trim() + "/" + c.configArea.variedade.Descricao.Trim()
                 }
                 ).ToList();
@@ -214,19 +222,19 @@ namespace FarmPlannerAPI.Services
 
         public async Task<(decimal rendimento, decimal consumo)> BuscaParametros(string idconta, int idmodelo, int idmaquina, int idconfigarea, int idcultura, int idoperacao)
         {
-            var ca = _context.configareas.Where(x => x.idconta == idconta && x.Id == idconfigarea).FirstOrDefault();
-            if (c != null)
+            var ca = _context.configareas.Include(x => x.variedade).Where(x => x.idconta == idconta && x.Id == idconfigarea).FirstOrDefault();
+            if (ca != null)
             {
                 if (idmaquina != 0)
                 {
-                    var maqp = _context.maquinasparametro.Where(m => m.idconta == idconta && m.IdMaquina == idmaquina && m.IdOperacao == idoperacao && m.IdCultura == idcultura).FirstOrDefault();
+                    var maqp = _context.maquinasparametro.Where(m => m.idconta == idconta && m.IdMaquina == idmaquina && m.IdOperacao == idoperacao && (m.IdCultura == idcultura || m.IdCultura == ca.variedade.IdCultura)).FirstOrDefault();
                     if (maqp != null)
                     {
                         return (maqp.Rendimento, maqp.Consumo);
                     }
                     else
                     {
-                        var modp = _context.modelosparametros.Where(m => m.idconta == idconta && m.IdModeloMaquina == idmodelo && m.IdOperacao == idoperacao && m.IdCultura == idcultura).FirstOrDefault();
+                        var modp = _context.modelosparametros.Where(m => m.idconta == idconta && m.IdModeloMaquina == idmodelo && m.IdOperacao == idoperacao && (m.IdCultura == idcultura || m.IdCultura == ca.variedade.IdCultura)).FirstOrDefault();
                         if (modp != null)
                         {
                             return (modp.Rendimento, modp.Consumo);
@@ -238,6 +246,22 @@ namespace FarmPlannerAPI.Services
                             {
                                 return (modp.Rendimento, modp.Consumo);
                             }
+                        }
+                    }
+                }
+                else
+                {
+                    var modp = _context.modelosparametros.Where(m => m.idconta == idconta && m.IdModeloMaquina == idmodelo && m.IdOperacao == idoperacao && (m.IdCultura == idcultura || m.IdCultura == ca.variedade.IdCultura)).FirstOrDefault();
+                    if (modp != null)
+                    {
+                        return (modp.Rendimento, modp.Consumo);
+                    }
+                    else
+                    {
+                        var op = _context.operacoes.Where(m => m.idconta == idconta && m.IdTipoOperacao == idoperacao).FirstOrDefault();
+                        if (modp != null)
+                        {
+                            return (modp.Rendimento, modp.Consumo);
                         }
                     }
                 }
@@ -268,7 +292,8 @@ namespace FarmPlannerAPI.Services
                         CustoOperacao = 0,
                         uid = uid,
                         QHorasEstimadas = 0,
-                        DataPrevista = c.dataprevista
+                        DataPrevista = c.dataprevista,
+                        Percentual = c.perc
                     };
                     var (x, success) = await AdicionarPlanejamentoOperacao(pl);
                     if (success != null)
@@ -284,7 +309,6 @@ namespace FarmPlannerAPI.Services
                             uid = uid,
                             IdPlanejamento = x.Id,
                             IdConfigArea = c.idconfig,
-                            AreaPercent = prod.percent,
                             Dosagem = prod.dosagem,
                             IdPrincipioAtivo = (prod.idprincipio == 0) ? null : prod.idprincipio,
                             IdProduto = (prod.idproduto == 0) ? null : prod.idproduto,

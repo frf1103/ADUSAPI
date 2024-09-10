@@ -33,6 +33,9 @@ namespace FarmPlannerAPI.Entities
         [Precision(18, 2)]
         public decimal CustoOperacao { get; set; }
 
+        [Precision(6, 2)]
+        public decimal? Percentual { get; set; }
+
         [ForeignKey("IdConfigArea,idconta")]
         public ConfigArea configArea { get; set; }
 

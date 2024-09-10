@@ -11,7 +11,7 @@ namespace FarmPlannerAPI.Entities
 
         public int IdPlanejamento { get; set; }
         public int IdModeloMaquina { get; set; }
-        public int IdMaquina { get; set; }
+        public int? IdMaquina { get; set; }
 
         [Precision(18, 2)]
         public decimal Rendimento { get; set; }
@@ -26,7 +26,7 @@ namespace FarmPlannerAPI.Entities
         public decimal QtdCombEstimado { get; set; }
 
         [ForeignKey("IdMaquina,idconta")]
-        public Maquina maquina { get; set; }
+        public Maquina? maquina { get; set; }
 
         [ForeignKey("IdModeloMaquina,idconta")]
         public ModeloMaquina modelomaquina { get; set; }

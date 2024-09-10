@@ -21,6 +21,7 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(x => x.datains).IsRequired(false);
             builder.Property(x => x.uid).IsRequired(false);
             builder.Property(x => x.dataup).IsRequired(false);
+            builder.Property(x => x.Percentual).IsRequired(false);
 
             builder.Property(x => x.idconta);
             builder.HasKey(x => new { x.Id, x.idconta });

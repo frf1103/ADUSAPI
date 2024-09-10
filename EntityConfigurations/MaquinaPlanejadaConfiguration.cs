@@ -10,7 +10,7 @@ namespace FarmPlannerAPI.EntityConfigurations
         {
             builder.ToTable("MaquinasPlanejadas");
             builder.Property(t => t.Id).UseIdentityColumn();
-            builder.Property(t => t.IdMaquina);
+            builder.Property(t => t.IdMaquina).IsRequired(false);
             builder.Property(t => t.IdModeloMaquina);
             builder.Property(t => t.QtdCombEstimado);
             builder.Property(t => t.Consumo);

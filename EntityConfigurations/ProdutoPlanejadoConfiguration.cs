@@ -15,7 +15,7 @@ namespace FarmPlannerAPI.EntityConfigurations
 
             builder.Property(x => x.IdPlanejamento);
             builder.Property(x => x.Dosagem);
-            builder.Property(x => x.AreaPercent);
+
             builder.Property(x => x.Tamanho);
             builder.Property(x => x.TotalProduto);
             builder.Property(x => x.idconta);

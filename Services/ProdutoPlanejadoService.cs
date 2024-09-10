@@ -34,7 +34,7 @@ namespace FarmPlannerAPI.Services
                 ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
                 ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
-                ProdutoPlanejado.AreaPercent = dados.AreaPercent;
+
                 ProdutoPlanejado.Tamanho = dados.Tamanho;
                 ProdutoPlanejado.TotalProduto = dados.TotalProduto;
                 ProdutoPlanejado.IdPlanejamento = dados.IdPlanejamento;
@@ -51,7 +51,6 @@ namespace FarmPlannerAPI.Services
                     IdProduto = ProdutoPlanejado.IdProduto,
                     IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
-                    AreaPercent = ProdutoPlanejado.AreaPercent,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
                     IdPlanejamento = ProdutoPlanejado.IdPlanejamento
@@ -72,7 +71,7 @@ namespace FarmPlannerAPI.Services
                 ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
                 ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
-                ProdutoPlanejado.AreaPercent = dados.AreaPercent;
+
                 ProdutoPlanejado.Tamanho = dados.Tamanho;
                 ProdutoPlanejado.TotalProduto = dados.TotalProduto;
                 ProdutoPlanejado.IdPlanejamento = dados.IdPlanejamento;
@@ -88,7 +87,7 @@ namespace FarmPlannerAPI.Services
                     IdProduto = ProdutoPlanejado.IdProduto,
                     IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
-                    AreaPercent = ProdutoPlanejado.AreaPercent,
+
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
                     IdPlanejamento = ProdutoPlanejado.IdPlanejamento
@@ -116,7 +115,6 @@ namespace FarmPlannerAPI.Services
                     IdProduto = ProdutoPlanejado.IdProduto,
                     IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
-                    AreaPercent = ProdutoPlanejado.AreaPercent,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
                     IdPlanejamento = ProdutoPlanejado.IdPlanejamento
@@ -136,7 +134,6 @@ namespace FarmPlannerAPI.Services
                     IdProduto = ProdutoPlanejado.IdProduto,
                     IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
-                    AreaPercent = ProdutoPlanejado.AreaPercent,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
                     IdPlanejamento = ProdutoPlanejado.IdPlanejamento
@@ -157,7 +154,7 @@ namespace FarmPlannerAPI.Services
                     IdProduto = c.IdProduto,
                     IdPrincipioAtivo = c.IdPrincipioAtivo,
                     Dosagem = c.Dosagem,
-                    AreaPercent = c.AreaPercent,
+
                     Tamanho = c.Tamanho,
                     TotalProduto = c.TotalProduto,
                     IdPlanejamento = c.IdPlanejamento,

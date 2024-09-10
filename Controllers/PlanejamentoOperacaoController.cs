@@ -46,7 +46,7 @@ namespace FarmPlannerAPI.Controllers
         [HttpGet("Listar/{idorganizacao}/{idfazenda}/{idano}/{idsafra}/{idtalhao}/{idoperacao}/{idconta}/{idvariedade}/{ini}/{fim}")]
         public async Task<IActionResult> ListarPlanejamentoOperacao(int idorganizacao, int idfazenda, int idano, int idsafra, int idtalhao, int idoperacao, string idconta, int idvariedade, DateTime ini, DateTime fim)
         {
-            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao, idsafra, idano, idfazenda,idoperacao,  idtalhao, idconta, idvariedade, ini, fim);
+            var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacao(idorganizacao, idsafra, idano, idfazenda, idoperacao, idtalhao, idconta, idvariedade, ini, fim);
             return Ok(conta);
         }
 
@@ -55,6 +55,13 @@ namespace FarmPlannerAPI.Controllers
         {
             var conta = await _PlanejamentoOperacaoservice.ListarPlanejamentoOperacaoById(id, idconta);
             return Ok(conta);
+        }
+
+        [HttpGet("parametrooperacao/{idconta}/{idmodelo}/{idmaquina}/{idoperacao}/{idconfigarea}/{idcultura}")]
+        public async Task<IActionResult> GetParametroOperacao(string idconta, int idmodelo, int idmaquina, int idoperacao, int idconfigarea, int idcultura)
+        {
+            var (rendimento, consumo) = await _PlanejamentoOperacaoservice.BuscaParametros(idconta, idmodelo, idmaquina, idconfigarea, idcultura, idoperacao);
+            return Ok(new { rendimento = rendimento, consumo = consumo });
         }
 
         [HttpPost("assistente/{idconta}/{uid}")]

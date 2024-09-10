@@ -794,7 +794,7 @@ namespace FarmPlannerAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("IdMaquina")
+                    b.Property<int?>("IdMaquina")
                         .HasColumnType("int");
 
                     b.Property<int>("IdModeloMaquina")
@@ -1311,6 +1311,10 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int>("IdOperacao")
                         .HasColumnType("int");
 
+                    b.Property<decimal?>("Percentual")
+                        .HasPrecision(6, 2)
+                        .HasColumnType("decimal(6,2)");
+
                     b.Property<bool>("Plantio")
                         .HasColumnType("bit");
 
@@ -1517,10 +1521,6 @@ namespace FarmPlannerAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("AreaPercent")
-                        .HasPrecision(6, 2)
-                        .HasColumnType("decimal(6,2)");
 
                     b.Property<decimal>("Dosagem")
                         .HasPrecision(18, 2)
@@ -2181,8 +2181,7 @@ namespace FarmPlannerAPI.Migrations
                     b.HasOne("FarmPlannerAPI.Entities.Maquina", "maquina")
                         .WithMany("maquinasplanejada")
                         .HasForeignKey("IdMaquina", "idconta")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("FarmPlannerAPI.Entities.PlanejamentoOperacao", "planejamentoOperacao")
                         .WithMany("maquinasplanejada")
