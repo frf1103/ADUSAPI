@@ -11,4 +11,6 @@ public class Moeda
     public ICollection<CotacaoMoeda> cotacaoMoedas { get; set; }
 
     public ICollection<Comercializacao> comercializacao { get; set; }
+
+    public ICollection<ProdutoOrcamento> produtosorcamento { get; set; }
 }

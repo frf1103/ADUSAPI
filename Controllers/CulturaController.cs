@@ -44,6 +44,13 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
+        [HttpGet("variedade")]
+        public async Task<IActionResult> ListarCulturaVariedade(string? filtro)
+        {
+            var conta = await _culturaservice.ListarCulturaVariedade(filtro);
+            return Ok(conta);
+        }
+
         [HttpGet("id")]
         public async Task<IActionResult> ListarCulturaById(int id)
         {

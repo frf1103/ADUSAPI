@@ -8,8 +8,10 @@ namespace FarmPlannerAPI.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public int IdFazenda { get; set; }
+
         public int IdSafra { get; set; }
-        public int IdProduto { get; set; }
+        public int IdPrincipio { get; set; }
 
         [Precision(18, 2)]
         public decimal QtdNecessaria { get; set; }
@@ -29,8 +31,8 @@ namespace FarmPlannerAPI.Entities
         [ForeignKey("IdSafra,idconta")]
         public Safra safra { get; set; }
 
-        [ForeignKey("IdProduto,idconta")]
-        public Produto produto { get; set; }
+        [ForeignKey("IdPrincipio")]
+        public PrincipioAtivo principio { get; set; }
 
         public string idconta { get; set; }
 
@@ -40,5 +42,8 @@ namespace FarmPlannerAPI.Entities
         public string? uid { get; set; }
         public DateTime? datains { get; set; }
         public DateTime? dataup { get; set; }
+
+        [ForeignKey("IdFazenda")]
+        public Fazenda fazenda { get; set; }
     }
 }

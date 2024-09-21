@@ -5,6 +5,7 @@ using FarmPlannerAPICore.Models.MaquinaPlanejada;
 using FarmPlannerAPICore.Models.PlanejamentoOperacao;
 using FarmPlannerAPICore.Models.ProdutoPlanejado;
 using FluentValidation;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
@@ -272,11 +273,12 @@ namespace FarmPlannerAPI.Services
 
         public async Task<(bool success, List<string> erros)> AdicionarPlanejOperAreaAssistente(string idconta, string uid, List<AssistentePlanejOperViewModel> dados)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
+            List<object[]> xlista = new List<object[]>();
 
-            foreach (var c in dados)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                try
+                foreach (var c in dados)
                 {
                     decimal tothoras, totcomb;
                     tothoras = 0; totcomb = 0;
@@ -302,6 +304,7 @@ namespace FarmPlannerAPI.Services
                         await transaction.RollbackAsync();
                         return (false, success);
                     }
+                    var cf = _context.configareas.Include(x => x.talhao).Where(x => x.Id == c.idconfig).FirstOrDefault();
                     foreach (var prod in c.produtos)
                     {
                         ProdutoPlanejadoViewModel pr = new ProdutoPlanejadoViewModel
@@ -316,7 +319,18 @@ namespace FarmPlannerAPI.Services
                             Tamanho = prod.tamanho,
                             TotalProduto = prod.tamanho * prod.dosagem * prod.percent / 100
                         };
-                        var (xp, successp) = await _produtoplan.AdicionarProdutoPlanejado(pr);
+                        var (xp, successp) = await _produtoplan.AdicionarProdutoPlanejado(pr, false);
+                        object[] resultado = null;
+                        resultado = (object[])xlista.Find(x => (int)x[0] == prod.idprincipio && (int)x[1] == cf.talhao.IdFazenda && (int)x[2] == cf.IdSafra);
+
+                        if (resultado == null)
+                        {
+                            xlista.Add(new object[] { prod.idprincipio, cf.talhao.IdFazenda, cf.IdSafra, (decimal)pr.TotalProduto });
+                        }
+                        else
+                        {
+                            resultado[3] = (decimal)resultado[3] + pr.TotalProduto;
+                        }
                         if (success != null)
                         {
                             await transaction.RollbackAsync();
@@ -332,7 +346,6 @@ namespace FarmPlannerAPI.Services
                         {
                             horas = (c.perc * c.area / 100) / rend;
                         }
-                        
 
                         decimal comb = horas * cons;
                         MaquinaPlanejadaViewModel mq = new MaquinaPlanejadaViewModel
@@ -357,13 +370,42 @@ namespace FarmPlannerAPI.Services
                         totcomb = totcomb + comb;
                     }
                 }
-                catch (Exception ex)
+                foreach (var y in xlista)
                 {
-                    // Revertendo a transação em caso de erro
-                    await transaction.RollbackAsync();
-                    List<string> errorMessages = new List<string> { ex.Message.ToString() };
-                    return (false, errorMessages);
+                    var totalnec = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.IdPrincipio == (int)y[0]).Sum(x => x.QtdNecessaria);
+                    var compra = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.IdPrincipio == (int)y[0]).FirstOrDefault();
+                    if (compra != null)
+                    {
+                        compra.QtdNecessaria = compra.QtdNecessaria + (decimal)y[3];
+                        compra.QtdComprar = compra.QtdNecessaria - compra.QtdEstoque;
+                        compra.Saldo = compra.QtdComprar - compra.QtdComprada;
+                        _context.planejamentoCompras.Update(compra);
+                    }
+                    else
+                    {
+                        _context.planejamentoCompras.Add(new PlanejamentoCompra
+                        {
+                            IdPrincipio = (int)y[0],
+                            IdFazenda = (int)y[1],
+                            IdSafra = (int)y[2],
+                            idconta = idconta,
+                            uid = uid,
+                            QtdComprada = 0,
+                            QtdEstoque = 0,
+                            QtdComprar = 0,
+                            Saldo = 0,
+                            QtdNecessaria = (decimal)y[3]
+                        });
+                    }
                 }
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                // Revertendo a transação em caso de erro
+                await transaction.RollbackAsync();
+                List<string> errorMessages = new List<string> { ex.Message.ToString() };
+                return (false, errorMessages);
             }
             await transaction.CommitAsync();
             return (true, null);

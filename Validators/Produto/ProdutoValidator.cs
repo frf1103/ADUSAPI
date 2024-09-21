@@ -7,6 +7,7 @@ namespace FarmPlannerAPI.Validators.Produto
     public class ProdutoValidator : AbstractValidator<ProdutoViewModel>
     {
         private readonly FarmPlannerContext _context;
+
         public ProdutoValidator(FarmPlannerContext context)
         {
             _context = context;
@@ -14,20 +15,17 @@ namespace FarmPlannerAPI.Validators.Produto
             RuleFor(c => c.Descricao)
                 .NotEmpty().WithMessage("É necessário informar a Descricao.")
                 .MaximumLength(100).WithMessage("A Descricao deve ter no máximo 100 caracteres");
-
         }
-
     }
 
     public class ExcluirProdutoValidator : AbstractValidator<ProdutoViewModel>
     {
         private readonly FarmPlannerContext _context;
+
         public ExcluirProdutoValidator(FarmPlannerContext context)
         {
-            
             RuleFor(c => c).Custom((grupo, validateContext) =>
             {
-
                 var reg = context.produtoplanejados.FirstOrDefault(c => c.IdProduto == grupo.Id);
                 if (reg != null)
                 {
@@ -43,15 +41,7 @@ namespace FarmPlannerAPI.Validators.Produto
                 {
                     validateContext.AddFailure("Produto com orçamento");
                 }
-                var reg3 = context.planejamentoCompras.FirstOrDefault(c => c.IdProduto == grupo.Id);
-                if (reg3 != null)
-                {
-                    validateContext.AddFailure("Produto com planejamento de compra");
-                }
-
-            }); 
-
+            });
         }
-
     }
 }

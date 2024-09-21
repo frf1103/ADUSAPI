@@ -32,8 +32,12 @@ namespace FarmPlannerAPI.Services
             ProdutoOrcamento.PrecoUnitario = dados.PrecoUnitario;
             ProdutoOrcamento.DataPreco = dados.DataPreco;
             ProdutoOrcamento.idconta = dados.idconta;
+            ProdutoOrcamento.uid = dados.uid;
+            ProdutoOrcamento.datains = DateTime.Now;
+            ProdutoOrcamento.idmoeda = dados.idmoeda;
 
             await _context.AddAsync(ProdutoOrcamento);
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusao  Orçamento hectarizado " + ProdutoOrcamento.IdOrcamento.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
             await _context.SaveChangesAsync();
             return new ProdutoOrcamentoViewModel
             {
@@ -47,9 +51,9 @@ namespace FarmPlannerAPI.Services
             };
         }
 
-        public async Task<ProdutoOrcamentoViewModel>? SalvarProdutoOrcamento(int id, ProdutoOrcamentoViewModel dados)
+        public async Task<ProdutoOrcamentoViewModel>? SalvarProdutoOrcamento(int id, string idconta, ProdutoOrcamentoViewModel dados)
         {
-            var ProdutoOrcamento = _context.produtosorcamento.Find(id);
+            var ProdutoOrcamento = _context.produtosorcamento.Where(p => p.idconta == idconta && p.Id == id).FirstOrDefault();
             if (ProdutoOrcamento != null)
             {
                 ProdutoOrcamento.TipoProdutoOrc = dados.TipoProdutoOrc;
@@ -58,8 +62,11 @@ namespace FarmPlannerAPI.Services
                 ProdutoOrcamento.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoOrcamento.PrecoUnitario = dados.PrecoUnitario;
                 ProdutoOrcamento.DataPreco = dados.DataPreco;
-
+                ProdutoOrcamento.uid = dados.uid;
+                ProdutoOrcamento.dataup = DateTime.Now;
+                ProdutoOrcamento.idmoeda = dados.idmoeda;
                 _context.Update(ProdutoOrcamento);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Orçamento hectarizado " + ProdutoOrcamento.IdOrcamento.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 await _context.SaveChangesAsync();
                 return new ProdutoOrcamentoViewModel
                 {
@@ -75,13 +82,18 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<ProdutoOrcamentoViewModel>? ExcluirProdutoOrcamento(int id, ProdutoOrcamentoViewModel dados)
+        public async Task<ProdutoOrcamentoViewModel>? ExcluirProdutoOrcamento(int id, string idconta, string uid)
         {
-            _excluirProdutoOrcamentoValidator.ValidateAndThrow(dados);
-            var ProdutoOrcamento = _context.produtosorcamento.Find(id);
+            var ProdutoOrcamento = _context.produtosorcamento.Where(p => p.idconta == idconta && p.Id == id).FirstOrDefault();
             if (ProdutoOrcamento != null)
             {
+                ProdutoOrcamentoViewModel dados = new ProdutoOrcamentoViewModel
+                {
+                    Id = ProdutoOrcamento.Id
+                };
+                _excluirProdutoOrcamentoValidator.ValidateAndThrow(dados);
                 _context.produtosorcamento.Remove(ProdutoOrcamento);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Alteração  Orçamento hectarizado " + ProdutoOrcamento.IdOrcamento.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new ProdutoOrcamentoViewModel
                 {
@@ -97,9 +109,9 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<ProdutoOrcamentoViewModel>? ListarProdutoOrcamentoById(int id)
+        public async Task<ProdutoOrcamentoViewModel>? ListarProdutoOrcamentoById(int id, string idconta)
         {
-            var ProdutoOrcamento = _context.produtosorcamento.Find(id);
+            var ProdutoOrcamento = _context.produtosorcamento.Where(p => p.idconta == idconta && p.Id == id).FirstOrDefault();
             if (ProdutoOrcamento != null)
             {
                 return new ProdutoOrcamentoViewModel
@@ -110,19 +122,21 @@ namespace FarmPlannerAPI.Services
                     TipoProdutoOrc = ProdutoOrcamento.TipoProdutoOrc,
                     PrecoUnitario = ProdutoOrcamento.PrecoUnitario,
                     IdPrincipioAtivo = ProdutoOrcamento.IdPrincipioAtivo,
-                    DataPreco = ProdutoOrcamento.DataPreco
+                    DataPreco = ProdutoOrcamento.DataPreco,
+                    idmoeda = ProdutoOrcamento.idmoeda
                 };
             }
             else return null;
         }
 
-        public async Task<IEnumerable<ListProdutoOrcamentoViewModel>> ListarProdutoOrcamentoByOrcamento(int idorcamento, int idprincativo, int idproduto)
+        public async Task<IEnumerable<ListProdutoOrcamentoViewModel>> ListarProdutoOrcamentoByOrcamento(int idorcamento, int idprincativo, int idproduto, string idconta)
         {
             var condicao = (ProdutoOrcamento m) => (m.IdOrcamento == idorcamento) && (idproduto == 0 || m.IdProduto == idproduto) &&
-            (idprincativo == 0 || m.IdPrincipioAtivo == idprincativo);
+            (idprincativo == 0 || m.IdPrincipioAtivo == idprincativo) && m.idconta == idconta;
 
             var query = _context.produtosorcamento
-                .Include(x => x.princativo).Include(x => x.produto);
+                .Include(x => x.princativo).Include(x => x.produto)
+                .Include(x => x.moeda);
             var ProdutoOrcamentos = query.Where(condicao)
                 .Select(c => new ListProdutoOrcamentoViewModel
                 {
@@ -132,10 +146,11 @@ namespace FarmPlannerAPI.Services
                     TipoProdutoOrc = c.TipoProdutoOrc,
                     PrecoUnitario = c.PrecoUnitario,
                     IdPrincipioAtivo = c.IdPrincipioAtivo,
-                    descpricativo = c.princativo.Descricao,
+                    descprincativo = c.princativo.Descricao,
                     descproduto = c.produto.Descricao,
-                    desctipoproduto = c.TipoProdutoOrc.ToString(),
-                    DataPreco = c.DataPreco
+                    desctipoproduto = (c.TipoProdutoOrc == 1) ? "Combustível" : "Insumo",
+                    DataPreco = c.DataPreco,
+                    descmoeda = c.moeda.Descricao
                 }
                 ).ToList();
             return (ProdutoOrcamentos);

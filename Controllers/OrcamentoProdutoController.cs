@@ -22,31 +22,31 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarOrcamentoProduto(int id, OrcamentoProdutoViewModel dados)
+        [HttpPut("{id}/{idconta}")]
+        public async Task<IActionResult>? EditarOrcamentoProduto(int id, string idconta, OrcamentoProdutoViewModel dados)
         {
-            var conta = await _OrcamentoProdutoservice.SalvarOrcamentoProduto(id, dados);
+            var conta = await _OrcamentoProdutoservice.SalvarOrcamentoProduto(id, idconta, dados);
             return Ok(conta);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult>? ExcluirOrcamentoProduto(int id, OrcamentoProdutoViewModel dados)
+        [HttpDelete("{id}/{idconta}/{uid}")]
+        public async Task<IActionResult>? ExcluirOrcamentoProduto(int id, string uid, string idconta)
         {
-            var conta = await _OrcamentoProdutoservice.ExcluirOrcamentoProduto(id, dados);
+            var conta = await _OrcamentoProdutoservice.ExcluirOrcamentoProduto(id, idconta, uid);
             return Ok(conta);
         }
 
-        [HttpGet("Listar/{idfazenda}/{idsafra}")]
-        public async Task<IActionResult> ListarOrcamentoProduto(int idfazenda, int idsafra, string? filtro)
+        [HttpGet("Listar/{idfazenda}/{idsafra}/{idconta}/{idprincipio}/{idproduto}")]
+        public async Task<IActionResult> ListarOrcamentoProduto(int idfazenda, int idsafra, string idconta, int idprincipio, int idproduto, string? filtro)
         {
-            var conta = await _OrcamentoProdutoservice.ListarOrcamentoProduto(idfazenda, idsafra, filtro);
+            var conta = await _OrcamentoProdutoservice.ListarOrcamentoProduto(idfazenda, idsafra, idconta, idprincipio, idproduto, filtro);
             return Ok(conta);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> ListarOrcamentoProdutoById(int id)
+        [HttpGet("{id}/{idconta}")]
+        public async Task<IActionResult> ListarOrcamentoProdutoById(int id, string idconta)
         {
-            var conta = await _OrcamentoProdutoservice.ListarOrcamentoProdutoById(id);
+            var conta = await _OrcamentoProdutoservice.ListarOrcamentoProdutoById(id, idconta);
             return Ok(conta);
         }
     }

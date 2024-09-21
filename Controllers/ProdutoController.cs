@@ -37,10 +37,10 @@ namespace FarmPlannerAPI.Controllers
             return Ok(Produto);
         }
 
-        [HttpGet("Listar/{idgrupo}/{idfab}/{idprincipio}/{idconta}")]
-        public async Task<IActionResult> ListarProduto(string idconta, int idgrupo, int idfab, int idprincipio, string? filtro)
+        [HttpGet("Listar/{idgrupo}/{idfab}/{idprincipio}/{idconta}/{tipo}")]
+        public async Task<IActionResult> ListarProduto(string idconta, int idgrupo, int idfab, int idprincipio, int tipo, string? filtro)
         {
-            var Produto = await _Produtoservice.ListarProduto(filtro, idconta, idgrupo, idfab, idprincipio);
+            var Produto = await _Produtoservice.ListarProduto(filtro, idconta, idgrupo, idfab, idprincipio, tipo);
             return Ok(Produto);
         }
 

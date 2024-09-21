@@ -161,5 +161,37 @@ namespace FarmPlannerAPI.Services
 
             return (cview);
         }
+
+        public async Task<IEnumerable<CulturaViewModel>> ListarCulturaVariedade(string? filtro)
+        {
+            var condicao = (Cultura m) => (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper())
+            || String.IsNullOrWhiteSpace(filtro) || m.Variedades.Any(v => v.Descricao.ToUpper().Contains(filtro.ToUpper())));
+            var query = _context.culturas.Include(c => c.Variedades)
+                .ThenInclude(v => v.tecnologia);
+            var Culturas = query.Where(condicao).ToList();
+            var cview = Culturas.Select(c => new CulturaViewModel
+            {
+                Descricao = c.Descricao,
+                UnidadeProdutiva = c.UnidadeProdutiva,
+                CodigoExterno = c.CodigoExterno,
+                DiasEstimadosEmergencia = c.DiasEstimadosEmergencia,
+                NomeProduto = c.NomeProduto,
+                Id = c.Id,
+                listVariedade = c.Variedades.Select(v => new ListVariedadeViewModel
+                {
+                    Id = v.Id,
+                    Descricao = v.Descricao,
+                    desctecnologia = v.tecnologia.Descricao,
+                    Ciclo = v.Ciclo,
+                    CodigoExterno = v.CodigoExterno,
+                    IdCultura = v.IdCultura,
+                    IdTecnologia = v.IdTecnologia,
+                    desccultura = v.cultura.Descricao
+                }).ToList()
+            }
+                ).ToList();
+
+            return (cview);
+        }
     }
 }

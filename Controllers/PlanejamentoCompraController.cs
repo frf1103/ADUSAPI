@@ -24,31 +24,32 @@ namespace FarmPlannerAPI.Controllers
             return Ok(PlanejamentoCompra);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarPlanejamentoCompra(int id, PlanejamentoCompraViewModel dados)
+        [HttpPut("{id}/{idconta}")]
+        public async Task<IActionResult>? EditarPlanejamentoCompra(int id, string idconta, PlanejamentoCompraViewModel dados)
         {
-            var PlanejamentoCompra = await _PlanejamentoCompraservice.SalvarPlanejamentoCompra(id, dados);
+            var PlanejamentoCompra = await _PlanejamentoCompraservice.SalvarPlanejamentoCompra(id, idconta, dados);
             return Ok(PlanejamentoCompra);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult>? ExcluirPlanejamentoCompra(int id, PlanejamentoCompraViewModel dados)
+        [HttpDelete("{id}/{idconta}/{uid}")]
+        public async Task<IActionResult>? ExcluirPlanejamentoCompra(int id, string idconta, string uid)
         {
-            var PlanejamentoCompra = await _PlanejamentoCompraservice.ExcluirPlanejamentoCompra(id, dados);
+            var PlanejamentoCompra = await _PlanejamentoCompraservice.ExcluirPlanejamentoCompra(id, idconta, uid);
             return Ok(PlanejamentoCompra);
         }
 
-        [HttpGet("Listar/{idconta}/{idano},{idorganizacao}/{idsafra}/{idproduto}")]
-        public async Task<IActionResult> ListarPlanejamentoCompra(string idconta, int idano, int idorganizacao, int idsafra, int idproduto)
+        [HttpGet("listar/{idconta}/{idano}/{idorganizacao}/{idsafra}/{idprincipio}/{idfazenda}")]
+        public async Task<IActionResult> ListarPlanejamentoCompra(string idconta, int idano, int idorganizacao, int idsafra, int idprincipio, int idfazenda)
         {
-            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamento(idconta, idano, idorganizacao, idproduto, idsafra);
+            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamento(idconta, idano, idorganizacao, idprincipio, idsafra, idfazenda);
+
             return Ok(PlanejamentoCompra);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> ListarPlanejamentoCompraById(int id)
+        [HttpGet("{id}/{idconta}")]
+        public async Task<IActionResult> ListarPlanejamentoCompraById(int id, string idconta)
         {
-            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamentoCompraById(id);
+            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamentoCompraById(id, idconta);
             return Ok(PlanejamentoCompra);
         }
     }

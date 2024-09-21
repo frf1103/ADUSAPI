@@ -13,7 +13,7 @@ namespace FarmPlannerAPI.Entities
         public int IdOrcamento { get; set; }
         public int TipoProdutoOrc { get; set; }
         public int? IdPrincipioAtivo { get; set; }
-        public int IdProduto { get; set; }
+        public int? IdProduto { get; set; }
 
         [Precision(18, 4)]
         public decimal PrecoUnitario { get; set; }
@@ -23,16 +23,20 @@ namespace FarmPlannerAPI.Entities
         [ForeignKey("IdOrcamento")]
         public OrcamentoProduto orcamentoProduto { get; set; }
 
-        [ForeignKey("IdPrincipioAtivo,idconta")]
+        [ForeignKey("IdPrincipioAtivo")]
         public PrincipioAtivo? princativo { get; set; }
 
-        [ForeignKey("IdProduto")]
+        [ForeignKey("IdProduto,idconta")]
         public Produto produto { get; set; }
 
         public string idconta { get; set; }
+        public int idmoeda { get; set; }
 
         [ForeignKey("idconta")]
         public Conta conta { get; set; }
+
+        [ForeignKey("idmoeda")]
+        public Moeda moeda { get; set; }
 
         public string? uid { get; set; }
         public DateTime? datains { get; set; }

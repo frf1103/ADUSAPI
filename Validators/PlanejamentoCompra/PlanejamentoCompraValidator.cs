@@ -13,10 +13,20 @@ namespace FarmPlannerAPI.Validators.PlanejamentoCompra
         {
             _context = context;
 
-/*            RuleFor(c => c.Descricao)
-                .NotEmpty().WithMessage("É necessário informar a Descricao.")
-                .MaximumLength(100).WithMessage("A Descricao deve ter no máximo 100 caracteres");
-*/
+            RuleFor(c => c).Custom((plcompra, validateContext) =>
+            {
+                var plc = _context.planejamentoCompras.Where(p => p.IdSafra == plcompra.IdSafra && p.IdFazenda == plcompra.IdFazenda && p.IdPrincipio == plcompra.IdPrincipio && p.Id!=plcompra.Id).FirstOrDefault();
+                if (plc != null)
+                {
+                    validateContext.AddFailure("Já existe essa configuração no planejamento de compras");
+                }
+
+            });
+
+            /*            RuleFor(c => c.Descricao)
+                            .NotEmpty().WithMessage("É necessário informar a Descricao.")
+                            .MaximumLength(100).WithMessage("A Descricao deve ter no máximo 100 caracteres");
+            */
         }
 
     }
@@ -27,11 +37,7 @@ namespace FarmPlannerAPI.Validators.PlanejamentoCompra
         private readonly FarmPlannerContext _context;
         public ExcluirPlanejamentoCompraValidator(FarmPlannerContext context)
         {
-            RuleFor(c => c).Custom((tipooper, validateContext) =>
-            {
-
-  
-            });
+    
         }
 
     }

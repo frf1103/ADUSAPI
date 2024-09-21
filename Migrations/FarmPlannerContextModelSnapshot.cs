@@ -1236,7 +1236,10 @@ namespace FarmPlannerAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("IdProduto")
+                    b.Property<int>("IdFazenda")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdPrincipio")
                         .HasColumnType("int");
 
                     b.Property<int>("IdSafra")
@@ -1273,7 +1276,9 @@ namespace FarmPlannerAPI.Migrations
 
                     b.HasKey("idconta", "Id");
 
-                    b.HasIndex("IdProduto", "idconta");
+                    b.HasIndex("IdPrincipio");
+
+                    b.HasIndex("IdFazenda", "idconta");
 
                     b.HasIndex("IdSafra", "idconta");
 
@@ -1481,7 +1486,7 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int?>("IdPrincipioAtivo")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdProduto")
+                    b.Property<int?>("IdProduto")
                         .HasColumnType("int");
 
                     b.Property<decimal>("PrecoUnitario")
@@ -2363,15 +2368,21 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.PlanejamentoCompra", b =>
                 {
+                    b.HasOne("FarmPlannerAPI.Entities.PrincipioAtivo", "principio")
+                        .WithMany("planejamentoCompras")
+                        .HasForeignKey("IdPrincipio")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("FarmPlannerAPI.Entities.Conta", "conta")
                         .WithMany("planejamentoCompras")
                         .HasForeignKey("idconta")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FarmPlannerAPI.Entities.Produto", "produto")
-                        .WithMany("planejamentoCompras")
-                        .HasForeignKey("IdProduto", "idconta")
+                    b.HasOne("FarmPlannerAPI.Entities.Fazenda", "fazenda")
+                        .WithMany("planejamentos")
+                        .HasForeignKey("IdFazenda", "idconta")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -2383,7 +2394,9 @@ namespace FarmPlannerAPI.Migrations
 
                     b.Navigation("conta");
 
-                    b.Navigation("produto");
+                    b.Navigation("fazenda");
+
+                    b.Navigation("principio");
 
                     b.Navigation("safra");
                 });
@@ -2749,6 +2762,8 @@ namespace FarmPlannerAPI.Migrations
                     b.Navigation("OrcamentoProduto");
 
                     b.Navigation("Talhoes");
+
+                    b.Navigation("planejamentos");
                 });
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.GrupoConta", b =>
@@ -2839,6 +2854,8 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.PrincipioAtivo", b =>
                 {
+                    b.Navigation("planejamentoCompras");
+
                     b.Navigation("produtoorcamento");
 
                     b.Navigation("produtosplanejados");
@@ -2848,8 +2865,6 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.Produto", b =>
                 {
-                    b.Navigation("planejamentoCompras");
-
                     b.Navigation("produtoorcamento");
 
                     b.Navigation("produtosplanejados");

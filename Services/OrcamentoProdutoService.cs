@@ -28,8 +28,11 @@ namespace FarmPlannerAPI.Services
             OrcamentoProduto.IdSafra = dados.IdSafra;
             OrcamentoProduto.IdFazenda = dados.IdFazenda;
             OrcamentoProduto.idconta = dados.idconta;
+            OrcamentoProduto.uid = dados.uid;
+            OrcamentoProduto.datains = DateTime.Now;
 
             await _context.AddAsync(OrcamentoProduto);
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Orçamento hectarizado " + OrcamentoProduto.Id.ToString() + "/" + OrcamentoProduto.IdSafra.ToString() + "/" + OrcamentoProduto.IdFazenda.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
             await _context.SaveChangesAsync();
             return new OrcamentoProdutoViewModel
             {
@@ -41,16 +44,19 @@ namespace FarmPlannerAPI.Services
             };
         }
 
-        public async Task<OrcamentoProdutoViewModel>? SalvarOrcamentoProduto(int id, OrcamentoProdutoViewModel dados)
+        public async Task<OrcamentoProdutoViewModel>? SalvarOrcamentoProduto(int id, string idconta, OrcamentoProdutoViewModel dados)
         {
-            var OrcamentoProduto = _context.orcamentosproduto.Find(id);
+            var OrcamentoProduto = _context.orcamentosproduto.Where(o => o.idconta == idconta && o.Id == id).FirstOrDefault();
             if (OrcamentoProduto != null)
             {
                 OrcamentoProduto.Descricao = dados.Descricao;
                 OrcamentoProduto.IdSafra = dados.IdSafra;
                 OrcamentoProduto.IdFazenda = dados.IdFazenda;
+                OrcamentoProduto.uid = dados.uid;
+                OrcamentoProduto.dataup = DateTime.Now;
 
                 _context.Update(OrcamentoProduto);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Orçamento hectarizado " + OrcamentoProduto.Id.ToString() + "/" + OrcamentoProduto.IdSafra.ToString() + "/" + OrcamentoProduto.IdFazenda.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 await _context.SaveChangesAsync();
                 return new OrcamentoProdutoViewModel
                 {
@@ -64,13 +70,18 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<OrcamentoProdutoViewModel>? ExcluirOrcamentoProduto(int id, OrcamentoProdutoViewModel dados)
+        public async Task<OrcamentoProdutoViewModel>? ExcluirOrcamentoProduto(int id, string idconta, string uid)
         {
-            _excluirOrcamentoProdutoValidator.ValidateAndThrow(dados);
-            var OrcamentoProduto = _context.orcamentosproduto.Find(id);
+            var OrcamentoProduto = _context.orcamentosproduto.Where(o => o.idconta == idconta && o.Id == id).FirstOrDefault();
             if (OrcamentoProduto != null)
             {
+                OrcamentoProdutoViewModel dados = new OrcamentoProdutoViewModel
+                {
+                    Id = OrcamentoProduto.Id
+                };
+                _excluirOrcamentoProdutoValidator.ValidateAndThrow(dados);
                 _context.orcamentosproduto.Remove(OrcamentoProduto);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Orçamento hectarizado " + OrcamentoProduto.Id.ToString() + "/" + OrcamentoProduto.IdSafra.ToString() + "/" + OrcamentoProduto.IdFazenda.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new OrcamentoProdutoViewModel
                 {
@@ -84,9 +95,9 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<OrcamentoProdutoViewModel>? ListarOrcamentoProdutoById(int id)
+        public async Task<OrcamentoProdutoViewModel>? ListarOrcamentoProdutoById(int id, string idconta)
         {
-            var OrcamentoProduto = _context.orcamentosproduto.Find(id);
+            var OrcamentoProduto = _context.orcamentosproduto.Where(o => o.idconta == idconta && o.Id == id).FirstOrDefault();
             if (OrcamentoProduto != null)
             {
                 return new OrcamentoProdutoViewModel
@@ -101,11 +112,13 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<IEnumerable<ListOrcamentoProdutoViewModel>> ListarOrcamentoProduto(int idfazenda, int idsafra, string? filtro)
+        public async Task<IEnumerable<ListOrcamentoProdutoViewModel>> ListarOrcamentoProduto(int idfazenda, int idsafra, string idconta, int idprincipio, int idproduto, string? filtro)
         {
             var condicao = (OrcamentoProduto m) => (idfazenda == 0 || m.IdFazenda == idfazenda) &&
-            (idsafra == 0 || m.IdSafra == idsafra) &&
-            (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
+            (idsafra == 0 || m.IdSafra == idsafra) && m.idconta == idconta &&
+            (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()))
+            && (idprincipio == 0 || m.produtoorcamento.Any(p => p.IdPrincipioAtivo == idprincipio)) &&
+            (idproduto == 0 || m.produtoorcamento.Any(p => p.IdProduto == idproduto));
             var query = _context.orcamentosproduto
                 .Include(m => m.fazenda).Include(m => m.safra);
             var OrcamentoProdutos = query.Where(condicao)

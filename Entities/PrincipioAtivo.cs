@@ -13,6 +13,7 @@ namespace FarmPlannerAPI.Entities
 
         public ICollection<ProdutoOrcamento>? produtoorcamento { get; set; }
         public ICollection<ProdutoPlanejado> produtosplanejados { get; set; }
+        public ICollection<PlanejamentoCompra> planejamentoCompras { get; set; }
         public string? uid { get; set; }
         public DateTime? datains { get; set; }
         public DateTime? dataup { get; set; }

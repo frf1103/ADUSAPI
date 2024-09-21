@@ -110,7 +110,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<ProdutoViewModel>? ListarProdutoById(int id, string idconta)
         {
-            var Produto = _context.produtos.Where(m => (m.idconta == idconta && m.Id == id)).FirstOrDefault();
+            var Produto = _context.produtos.Include(p => p.grupoProduto).Where(m => (m.idconta == idconta && m.Id == id)).FirstOrDefault();
             if (Produto != null)
             {
                 return new ProdutoViewModel
@@ -121,22 +121,24 @@ namespace FarmPlannerAPI.Services
                     //  IdPrincipioAtivo = Produto.IdPrincipioAtivo,
                     idconta = Produto.idconta,
                     idunidade = Produto.idunidade,
-                    IdGrupoProduto = Produto.IdGrupoProduto
+                    IdGrupoProduto = Produto.IdGrupoProduto,
+                    tipo = (int)Produto.grupoProduto.Tipo
                 };
             }
             else return null;
         }
 
-        public async Task<IEnumerable<ListProdutoViewModel>> ListarProduto(string? filtro, string idconta, int idgrupo, int idfab, int idprincipio)
+        public async Task<IEnumerable<ListProdutoViewModel>> ListarProduto(string? filtro, string idconta, int idgrupo, int idfab, int idprincipio, int tipo)
         {
             var Produtos = _context.produtos.Where(m => (m.idconta == idconta)
                 && (idgrupo == 0 || m.IdGrupoProduto == idgrupo) && (idfab == 0 || m.IdFabricante == idfab)
-                && (idprincipio == 0 || m.produtosprincipio.Any(p => p.idproduto == m.Id && p.idprincipio==idprincipio))
+                && (idprincipio == 0 || m.produtosprincipio.Any(p => p.idproduto == m.Id && p.idprincipio == idprincipio))
                 //&& (idprincipio == 0 || m.IdPrincipioAtivo == idprincipio)
                 && (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper())))
                 .Include(c => c.grupoProduto)
                 .Include(c => c.parceiro)
                 .Include(c => c.unidade)
+                .Where(c => (tipo == -1 && c.grupoProduto.Tipo != 5) || c.grupoProduto.Tipo == tipo)
                 //.Include(c => c.principioAtivo)
                 .Select(c => new ListProdutoViewModel
                 {
@@ -150,7 +152,8 @@ namespace FarmPlannerAPI.Services
                     descfab = c.parceiro.Fantasia,
                     //   descprincipio = c.principioAtivo.Descricao,
                     descgrupo = c.grupoProduto.Descricao,
-                    descunidade = c.unidade.descricao
+                    descunidade = c.unidade.descricao,
+                    tipo = c.grupoProduto.Tipo.ToString()
                 }
                 ).ToList();
             return (Produtos);

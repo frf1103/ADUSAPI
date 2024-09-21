@@ -37,6 +37,8 @@ namespace FarmPlannerAPI.Entities
         public Organizacao organizacao { get; set; }
 
         public ICollection<OrcamentoProduto> OrcamentoProduto { get; set; }
+
+        public ICollection<PlanejamentoCompra> planejamentos { get; set; }
         public string idconta { get; set; }
 
         [ForeignKey("idconta")]
