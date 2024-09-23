@@ -23,18 +23,19 @@ namespace FarmPlannerAPI.Services
 
         public async Task<ProdutoOrcamentoViewModel> AdicionarProdutoOrcamento(ProdutoOrcamentoViewModel dados)
         {
-            _adicionarProdutoOrcamentoValidator.ValidateAndThrow(dados);
+            //_adicionarProdutoOrcamentoValidator.ValidateAndThrow(dados);
             var ProdutoOrcamento = new ProdutoOrcamento();
             ProdutoOrcamento.TipoProdutoOrc = dados.TipoProdutoOrc;
-            ProdutoOrcamento.IdProduto = dados.IdProduto;
+            ProdutoOrcamento.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
             ProdutoOrcamento.IdOrcamento = dados.IdOrcamento;
-            ProdutoOrcamento.IdPrincipioAtivo = dados.IdPrincipioAtivo;
+            ProdutoOrcamento.IdPrincipioAtivo = (dados.IdPrincipioAtivo == 0) ? null : dados.IdPrincipioAtivo;
             ProdutoOrcamento.PrecoUnitario = dados.PrecoUnitario;
             ProdutoOrcamento.DataPreco = dados.DataPreco;
             ProdutoOrcamento.idconta = dados.idconta;
             ProdutoOrcamento.uid = dados.uid;
             ProdutoOrcamento.datains = DateTime.Now;
             ProdutoOrcamento.idmoeda = dados.idmoeda;
+            ProdutoOrcamento.DataPreco = dados.DataPreco ?? DateTime.Now.Date;
 
             await _context.AddAsync(ProdutoOrcamento);
             await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusao  Orçamento hectarizado " + ProdutoOrcamento.IdOrcamento.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
@@ -57,14 +58,15 @@ namespace FarmPlannerAPI.Services
             if (ProdutoOrcamento != null)
             {
                 ProdutoOrcamento.TipoProdutoOrc = dados.TipoProdutoOrc;
-                ProdutoOrcamento.IdProduto = dados.IdProduto;
+                ProdutoOrcamento.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
                 ProdutoOrcamento.IdOrcamento = dados.IdOrcamento;
-                ProdutoOrcamento.IdPrincipioAtivo = dados.IdPrincipioAtivo;
+                ProdutoOrcamento.IdPrincipioAtivo = (dados.IdPrincipioAtivo == 0) ? null : dados.IdPrincipioAtivo;
                 ProdutoOrcamento.PrecoUnitario = dados.PrecoUnitario;
                 ProdutoOrcamento.DataPreco = dados.DataPreco;
                 ProdutoOrcamento.uid = dados.uid;
                 ProdutoOrcamento.dataup = DateTime.Now;
                 ProdutoOrcamento.idmoeda = dados.idmoeda;
+                ProdutoOrcamento.DataPreco = dados.DataPreco ?? DateTime.Now.Date;
                 _context.Update(ProdutoOrcamento);
                 await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Orçamento hectarizado " + ProdutoOrcamento.IdOrcamento.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString() + "/" + ProdutoOrcamento.IdPrincipioAtivo.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 await _context.SaveChangesAsync();
@@ -135,7 +137,8 @@ namespace FarmPlannerAPI.Services
             (idprincativo == 0 || m.IdPrincipioAtivo == idprincativo) && m.idconta == idconta;
 
             var query = _context.produtosorcamento
-                .Include(x => x.princativo).Include(x => x.produto)
+                .Include(x => x.produto)
+                .Include(x => x.princativo)
                 .Include(x => x.moeda);
             var ProdutoOrcamentos = query.Where(condicao)
                 .Select(c => new ListProdutoOrcamentoViewModel
@@ -145,9 +148,9 @@ namespace FarmPlannerAPI.Services
                     IdProduto = c.IdProduto,
                     TipoProdutoOrc = c.TipoProdutoOrc,
                     PrecoUnitario = c.PrecoUnitario,
-                    IdPrincipioAtivo = c.IdPrincipioAtivo,
-                    descprincativo = c.princativo.Descricao,
-                    descproduto = c.produto.Descricao,
+                    IdPrincipioAtivo = c.IdPrincipioAtivo ?? 0,
+                    descprincativo = (c.princativo == null) ? "SEM PRINCIPIO" : c.princativo.Descricao,
+                    descproduto = (c.produto == null) ? "SEM PRODUTO" : c.produto.Descricao,
                     desctipoproduto = (c.TipoProdutoOrc == 1) ? "Combustível" : "Insumo",
                     DataPreco = c.DataPreco,
                     descmoeda = c.moeda.Descricao

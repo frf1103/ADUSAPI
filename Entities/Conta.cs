@@ -53,5 +53,9 @@ namespace FarmPlannerAPI.Entities
         public ICollection<Parceiro> parceiros { get; set; }
 
         public ICollection<ProdutoPrincipioAtivo> produtoPrincipios { get; set; }
+
+        public ICollection<PedidoCompra>? pedidos { get; set; }
+
+        public ICollection<ProdutoCompra>? produtospedidos { get; set; }
     }
 }

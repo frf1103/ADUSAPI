@@ -35,5 +35,7 @@ namespace FarmPlannerAPI.Entities
         public Unidade unidade { get; set; }
 
         public ICollection<ProdutoPrincipioAtivo> produtosprincipio { get; set; }
+
+        public ICollection<ProdutoCompra>? produtospedidos { get; set; }
     }
 }

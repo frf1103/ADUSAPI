@@ -66,6 +66,8 @@ namespace FarmPlannerAPI.Context
 
         public DbSet<ProdutoPrincipioAtivo> produtosprincipio => Set<ProdutoPrincipioAtivo>();
 
+        public DbSet<PedidoCompra> pedidoscompra => Set<PedidoCompra>();
+        public DbSet<ProdutoCompra> produtoscompra => Set<ProdutoCompra>();
         public DbSet<PreferUsu> preferUsus => Set<PreferUsu>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
@@ -123,6 +125,9 @@ namespace FarmPlannerAPI.Context
             modelBuilder.ApplyConfiguration(new PreferUsuConfiguration());
             modelBuilder.ApplyConfiguration(new UnidadeConfiguration());
             modelBuilder.ApplyConfiguration(new ProdutoPrincipioConfiguration());
+
+            modelBuilder.ApplyConfiguration(new ProdutoCompraConfiguration());
+            modelBuilder.ApplyConfiguration(new PedidoCompraConfiguration());
         }
     }
 }

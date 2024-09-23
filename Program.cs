@@ -17,6 +17,7 @@ using FarmPlannerAPI.Validators.Operacao;
 using FarmPlannerAPI.Validators.OrcamentoProduto;
 using FarmPlannerAPI.Validators.Organizacao;
 using FarmPlannerAPI.Validators.Parceiro;
+using FarmPlannerAPI.Validators.PedidoCompra;
 using FarmPlannerAPI.Validators.PlanejamentoCompra;
 using FarmPlannerAPI.Validators.PlanejamentoOperacao;
 using FarmPlannerAPI.Validators.PrincipioAtivo;
@@ -175,6 +176,10 @@ builder.Services.AddTransient<ExcluirUnidadeValidator>();
 
 builder.Services.AddTransient<ProdutoPrincipioValidator>();
 builder.Services.AddTransient<PreferUsuService>();
+
+builder.Services.AddTransient<PedidoCompraService>();
+builder.Services.AddTransient<PedidoCompraValidator>();
+builder.Services.AddTransient<ExcluirPedidoCompraValidator>();
 
 builder.Services.AddCors(options =>
 {

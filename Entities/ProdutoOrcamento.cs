@@ -27,7 +27,7 @@ namespace FarmPlannerAPI.Entities
         public PrincipioAtivo? princativo { get; set; }
 
         [ForeignKey("IdProduto,idconta")]
-        public Produto produto { get; set; }
+        public Produto? produto { get; set; }
 
         public string idconta { get; set; }
         public int idmoeda { get; set; }

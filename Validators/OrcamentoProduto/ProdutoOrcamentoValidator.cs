@@ -11,10 +11,12 @@ namespace FarmPlannerAPI.Validators.OrcamentoProduto
         public ProdutoOrcamentoValidator(FarmPlannerContext context)
         {
             _context = context;
+            /*
             RuleFor(c => c.IdProduto)
                 .NotEmpty().WithMessage("É necessário informar o produto.");
             RuleFor(c => c.IdPrincipioAtivo)
                 .NotEmpty().WithMessage("É necessário informar o principio ativo.");
+            */
             RuleFor(c => c).Custom((orc, validateContext) =>
             {
                 var conf = _context.produtos.Where(c => c.Id == orc.IdProduto).FirstOrDefault();
