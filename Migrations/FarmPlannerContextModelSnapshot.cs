@@ -415,6 +415,65 @@ namespace FarmPlannerAPI.Migrations
                     b.ToTable("Culturas", (string)null);
                 });
 
+            modelBuilder.Entity("FarmPlannerAPI.Entities.EntregaCompra", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<decimal>("conversor")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("dataentrega")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("datains")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("dataup")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("documento")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("nvarchar(60)");
+
+                    b.Property<string>("idconta")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("idpedido")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idproduto")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idprodutopedido")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idunidentrega")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("qtd")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
+
+                    b.Property<string>("uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("idproduto", "idconta");
+
+                    b.HasIndex("idprodutopedido", "idconta", "idpedido");
+
+                    b.ToTable("entregascompras");
+                });
+
             modelBuilder.Entity("FarmPlannerAPI.Entities.EntregaContrato", b =>
                 {
                     b.Property<int>("Id")
@@ -1239,6 +1298,9 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<DateTime>("datains")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("datapedido")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("dataup")
                         .HasColumnType("datetime2");
 
@@ -1257,6 +1319,10 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<string>("observacao")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("pedidofornecedor")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<decimal>("total")
                         .HasPrecision(18, 2)
@@ -1539,6 +1605,12 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int>("idpedido")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("datains")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("dataup")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("idproduto")
                         .HasColumnType("int");
 
@@ -1557,6 +1629,10 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<decimal>("total")
                         .HasPrecision(20, 2)
                         .HasColumnType("decimal(20,2)");
+
+                    b.Property<string>("uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id", "idconta", "idpedido");
 
@@ -2107,6 +2183,25 @@ namespace FarmPlannerAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("moeda");
+                });
+
+            modelBuilder.Entity("FarmPlannerAPI.Entities.EntregaCompra", b =>
+                {
+                    b.HasOne("FarmPlannerAPI.Entities.Produto", "produto")
+                        .WithMany("entregas")
+                        .HasForeignKey("idproduto", "idconta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FarmPlannerAPI.Entities.ProdutoCompra", "produtoCompra")
+                        .WithMany("entregas")
+                        .HasForeignKey("idprodutopedido", "idconta", "idpedido")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("produto");
+
+                    b.Navigation("produtoCompra");
                 });
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.EntregaContrato", b =>
@@ -3067,6 +3162,8 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.Produto", b =>
                 {
+                    b.Navigation("entregas");
+
                     b.Navigation("produtoorcamento");
 
                     b.Navigation("produtospedidos");
@@ -3074,6 +3171,11 @@ namespace FarmPlannerAPI.Migrations
                     b.Navigation("produtosplanejados");
 
                     b.Navigation("produtosprincipio");
+                });
+
+            modelBuilder.Entity("FarmPlannerAPI.Entities.ProdutoCompra", b =>
+                {
+                    b.Navigation("entregas");
                 });
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.Regiao", b =>

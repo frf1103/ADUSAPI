@@ -27,7 +27,10 @@ namespace FarmPlannerAPI.Entities
         public DateTime datains { get; set; }
         public DateTime? dataup { get; set; }
 
-        public string? pedidofonecedor { get; set; }
+        public DateTime datapedido { get; set; }
+
+        [MaxLength(20)]
+        public string? pedidofornecedor { get; set; }
 
         [ForeignKey("idconta")]
         public Conta conta { get; set; }

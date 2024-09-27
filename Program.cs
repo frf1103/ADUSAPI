@@ -22,6 +22,7 @@ using FarmPlannerAPI.Validators.PlanejamentoCompra;
 using FarmPlannerAPI.Validators.PlanejamentoOperacao;
 using FarmPlannerAPI.Validators.PrincipioAtivo;
 using FarmPlannerAPI.Validators.Produto;
+using FarmPlannerAPI.Validators.ProdutoCompra;
 using FarmPlannerAPI.Validators.ProdutoPlanejado;
 using FarmPlannerAPI.Validators.Safra;
 using FarmPlannerAPI.Validators.Talhao;
@@ -31,6 +32,7 @@ using FarmPlannerAPI.Validators.Unidade;
 using FarmPlannerAPI.Validators.Variedade;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using static FarmPlannerAPI.Validators.EntregaCompra.EntregaCompraValidator;
 using static FarmPlannerAPI.Validators.Variedade.VariedadeValidator;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -180,6 +182,14 @@ builder.Services.AddTransient<PreferUsuService>();
 builder.Services.AddTransient<PedidoCompraService>();
 builder.Services.AddTransient<PedidoCompraValidator>();
 builder.Services.AddTransient<ExcluirPedidoCompraValidator>();
+
+builder.Services.AddTransient<ProdutoCompraService>();
+builder.Services.AddTransient<ProdutoCompraValidator>();
+builder.Services.AddTransient<ExcluirProdutoCompraValidator>();
+
+builder.Services.AddTransient<EntregaCompraService>();
+builder.Services.AddTransient<AddEntregaCompraValidator>();
+builder.Services.AddTransient<ExcluirEntregaCompraValidator>();
 
 builder.Services.AddCors(options =>
 {

@@ -29,17 +29,17 @@ namespace FarmPlannerAPI.Controllers
             return Ok(conta);
         }
 
-        [HttpDelete("{id}/{idconta}")]
+        [HttpDelete("{id}/{idconta}/{uid}")]
         public async Task<IActionResult>? ExcluirPedidoCompra(int id, string idconta, string uid)
         {
             var conta = await _PedidoCompraservice.ExcluirPedidoCompra(id, idconta, uid);
             return Ok(conta);
         }
 
-        [HttpGet("Listar/{idorganizacao}/{idano}/{idfazenda}/{idsafra}/{idmoeda}/{idproduto}/{idconta}")]
-        public async Task<IActionResult> ListarPedidoCompra(int idorganizacao, int idfazenda, int idano, int idsafra, string idconta, int idmoeda, int idproduto, string? filtro)
+        [HttpGet("Listar/{idorganizacao}/{idano}/{idfazenda}/{idsafra}/{idmoeda}/{idproduto}/{idconta}/{idfornec}/{ini}/{fim}")]
+        public async Task<IActionResult> ListarPedidoCompra(int idorganizacao, int idfazenda, int idano, int idsafra, string idconta, int idmoeda, int idproduto, int idfornec, DateTime ini, DateTime fim, string? filtro)
         {
-            var conta = await _PedidoCompraservice.ListarPedidoCompra(idorganizacao, idano, idfazenda, idsafra, idconta, idproduto, idmoeda, filtro);
+            var conta = await _PedidoCompraservice.ListarPedidoCompra(idorganizacao, idano, idfazenda, idsafra, idconta, idproduto, idmoeda, idfornec, ini, fim, filtro);
             return Ok(conta);
         }
 

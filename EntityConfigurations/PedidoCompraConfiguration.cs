@@ -15,8 +15,9 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(p => p.idsafra);
             builder.Property(p => p.idfazenda);
             builder.Property(p => p.idfornecedor);
-            builder.Property(p => p.pedidofonecedor);
+            builder.Property(p => p.pedidofornecedor).IsRequired(false).HasMaxLength(20);
             builder.Property(p => p.total);
+            builder.Property(p => p.datapedido);
             builder.Property(p => p.datains);
             builder.Property(p => p.dataup).IsRequired(false);
             builder.Property(p => p.uid);

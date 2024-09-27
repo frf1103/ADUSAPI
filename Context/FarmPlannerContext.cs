@@ -69,6 +69,7 @@ namespace FarmPlannerAPI.Context
         public DbSet<PedidoCompra> pedidoscompra => Set<PedidoCompra>();
         public DbSet<ProdutoCompra> produtoscompra => Set<ProdutoCompra>();
         public DbSet<PreferUsu> preferUsus => Set<PreferUsu>();
+        public DbSet<EntregaCompra> entregascompras => Set<EntregaCompra>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {

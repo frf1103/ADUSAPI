@@ -32,5 +32,11 @@ namespace FarmPlannerAPI.Entities
 
         [ForeignKey("idproduto,idconta")]
         public Produto produto { get; set; }
+
+        public string uid { get; set; }
+        public DateTime datains { get; set; }
+        public DateTime? dataup { get; set; }
+
+        public ICollection<EntregaCompra>? entregas { get; set; }
     }
 }
