@@ -3,35 +3,34 @@ using FarmPlannerAPICore.Models.Safra;
 using FarmPlannerAPICore.Models.Variedade;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Validators.Variedade{
-    
-        public class VariedadeValidator : AbstractValidator<VariedadeViewModel>
-        {
-            private readonly FarmPlannerContext _context;
-            public VariedadeValidator(FarmPlannerContext context)
-            {
-                _context = context;
+namespace FarmPlannerAPI.Validators.Variedade
+{
+    public class VariedadeValidator : AbstractValidator<VariedadeViewModel>
+    {
+        private readonly FarmPlannerContext _context;
 
-                RuleFor(c => c.Descricao)
-                    .NotEmpty().WithMessage("É necessário informar a Descricao.")
-                    .MaximumLength(100).WithMessage("A Descriçao deve ter no máximo 100 caracteres");
+        public VariedadeValidator(FarmPlannerContext context)
+        {
+            _context = context;
+
+            RuleFor(c => c.Descricao)
+                .NotEmpty().WithMessage("É necessário informar a Descricao.")
+                .MaximumLength(100).WithMessage("A Descriçao deve ter no máximo 100 caracteres");
             RuleFor(c => c.Ciclo)
                 .NotEmpty().WithMessage("É necessário informar o ciclo.");
             RuleFor(c => c.IdCultura)
                 .NotEmpty().WithMessage("É necessário informar a Cultura.");
             RuleFor(c => c.IdTecnologia)
                 .NotEmpty().WithMessage("É necessário informar a Tecnologia.");
-
-
         }
 
         public class ExcluirVariedadeValidator : AbstractValidator<VariedadeViewModel>
         {
             private readonly FarmPlannerContext _context;
+
             public ExcluirVariedadeValidator(FarmPlannerContext context)
             {
                 _context = context;
-
 
                 RuleFor(c => c).Custom((variedade, validateContext) =>
                 {
@@ -41,13 +40,7 @@ namespace FarmPlannerAPI.Validators.Variedade{
                         validateContext.AddFailure("Existem configuraçoes para essa variedade");
                     }
                 });
-
             }
-
-
         }
-
-
     }
-
 }

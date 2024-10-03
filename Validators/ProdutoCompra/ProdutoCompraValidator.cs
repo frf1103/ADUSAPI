@@ -30,6 +30,11 @@ namespace FarmPlannerAPI.Validators.ProdutoCompra
 
             RuleFor(c => c).Custom((ped, validateContext) =>
             {
+                var x = _context.entregascompras.Where(x => x.idprodutopedido == ped.id).FirstOrDefault();
+                if (x != null)
+                {
+                    validateContext.AddFailure("Compra tem entregas efetuadas");
+                }
             });
         }
     }

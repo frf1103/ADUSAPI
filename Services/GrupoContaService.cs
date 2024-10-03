@@ -30,8 +30,10 @@ namespace FarmPlannerAPI.Services
             GrupoConta.CodigoCliente = dados.CodigoCliente;
             GrupoConta.CodigoExterno = dados.CodigoExterno;
             GrupoConta.idconta = dados.idconta;
-
+            GrupoConta.uid = dados.uid;
+            GrupoConta.datains = DateTime.Now;
             await _context.AddAsync(GrupoConta);
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  grupo de conta " + GrupoConta.Id.ToString() + "/" + GrupoConta.Descricao, datalog = DateTime.Now, idconta = dados.idconta }); ;
             await _context.SaveChangesAsync();
             return new GrupoContaViewModel
             {
@@ -44,9 +46,9 @@ namespace FarmPlannerAPI.Services
             };
         }
 
-        public async Task<GrupoContaViewModel>? SalvarGrupoConta(int id, GrupoContaViewModel dados)
+        public async Task<GrupoContaViewModel>? SalvarGrupoConta(int id, string idconta, GrupoContaViewModel dados)
         {
-            var GrupoConta = _context.gruposcontas.Find(id);
+            var GrupoConta = _context.gruposcontas.Where(x => x.Id == id && x.idconta == idconta).FirstOrDefault();
             if (GrupoConta != null)
             {
                 GrupoConta.Descricao = dados.Descricao;
@@ -56,6 +58,7 @@ namespace FarmPlannerAPI.Services
                 GrupoConta.CodigoExterno = dados.CodigoExterno;
 
                 _context.Update(GrupoConta);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteracao  grupo de conta " + GrupoConta.Id.ToString() + "/" + GrupoConta.Descricao, datalog = DateTime.Now, idconta = dados.idconta }); ;
                 await _context.SaveChangesAsync();
                 return new GrupoContaViewModel
                 {
@@ -70,12 +73,17 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<GrupoContaViewModel>? ExcluirGrupoConta(int id, GrupoContaViewModel dados)
+        public async Task<GrupoContaViewModel>? ExcluirGrupoConta(int id, string idconta, string uid)
         {
-            _excluirGrupoContaValidator.ValidateAndThrow(dados);
-            var GrupoConta = _context.gruposcontas.Find(id);
+            var GrupoConta = _context.gruposcontas.Where(x => x.Id == id && x.idconta == idconta).FirstOrDefault();
             if (GrupoConta != null)
             {
+                var dados = new GrupoContaViewModel
+                {
+                    Id = GrupoConta.Id
+                };
+                _excluirGrupoContaValidator.ValidateAndThrow(dados);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  grupo de conta " + GrupoConta.Id.ToString() + "/" + GrupoConta.Descricao, datalog = DateTime.Now, idconta = idconta }); ;
                 _context.gruposcontas.Remove(GrupoConta);
                 await _context.SaveChangesAsync();
                 return new GrupoContaViewModel
@@ -91,23 +99,31 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<GrupoContaViewModel>? ListarGrupoContaById(int id)
+        public async Task<GrupoContaViewModel>? ListarGrupoContaById(int id, string idconta)
         {
-            var GrupoConta = _context.tiposoperacao.Find(id);
+            var GrupoConta = _context.gruposcontas.Where(x => x.Id == id && x.idconta == idconta).FirstOrDefault();
             if (GrupoConta != null)
             {
                 return new GrupoContaViewModel
                 {
                     Descricao = GrupoConta.Descricao,
-                    Id = GrupoConta.Id
+                    Id = GrupoConta.Id,
+                    CodigoCliente=GrupoConta.CodigoCliente,
+                    CodigoExterno=GrupoConta.CodigoExterno,
+                    IdClasseConta=GrupoConta.IdClasseConta,
+                    IdOrganizacao=GrupoConta.IdOrganizacao,
+                    idconta=GrupoConta.idconta,
+                    uid=GrupoConta.uid
+
                 };
             }
             else return null;
         }
 
-        public async Task<IEnumerable<ListGrupoContaViewModel>> ListarGrupoConta(int idorganizacao, int idclasse, string? filtro)
+        public async Task<IEnumerable<ListGrupoContaViewModel>> ListarGrupoConta(int idorganizacao, int idclasse, string idconta, string? filtro)
         {
-            var condicao = (GrupoConta m) => (m.IdOrganizacao == idorganizacao && (idclasse == 0 || m.IdClasseConta == idclasse) && String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
+            var condicao = (GrupoConta m) => (m.idconta == idconta && m.IdOrganizacao == idorganizacao && (idclasse == 0 || m.IdClasseConta == idclasse));
+            //&& String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
             var query = _context.gruposcontas.Include(m => m.organizacao).Include(m => m.classeConta);
             var GrupoContas = query.Where(condicao)
                 .Select(c => new ListGrupoContaViewModel

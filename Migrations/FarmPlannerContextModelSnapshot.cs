@@ -120,6 +120,16 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int>("IdGrupoConta")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("datains")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("dataup")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("uid")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id", "idconta");
 
                     b.HasIndex("idconta");
@@ -178,6 +188,9 @@ namespace FarmPlannerAPI.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<int>("IdFazenda")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdMoeda")
                         .HasColumnType("int");
 
@@ -227,6 +240,8 @@ namespace FarmPlannerAPI.Migrations
                     b.HasIndex("IdMoeda");
 
                     b.HasIndex("idconta");
+
+                    b.HasIndex("IdFazenda", "idconta");
 
                     b.HasIndex("IdParceiro", "idconta");
 
@@ -2118,6 +2133,12 @@ namespace FarmPlannerAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("FarmPlannerAPI.Entities.Fazenda", "fazenda")
+                        .WithMany("comercializacoes")
+                        .HasForeignKey("IdFazenda", "idconta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("FarmPlannerAPI.Entities.Parceiro", "parceiro")
                         .WithMany("comercializacao")
                         .HasForeignKey("IdParceiro", "idconta")
@@ -2131,6 +2152,8 @@ namespace FarmPlannerAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("conta");
+
+                    b.Navigation("fazenda");
 
                     b.Navigation("moeda");
 
@@ -3046,6 +3069,8 @@ namespace FarmPlannerAPI.Migrations
                     b.Navigation("OrcamentoProduto");
 
                     b.Navigation("Talhoes");
+
+                    b.Navigation("comercializacoes");
 
                     b.Navigation("pedidos");
 

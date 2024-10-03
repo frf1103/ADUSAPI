@@ -26,6 +26,7 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(x => x.ValorLiquido);
             builder.Property(x => x.NumeroContrato);
             builder.Property(x => x.idconta);
+            builder.Property(x => x.IdFazenda);
             builder.Property(x => x.datains).IsRequired(false);
             builder.Property(x => x.uid).IsRequired(false);
             builder.Property(x => x.dataup).IsRequired(false);
@@ -35,6 +36,7 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.HasOne(x => x.safra).WithMany(x => x.comercializacao).HasForeignKey(x => new { x.IdSafra, x.idconta });
             builder.HasOne(x => x.moeda).WithMany(x => x.comercializacao).HasForeignKey(x => new { x.IdMoeda });
             builder.HasOne(x => x.parceiro).WithMany(x => x.comercializacao).HasForeignKey(x => new { x.IdParceiro, x.idconta });
+            builder.HasOne(x => x.fazenda).WithMany(x => x.comercializacoes).HasForeignKey(x => new { x.IdFazenda, x.idconta });
         }
     }
 }

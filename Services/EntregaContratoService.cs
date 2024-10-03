@@ -28,8 +28,19 @@ namespace FarmPlannerAPI.Services
             EntregaContrato.Documento = dados.Documento;
             EntregaContrato.IdComercializacao = dados.IdComercializacao;
             EntregaContrato.idconta = dados.idconta;
+            EntregaContrato.uid = dados.uid;
+            EntregaContrato.datains = DateTime.Now;
 
             await _context.AddAsync(EntregaContrato);
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog
+            {
+                uid = dados.uid,
+                transacao = "Entrega Contrato " + EntregaContrato.IdComercializacao.ToString() + "/" + EntregaContrato.DataEntrega.ToLongDateString() + "/" + EntregaContrato.Quantidade + "/"
+                + EntregaContrato.Documento,
+                datalog = DateTime.Now,
+                idconta = dados.idconta
+            });
+
             await _context.SaveChangesAsync();
             return new EntregaContratoViewModel
             {
@@ -41,10 +52,10 @@ namespace FarmPlannerAPI.Services
             };
         }
 
-        public async Task<EntregaContratoViewModel>? SalvarEntregaContrato(int id, EntregaContratoViewModel dados)
+        public async Task<EntregaContratoViewModel>? SalvarEntregaContrato(int id, string idconta, EntregaContratoViewModel dados)
         {
             _adicionarEntregaContratoValidator.ValidateAndThrow(dados);
-            var EntregaContrato = _context.entregaContratos.Find(id);
+            var EntregaContrato = _context.entregaContratos.Where(m => m.idconta == idconta && m.Id == id).FirstOrDefault();
             if (EntregaContrato != null)
             {
                 EntregaContrato.DataEntrega = dados.DataEntrega;
@@ -66,13 +77,13 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<EntregaContratoViewModel>? ExcluirEntregaContrato(int id, EntregaContratoViewModel dados)
+        public async Task<EntregaContratoViewModel>? ExcluirEntregaContrato(int id, string idconta, string uid)
         {
-            _excluirEntregaContratoValidator.ValidateAndThrow(dados);
-            var EntregaContrato = _context.entregaContratos.Find(id);
+            var EntregaContrato = _context.entregaContratos.Where(m => m.idconta == idconta && m.Id == id).FirstOrDefault();
             if (EntregaContrato != null)
             {
                 _context.entregaContratos.Remove(EntregaContrato);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusao  da Entrega " + EntregaContrato.IdComercializacao.ToString() + "/" + EntregaContrato.Documento.ToString(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new EntregaContratoViewModel
                 {
@@ -86,9 +97,9 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<EntregaContratoViewModel>? ListarEntregaContratoById(int id)
+        public async Task<EntregaContratoViewModel>? ListarEntregaContratoById(int id, string idconta)
         {
-            var EntregaContrato = _context.entregaContratos.Find(id);
+            var EntregaContrato = _context.entregaContratos.Where(m => m.idconta == idconta && m.Id == id).FirstOrDefault();
             if (EntregaContrato != null)
             {
                 return new EntregaContratoViewModel
@@ -103,9 +114,9 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<IEnumerable<ListEntregaContratoViewModel>> ListarEntregaContratoByCom(int idcomercializacao, string? filtro)
+        public async Task<IEnumerable<ListEntregaContratoViewModel>> ListarEntregaContratoByCom(int idcomercializacao, string idconta, string? filtro)
         {
-            var condicao = (EntregaContrato m) => (m.IdComercializacao == idcomercializacao) && (String.IsNullOrWhiteSpace(filtro) || m.Documento.ToUpper().Contains(filtro.ToUpper()));
+            var condicao = (EntregaContrato m) => (m.IdComercializacao == idcomercializacao && m.idconta == idconta) && (String.IsNullOrWhiteSpace(filtro) || m.Documento.ToUpper().Contains(filtro.ToUpper()));
             var query = _context.entregaContratos.AsQueryable();
             var EntregaContratos = query.Where(condicao)
                 .Select(c => new ListEntregaContratoViewModel

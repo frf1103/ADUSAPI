@@ -21,5 +21,9 @@ namespace FarmPlannerAPI.Entities
 
         [ForeignKey("idconta")]
         public Conta conta { get; set; }
+
+        public string uid { get; set; }
+        public DateTime? datains { get; set; }
+        public DateTime? dataup { get; set; }
     }
 }

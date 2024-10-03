@@ -33,7 +33,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<PreferUsuViewModel>? SalvarPreferUsu(string uid, PreferUsuViewModel dados)
         {
-            var PreferUsu = _context.preferUsus.Find(uid);
+            var PreferUsu = _context.preferUsus.Where(x => x.uid == uid && x.idconta == dados.idconta).FirstOrDefault();
             if (PreferUsu != null)
             {
                 PreferUsu.idanoagricola = dados.idanoagricola;

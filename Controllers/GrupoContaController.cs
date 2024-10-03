@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FarmPlannerAPI.Controllers
 {
-    [Route("api/gripoconta")]
+    [Route("api/grupoconta")]
     [ApiController]
     public class GrupoContaController : ControllerBase
     {
@@ -22,32 +22,32 @@ namespace FarmPlannerAPI.Controllers
             return Ok(GrupoConta);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarGrupoConta(int id, GrupoContaViewModel dados)
+        [HttpPut("{id}/{idconta}")]
+        public async Task<IActionResult>? EditarGrupoConta(int id, string idconta, GrupoContaViewModel dados)
         {
-            var GrupoConta = await _GrupoContaservice.SalvarGrupoConta(id, dados);
+            var GrupoConta = await _GrupoContaservice.SalvarGrupoConta(id, idconta, dados);
             return Ok(GrupoConta);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult>? ExcluirGrupoConta(int id, GrupoContaViewModel dados)
+        [HttpDelete("{id}/{idconta}/{uid}")]
+        public async Task<IActionResult>? ExcluirGrupoConta(int id, string idconta, string uid)
         {
-            var GrupoConta = await _GrupoContaservice.ExcluirGrupoConta(id, dados);
+            var GrupoConta = await _GrupoContaservice.ExcluirGrupoConta(id, idconta, uid);
             return Ok(GrupoConta);
         }
 
-        [HttpGet("Listar/{idclasse}/{idorganizaco}")]
-        public async Task<IActionResult> ListarGrupoConta(int idclasse, int idorganizacao, string? filtro)
+        [HttpGet("Listar/{idclasse}/{idorganizacao}/{idconta}")]
+        public async Task<IActionResult> ListarGrupoConta(int idclasse, int idorganizacao, string idconta, string? filtro)
         {
-            var GrupoConta = await _GrupoContaservice.ListarGrupoConta(idorganizacao, idclasse, filtro);
+            var GrupoConta = await _GrupoContaservice.ListarGrupoConta(idorganizacao, idclasse, idconta, filtro);
 
             return Ok(GrupoConta);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> ListarGrupoContaById(int id)
+        [HttpGet("{id}/{idconta}")]
+        public async Task<IActionResult> ListarGrupoContaById(int id, string idconta)
         {
-            var GrupoConta = await _GrupoContaservice.ListarGrupoContaById(id);
+            var GrupoConta = await _GrupoContaservice.ListarGrupoContaById(id, idconta);
             return Ok(GrupoConta);
         }
     }

@@ -23,31 +23,31 @@ namespace FarmPlannerAPI.Controllers
             return Ok(CadastroConta);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarCadastroConta(int id, CadastroContaViewModel dados)
+        [HttpPut("{id}/{idconta}")]
+        public async Task<IActionResult>? EditarCadastroConta(int id, string idconta, CadastroContaViewModel dados)
         {
-            var CadastroConta = await _CadastroContaservice.SalvarCadastroConta(id, dados);
+            var CadastroConta = await _CadastroContaservice.SalvarCadastroConta(id, idconta, dados);
             return Ok(CadastroConta);
         }
 
-        [HttpDelete("id")]
-        public async Task<IActionResult>? ExcluirCadastroConta(int id, CadastroContaViewModel dados)
+        [HttpDelete("{id}/{idconta}/{uid}")]
+        public async Task<IActionResult>? ExcluirCadastroConta(int id, string idconta, string uid)
         {
-            var CadastroConta = await _CadastroContaservice.ExcluirCadastroConta(id, dados);
+            var CadastroConta = await _CadastroContaservice.ExcluirCadastroConta(id, idconta, uid);
             return Ok(CadastroConta);
         }
 
-        [HttpGet("Listar/{idorganizacao}")]
-        public async Task<IActionResult> ListarCadastroConta(int idorganizacao, string? filtro)
+        [HttpGet("Listar/{idorganizacao}/{idclasse}/{idgrupo}/{idconta}")]
+        public async Task<IActionResult> ListarCadastroConta(int idorganizacao, int idclasse, int idgrupo, string idconta, string? filtro)
         {
-            var CadastroConta = await _CadastroContaservice.ListarCadastroContaByOrg(idorganizacao, filtro);
+            var CadastroConta = await _CadastroContaservice.ListarCadastroContaByOrg(idorganizacao, idclasse, idgrupo, idconta, filtro);
             return Ok(CadastroConta);
         }
 
-        [HttpGet("id")]
-        public async Task<IActionResult> ListarCadastroContaById(int id)
+        [HttpGet("{id}/{idconta}")]
+        public async Task<IActionResult> ListarCadastroContaById(int id, string idconta)
         {
-            var CadastroConta = await _CadastroContaservice.ListarCadastroContaById(id);
+            var CadastroConta = await _CadastroContaservice.ListarCadastroContaById(id, idconta);
             return Ok(CadastroConta);
         }
     }

@@ -10,6 +10,8 @@ namespace FarmPlannerAPI.Entities
         public int Id { get; set; }
 
         public int IdSafra { get; set; }
+
+        public int IdFazenda { get; set; }
         public int IdParceiro { get; set; }
 
         [Precision(18, 2)]
@@ -58,6 +60,9 @@ namespace FarmPlannerAPI.Entities
 
         [ForeignKey("idconta")]
         public Conta conta { get; set; }
+
+        [ForeignKey("IdFazenda,idconta")]
+        public Fazenda fazenda { get; set; }
 
         public string? uid { get; set; }
         public DateTime? datains { get; set; }

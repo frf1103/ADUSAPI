@@ -191,6 +191,10 @@ builder.Services.AddTransient<EntregaCompraService>();
 builder.Services.AddTransient<AddEntregaCompraValidator>();
 builder.Services.AddTransient<ExcluirEntregaCompraValidator>();
 
+builder.Services.AddTransient<ComercializacaoService>();
+builder.Services.AddTransient<ComercializacaoValidator>();
+builder.Services.AddTransient<ExcluirComercializacaoValidator>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",

@@ -39,8 +39,14 @@ namespace FarmPlannerAPI.Services
             Comercializacao.ValorUnitario = dados.ValorUnitario;
             Comercializacao.ValorTotal = dados.ValorTotal;
             Comercializacao.idconta = dados.idconta;
+            Comercializacao.idconta = dados.idconta;
+            Comercializacao.IdFazenda = dados.IdFazenda;
+            Comercializacao.uid = dados.uid;
+            Comercializacao.datains = DateTime.Now;
 
             await _context.AddAsync(Comercializacao);
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Pedido de compra " + Comercializacao.Id.ToString() + "/" + Comercializacao.IdSafra.ToString() + "/" + Comercializacao.IdFazenda.ToString() + "/" + Comercializacao.IdParceiro.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+
             await _context.SaveChangesAsync();
             return new ComercializacaoViewModel
             {
@@ -58,13 +64,14 @@ namespace FarmPlannerAPI.Services
                 ValorLiquido = Comercializacao.ValorLiquido,
                 ValorUnitario = Comercializacao.ValorUnitario,
                 ValorTotal = Comercializacao.ValorTotal,
-                Id = Comercializacao.Id
+                Id = Comercializacao.Id,
+                IdFazenda = Comercializacao.IdFazenda
             };
         }
 
-        public async Task<ComercializacaoViewModel>? SalvarComercializacao(int id, ComercializacaoViewModel dados)
+        public async Task<ComercializacaoViewModel>? SalvarComercializacao(int id, string idconta, ComercializacaoViewModel dados)
         {
-            var Comercializacao = _context.comercializacoes.Find(id);
+            var Comercializacao = _context.comercializacoes.Where(x => x.idconta == idconta && x.Id == id).FirstOrDefault();
             if (Comercializacao != null)
             {
                 Comercializacao.IdSafra = dados.IdSafra;
@@ -81,8 +88,13 @@ namespace FarmPlannerAPI.Services
                 Comercializacao.ValorLiquido = dados.ValorLiquido;
                 Comercializacao.ValorUnitario = dados.ValorUnitario;
                 Comercializacao.ValorTotal = dados.ValorTotal;
-
+                Comercializacao.idconta = dados.idconta;
+                Comercializacao.uid = dados.uid;
+                Comercializacao.dataup = DateTime.Now;
+                Comercializacao.IdFazenda = dados.IdFazenda;
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Pedido de compra " + Comercializacao.Id.ToString() + "/" + Comercializacao.IdSafra.ToString() + "/" + Comercializacao.IdFazenda.ToString() + "/" + Comercializacao.IdParceiro.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 _context.Update(Comercializacao);
+
                 await _context.SaveChangesAsync();
                 return new ComercializacaoViewModel
                 {
@@ -100,19 +112,25 @@ namespace FarmPlannerAPI.Services
                     ValorLiquido = Comercializacao.ValorLiquido,
                     ValorUnitario = Comercializacao.ValorUnitario,
                     ValorTotal = Comercializacao.ValorTotal,
-                    Id = Comercializacao.Id
+                    Id = Comercializacao.Id,
+                    IdFazenda = Comercializacao.IdFazenda
                 };
             }
             else return null;
         }
 
-        public async Task<ComercializacaoViewModel>? ExcluirComercializacao(int id, ComercializacaoViewModel dados)
+        public async Task<ComercializacaoViewModel>? ExcluirComercializacao(int id, string idconta, string uid)
         {
-            _excluirComercializacaoValidator.ValidateAndThrow(dados);
-            var Comercializacao = _context.comercializacoes.Find(id);
+            var Comercializacao = _context.comercializacoes.Where(x => x.idconta == idconta && x.Id == id).FirstOrDefault();
             if (Comercializacao != null)
             {
+                ComercializacaoViewModel dados = new ComercializacaoViewModel
+                {
+                    Id = Comercializacao.Id
+                };
+                _excluirComercializacaoValidator.ValidateAndThrow(dados);
                 _context.comercializacoes.Remove(Comercializacao);
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusao  Pedido de compra " + Comercializacao.Id.ToString() + "/" + Comercializacao.IdSafra.ToString() + "/" + Comercializacao.IdFazenda.ToString() + "/" + Comercializacao.IdParceiro.ToString() + "/" + Comercializacao.NumeroContrato.ToString().Trim(), datalog = DateTime.Now, idconta = idconta });
                 await _context.SaveChangesAsync();
                 return new ComercializacaoViewModel
                 {
@@ -130,15 +148,16 @@ namespace FarmPlannerAPI.Services
                     ValorLiquido = dados.ValorLiquido,
                     ValorUnitario = dados.ValorUnitario,
                     ValorTotal = dados.ValorTotal,
-                    Id = Comercializacao.Id
+                    Id = Comercializacao.Id,
+                    IdFazenda = Comercializacao.IdFazenda
                 };
             }
             else return null;
         }
 
-        public async Task<ComercializacaoViewModel>? ListarComercializacaoById(int id)
+        public async Task<ComercializacaoViewModel>? ListarComercializacaoById(int id, string idconta)
         {
-            var Comercializacao = _context.comercializacoes.Find(id);
+            var Comercializacao = _context.comercializacoes.Where(m => m.Id == id && m.idconta == idconta).FirstOrDefault();
             if (Comercializacao != null)
             {
                 return new ComercializacaoViewModel
@@ -157,23 +176,28 @@ namespace FarmPlannerAPI.Services
                     ValorLiquido = Comercializacao.ValorLiquido,
                     ValorUnitario = Comercializacao.ValorUnitario,
                     ValorTotal = Comercializacao.ValorTotal,
-                    Id = Comercializacao.Id
+                    Id = Comercializacao.Id,
+                    IdFazenda = Comercializacao.IdFazenda
                 };
             }
             else return null;
         }
 
-        public async Task<IEnumerable<ListComercializacaoViewModel>> ListarComercializacao(string idconta, int idano, int idsafra, int idparceiro, int idmoeda, DateTime? dini = null, DateTime? dfim = null)
+        public async Task<IEnumerable<ListComercializacaoViewModel>> ListarComercializacao(string idconta, int idano, int idorganizacao, int idfazenda, int idsafra, int idparceiro, int idmoeda, DateTime? dini, DateTime? dfim, string? filtro)
         {
             //var condicao = (Comercializacao m) => (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
 
             var Comercializacoes = _context.comercializacoes.Include(m => m.safra).Include(m => m.moeda).Include(m => m.parceiro)
-                .Include(m => m.safra.anoAgricola.organizacao)
+                .Include(m => m.safra.anoAgricola.organizacao).Include(m => m.fazenda)
                 .Where(m => (m.safra.anoAgricola.organizacao.idconta == idconta) &&
                 (m.safra.anoAgricola.Id == idano) &&
                 (idsafra == 0 || m.IdSafra == idsafra) &&
                 (idparceiro == 0 || m.IdParceiro == idparceiro) &&
-                (idmoeda == 0 || m.IdMoeda == idmoeda))
+                (idmoeda == 0 || m.IdMoeda == idmoeda) && (m.fazenda.IdOrganizacao == idorganizacao) &&
+                (idfazenda == 0 || m.IdFazenda == idfazenda) &&
+                (String.IsNullOrWhiteSpace(filtro) || m.NumeroContrato.ToUpper().Contains(filtro.ToUpper()))
+                )
+
                 .Select(c => new ListComercializacaoViewModel
                 {
                     IdSafra = c.IdSafra,
@@ -193,10 +217,60 @@ namespace FarmPlannerAPI.Services
                     Id = c.Id,
                     descmoeda = c.moeda.Descricao,
                     descsafra = c.safra.Descricao,
-                    nomeparceiro = c.parceiro.Fantasia
+                    nomeparceiro = c.parceiro.Fantasia,
+                    IdFazenda = c.IdFazenda,
+                    descfazenda = c.fazenda.Descricao
                 }
                 ).ToList();
             return (Comercializacoes);
+        }
+
+        public async Task<IEnumerable<ItemEntregaContratoViewModel>> ListarItensEntrega(int idcomercialiazao, string idconta, int cond = 1)
+        {
+            var result = _context.comercializacoes.Where((Comercializacao m) => (m.Id == idcomercialiazao && m.idconta == idconta))
+
+                .GroupBy(p => new { p.Id, p.Quantidade })
+                .Select(group => new
+                {
+                    group.Key.Id,
+                    group.Key.Quantidade,
+                    Entregas = _context.entregaContratos
+                        .Where(e => e.IdComercializacao == group.Key.Id)
+                        .Sum(e => (decimal?)e.Quantidade) ?? 0 // Usar int? para evitar exceções de nulos
+                })
+                .Select(r => new ItemEntregaContratoViewModel
+                {
+                    id = r.Id,
+                    datanf = DateTime.Now.Date,
+                    idcomercializacao = r.Id,
+                    nf = " ",
+                    preco = 0,
+                    qtd = r.Quantidade - r.Entregas,
+                    qtdcompra = r.Quantidade,
+                    recebido = r.Entregas,
+                    saldo = r.Quantidade - r.Entregas,
+                    total = 0
+                })
+                .Where(r => r.qtd > 0 || cond == 0)
+                .ToList();
+            return (result);
+        }
+
+        public async Task<IEnumerable<EntregaContratoViewModel>> ListarEntregasByProduto(int id, string idconta)
+        {
+            var condicao = (EntregaContrato m) => (m.Id == id && m.idconta == idconta);
+
+            var result = _context.entregaContratos.Where(condicao)
+                .Select(r => new EntregaContratoViewModel
+                {
+                    Id = r.Id,
+                    DataEntrega = r.DataEntrega,
+                    Documento = r.Documento,
+                    Quantidade = r.Quantidade,
+                    IdComercializacao = r.IdComercializacao
+                })
+                .OrderBy(x => x.DataEntrega).ToList();
+            return (result);
         }
     }
 }

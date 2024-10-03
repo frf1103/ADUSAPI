@@ -49,5 +49,7 @@ namespace FarmPlannerAPI.Entities
         public DateTime? dataup { get; set; }
 
         public ICollection<PedidoCompra>? pedidos { get; set; }
+
+        public ICollection<Comercializacao>? comercializacoes { get; set; }
     }
 }
