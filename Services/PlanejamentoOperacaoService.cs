@@ -194,7 +194,7 @@ namespace FarmPlannerAPI.Services
                 (m.configArea.IdSafra == idsafra || idsafra == 0) && (m.IdOperacao == idoperacao || idoperacao == 0))
                 && (idvariedade == 0 || m.configArea.IdVariedade == idvariedade) && m.DataPrevista >= ini && m.DataPrevista <= fim &&
                 m.configArea.talhao.IdAnoAgricola == idano && m.configArea.talhao.fazenda.IdOrganizacao == idorganizacao
-                && m.produtosplanejados.Any(p => p.IdPlanejamento == m.Id && (idprincipio == 0 || p.IdPrincipioAtivo == idprincipio) &&
+                && m.produtosplanejados.Any(p => p.IdPlanejamento == m.Id && (idprincipio == 0 || p.IdProduto == idprincipio) &&
                 (idproduto == 0 || p.IdProduto == idproduto)));
             var PlanejamentoOperacaos = query
                 .Select(c => new ListPlanejamentoOperacaoViewModel
@@ -244,9 +244,9 @@ namespace FarmPlannerAPI.Services
                         else
                         {
                             var op = _context.operacoes.Where(m => m.idconta == idconta && m.IdTipoOperacao == idoperacao).FirstOrDefault();
-                            if (modp != null)
+                            if (op != null)
                             {
-                                return (modp.Rendimento, modp.Consumo);
+                                return ((decimal)op.Rendimento, (decimal)op.Consumo);
                             }
                         }
                     }
@@ -261,9 +261,9 @@ namespace FarmPlannerAPI.Services
                     else
                     {
                         var op = _context.operacoes.Where(m => m.idconta == idconta && m.IdTipoOperacao == idoperacao).FirstOrDefault();
-                        if (modp != null)
+                        if (op != null)
                         {
-                            return (modp.Rendimento, modp.Consumo);
+                            return ((decimal)op.Rendimento, (decimal)op.Consumo);
                         }
                     }
                 }
@@ -280,6 +280,15 @@ namespace FarmPlannerAPI.Services
             {
                 foreach (var c in dados)
                 {
+                    DateTime dtprev = c.dataprevista;
+                    if (c.plantio == false)
+                    {
+                        var regpl = _context.planejoperacoes.Include(x => x.configArea.variedade).Where(x => x.IdConfigArea == c.idconfig && x.operacao.TipoOperacao.plantio == true).FirstOrDefault();
+                        if (regpl != null)
+                        {
+                            dtprev = regpl.DataPrevista.AddDays(regpl.configArea.variedade.Ciclo + c.dae);
+                        }
+                    }
                     decimal tothoras, totcomb;
                     tothoras = 0; totcomb = 0;
                     PlanejamentoOperacaoViewModel pl = new PlanejamentoOperacaoViewModel
@@ -295,7 +304,7 @@ namespace FarmPlannerAPI.Services
                         CustoOperacao = 0,
                         uid = uid,
                         QHorasEstimadas = 0,
-                        DataPrevista = c.dataprevista,
+                        DataPrevista = dtprev,
                         Percentual = c.perc
                     };
                     var (x, success) = await AdicionarPlanejamentoOperacao(pl);
@@ -314,7 +323,7 @@ namespace FarmPlannerAPI.Services
                             IdPlanejamento = x.Id,
                             IdConfigArea = c.idconfig,
                             Dosagem = prod.dosagem,
-                            IdPrincipioAtivo = (prod.idprincipio == 0) ? null : prod.idprincipio,
+                            //   IdPrincipioAtivo = (prod.idprincipio == 0) ? null : prod.idprincipio,
                             IdProduto = (prod.idproduto == 0) ? null : prod.idproduto,
                             Tamanho = prod.tamanho,
                             TotalProduto = prod.tamanho * prod.dosagem * prod.percent / 100
@@ -325,7 +334,7 @@ namespace FarmPlannerAPI.Services
 
                         if (resultado == null)
                         {
-                            xlista.Add(new object[] { prod.idprincipio, cf.talhao.IdFazenda, cf.IdSafra, (decimal)pr.TotalProduto });
+                            xlista.Add(new object[] { prod.idproduto, cf.talhao.IdFazenda, cf.IdSafra, (decimal)pr.TotalProduto });
                         }
                         else
                         {
@@ -372,8 +381,8 @@ namespace FarmPlannerAPI.Services
                 }
                 foreach (var y in xlista)
                 {
-                    var totalnec = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.IdPrincipio == (int)y[0]).Sum(x => x.QtdNecessaria);
-                    var compra = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.IdPrincipio == (int)y[0]).FirstOrDefault();
+                    var totalnec = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.idproduto == (int)y[0]).Sum(x => x.QtdNecessaria);
+                    var compra = _context.planejamentoCompras.Where(x => x.IdSafra == (int)y[2] && x.IdFazenda == (int)y[1] && x.idproduto == (int)y[0]).FirstOrDefault();
                     if (compra != null)
                     {
                         compra.QtdNecessaria = compra.QtdNecessaria + (decimal)y[3];
@@ -385,7 +394,7 @@ namespace FarmPlannerAPI.Services
                     {
                         _context.planejamentoCompras.Add(new PlanejamentoCompra
                         {
-                            IdPrincipio = (int)y[0],
+                            idproduto = (int)y[0],
                             IdFazenda = (int)y[1],
                             IdSafra = (int)y[2],
                             idconta = idconta,

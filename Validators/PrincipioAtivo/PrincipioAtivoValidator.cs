@@ -37,11 +37,6 @@ namespace FarmPlannerAPI.Validators.PrincipioAtivo
                 {
                     validateContext.AddFailure("Principio ativo orcamento");
                 }
-                var princ2 = context.produtoplanejados.FirstOrDefault(c => c.IdPrincipioAtivo == principio.Id);
-                if (princ2 != null)
-                {
-                    validateContext.AddFailure("Principio ativo planejamento");
-                }
             });
         }
     }

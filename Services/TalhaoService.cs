@@ -168,7 +168,7 @@ namespace FarmPlannerAPI.Services
                 IdAnoAgricola = g.Talhao.IdAnoAgricola,
                 CodigoExterno = g.Talhao.CodigoExterno
             })
-            .Where(g => g.areaDisp > 0)
+            //.Where(g => g.areaDisp > 0)
             .ToList();
             if (result != null)
             {

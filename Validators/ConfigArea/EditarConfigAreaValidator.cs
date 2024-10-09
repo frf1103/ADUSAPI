@@ -41,7 +41,7 @@ namespace FarmPlannerAPI.Validators.ConfigArea
                 {
                     validateContext.AddFailure("Já existe área configurada para esse talhão/safra/variedade");
                 }
-                var soma = _context.configareas.Where(c => c.IdTalhao == ConfigArea.IdTalhao).Sum(c => c.Area);
+                var soma = _context.configareas.Where(c => c.IdTalhao == ConfigArea.IdTalhao && c.IdSafra == ConfigArea.IdSafra).Sum(c => c.Area);
                 var t = _context.talhoes.Where(c => c.Id == ConfigArea.IdTalhao).FirstOrDefault();
                 var novo = ConfigArea.Area;
                 var old = _context.configareas.Where(c => ConfigArea.Id == c.Id && ConfigArea.idconta == c.idconta).FirstOrDefault();
@@ -49,12 +49,14 @@ namespace FarmPlannerAPI.Validators.ConfigArea
                 {
                     validateContext.AddFailure("Soma das areas configuradas devera ser menor ou igual a area produtiva do talho");
                 }
+                /*
                 var conf1 = _context.planejoperacoes.FirstOrDefault(x => x.IdConfigArea == ConfigArea.Id && x.idconta == ConfigArea.idconta);
                 if (conf != null)
 
                 {
                     validateContext.AddFailure("Configuração com Planejamento de operações");
                 }
+                */
             });
         }
     }

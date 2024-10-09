@@ -38,10 +38,10 @@ namespace FarmPlannerAPI.Controllers
             return Ok(PlanejamentoCompra);
         }
 
-        [HttpGet("listar/{idconta}/{idano}/{idorganizacao}/{idsafra}/{idprincipio}/{idfazenda}")]
-        public async Task<IActionResult> ListarPlanejamentoCompra(string idconta, int idano, int idorganizacao, int idsafra, int idprincipio, int idfazenda)
+        [HttpGet("listar/{idconta}/{idano}/{idorganizacao}/{idsafra}/{idprincipio}/{idfazenda}/{idproduto}")]
+        public async Task<IActionResult> ListarPlanejamentoCompra(string idconta, int idano, int idorganizacao, int idsafra, int idprincipio, int idfazenda, int idproduto)
         {
-            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamento(idconta, idano, idorganizacao, idprincipio, idsafra, idfazenda);
+            var PlanejamentoCompra = await _PlanejamentoCompraservice.ListarPlanejamento(idconta, idano, idorganizacao, idprincipio, idsafra, idfazenda, idproduto);
 
             return Ok(PlanejamentoCompra);
         }

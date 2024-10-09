@@ -3,6 +3,7 @@ using FarmPlannerAPI.Entities;
 using FarmPlannerAPI.Validators.Operacao;
 using FarmPlannerAPICore.Models.Operacao;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace FarmPlannerAPI.Services
 {
@@ -47,7 +48,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<OperacaoViewModel>? SalvarOperacao(int id, string idconta, OperacaoViewModel dados)
         {
-            var Operacao = _context.operacoes.Find(id);
+            var Operacao = _context.operacoes.Where(x=>x.idconta==idconta && x.Id==id).FirstOrDefault();
             if (Operacao != null)
             {
                 Operacao.Descricao = dados.Descricao;
@@ -104,7 +105,7 @@ namespace FarmPlannerAPI.Services
 
         public async Task<OperacaoViewModel>? ListarOperacaoById(int id, string idconta)
         {
-            var Operacao = _context.operacoes.Where(o => o.Id == id && o.idconta == idconta).FirstOrDefault();
+            var Operacao = _context.operacoes.Where(o => o.Id == id && o.idconta == idconta).Include(o => o.TipoOperacao).FirstOrDefault();
             if (Operacao != null)
             {
                 return new OperacaoViewModel
@@ -116,7 +117,8 @@ namespace FarmPlannerAPI.Services
                     Rendimento = Operacao.Rendimento,
                     Consumo = Operacao.Consumo,
                     Id = Operacao.Id,
-                    idconta = Operacao.idconta
+                    idconta = Operacao.idconta,
+                    plantio = Operacao.TipoOperacao.plantio
                 };
             }
             else return null;
@@ -126,7 +128,7 @@ namespace FarmPlannerAPI.Services
         {
             var condicao = (Operacao m) => (m.idconta == idconta) && (idtipo == 0 || m.IdTipoOperacao == idtipo) && (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()));
             var query = _context.operacoes.AsQueryable();
-            var Operacaos = query.Where(condicao)
+            var Operacaos = query.Include(o => o.TipoOperacao).Where(condicao)
                 .Select(c => new OperacaoViewModel
                 {
                     Descricao = c.Descricao,
@@ -136,7 +138,8 @@ namespace FarmPlannerAPI.Services
                     Rendimento = c.Rendimento,
                     Consumo = c.Consumo,
                     Id = c.Id,
-                    idconta = c.idconta
+                    idconta = c.idconta,
+                    plantio = c.TipoOperacao.plantio
                 }
                 ).ToList();
             return (Operacaos);

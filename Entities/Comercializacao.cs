@@ -37,6 +37,7 @@ namespace FarmPlannerAPI.Entities
 
         public DateTime DataEntrega { get; set; }
         public DateTime DataPagamento { get; set; }
+        public DateTime? DataPedido { get; set; }
 
         [Precision(18, 2)]
         public decimal Descontos { get; set; }
@@ -45,6 +46,9 @@ namespace FarmPlannerAPI.Entities
         public decimal ValorLiquido { get; set; }
 
         public string? NumeroContrato { get; set; }
+
+        [Precision(18, 2)]
+        public decimal? Frete { get; set; }
 
         [ForeignKey("IdSafra,idconta")]
         public Safra safra { get; set; }

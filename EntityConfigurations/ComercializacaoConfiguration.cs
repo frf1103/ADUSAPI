@@ -25,6 +25,8 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(x => x.Descontos);
             builder.Property(x => x.ValorLiquido);
             builder.Property(x => x.NumeroContrato);
+            builder.Property(x => x.DataPedido).IsRequired(false);
+            builder.Property(x => x.Frete).IsRequired(false);
             builder.Property(x => x.idconta);
             builder.Property(x => x.IdFazenda);
             builder.Property(x => x.datains).IsRequired(false);

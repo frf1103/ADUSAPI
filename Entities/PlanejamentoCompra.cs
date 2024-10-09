@@ -11,7 +11,8 @@ namespace FarmPlannerAPI.Entities
         public int IdFazenda { get; set; }
 
         public int IdSafra { get; set; }
-        public int IdPrincipio { get; set; }
+
+        public int? idproduto { get; set; }
 
         [Precision(18, 2)]
         public decimal QtdNecessaria { get; set; }
@@ -31,8 +32,8 @@ namespace FarmPlannerAPI.Entities
         [ForeignKey("IdSafra,idconta")]
         public Safra safra { get; set; }
 
-        [ForeignKey("IdPrincipio")]
-        public PrincipioAtivo principio { get; set; }
+        [ForeignKey("idproduto,idconta")]
+        public Produto produto { get; set; }
 
         public string idconta { get; set; }
 

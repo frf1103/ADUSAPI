@@ -38,6 +38,8 @@ namespace FarmPlannerAPI.Services
             Comercializacao.ValorLiquido = dados.ValorLiquido;
             Comercializacao.ValorUnitario = dados.ValorUnitario;
             Comercializacao.ValorTotal = dados.ValorTotal;
+            Comercializacao.DataPedido = dados.DataPedido;
+            Comercializacao.Frete = dados.Frete;
             Comercializacao.idconta = dados.idconta;
             Comercializacao.idconta = dados.idconta;
             Comercializacao.IdFazenda = dados.IdFazenda;
@@ -65,7 +67,9 @@ namespace FarmPlannerAPI.Services
                 ValorUnitario = Comercializacao.ValorUnitario,
                 ValorTotal = Comercializacao.ValorTotal,
                 Id = Comercializacao.Id,
-                IdFazenda = Comercializacao.IdFazenda
+                IdFazenda = Comercializacao.IdFazenda,
+                DataPedido = Comercializacao.DataPedido,
+                Frete = Comercializacao.Frete
             };
         }
 
@@ -88,6 +92,9 @@ namespace FarmPlannerAPI.Services
                 Comercializacao.ValorLiquido = dados.ValorLiquido;
                 Comercializacao.ValorUnitario = dados.ValorUnitario;
                 Comercializacao.ValorTotal = dados.ValorTotal;
+                Comercializacao.DataPedido = dados.DataPedido;
+                Comercializacao.Frete = dados.Frete;
+
                 Comercializacao.idconta = dados.idconta;
                 Comercializacao.uid = dados.uid;
                 Comercializacao.dataup = DateTime.Now;
@@ -113,7 +120,9 @@ namespace FarmPlannerAPI.Services
                     ValorUnitario = Comercializacao.ValorUnitario,
                     ValorTotal = Comercializacao.ValorTotal,
                     Id = Comercializacao.Id,
-                    IdFazenda = Comercializacao.IdFazenda
+                    IdFazenda = Comercializacao.IdFazenda,
+                    DataPedido = Comercializacao.DataPedido,
+                    Frete = Comercializacao.Frete
                 };
             }
             else return null;
@@ -149,7 +158,9 @@ namespace FarmPlannerAPI.Services
                     ValorUnitario = dados.ValorUnitario,
                     ValorTotal = dados.ValorTotal,
                     Id = Comercializacao.Id,
-                    IdFazenda = Comercializacao.IdFazenda
+                    IdFazenda = Comercializacao.IdFazenda,
+                    DataPedido = Comercializacao.DataPedido,
+                    Frete = Comercializacao.Frete
                 };
             }
             else return null;
@@ -177,7 +188,9 @@ namespace FarmPlannerAPI.Services
                     ValorUnitario = Comercializacao.ValorUnitario,
                     ValorTotal = Comercializacao.ValorTotal,
                     Id = Comercializacao.Id,
-                    IdFazenda = Comercializacao.IdFazenda
+                    IdFazenda = Comercializacao.IdFazenda,
+                    DataPedido = Comercializacao.DataPedido,
+                    Frete = Comercializacao.Frete
                 };
             }
             else return null;
@@ -195,6 +208,7 @@ namespace FarmPlannerAPI.Services
                 (idparceiro == 0 || m.IdParceiro == idparceiro) &&
                 (idmoeda == 0 || m.IdMoeda == idmoeda) && (m.fazenda.IdOrganizacao == idorganizacao) &&
                 (idfazenda == 0 || m.IdFazenda == idfazenda) &&
+                (m.DataPedido >= dini && m.DataPedido <= dfim) &&
                 (String.IsNullOrWhiteSpace(filtro) || m.NumeroContrato.ToUpper().Contains(filtro.ToUpper()))
                 )
 
@@ -219,7 +233,9 @@ namespace FarmPlannerAPI.Services
                     descsafra = c.safra.Descricao,
                     nomeparceiro = c.parceiro.Fantasia,
                     IdFazenda = c.IdFazenda,
-                    descfazenda = c.fazenda.Descricao
+                    descfazenda = c.fazenda.Descricao,
+                    DataPedido = c.DataPedido,
+                    Frete = c.Frete
                 }
                 ).ToList();
             return (Comercializacoes);

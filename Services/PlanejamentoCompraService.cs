@@ -25,7 +25,7 @@ namespace FarmPlannerAPI.Services
             _adicionarPlanejamentoCompraValidator.ValidateAndThrow(dados);
             var PlanejamentoCompra = new PlanejamentoCompra();
 
-            PlanejamentoCompra.IdPrincipio = dados.IdPrincipio;
+            PlanejamentoCompra.idproduto = dados.idproduto;
             PlanejamentoCompra.IdFazenda = dados.IdFazenda;
             PlanejamentoCompra.IdSafra = dados.IdSafra;
             PlanejamentoCompra.QtdComprada = dados.QtdComprada;
@@ -38,7 +38,7 @@ namespace FarmPlannerAPI.Services
             PlanejamentoCompra.datains = DateTime.Now;
 
             await _context.AddAsync(PlanejamentoCompra);
-            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.IdPrincipio.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+            await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.idproduto.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
             if (commit)
             {
                 await _context.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace FarmPlannerAPI.Services
             return new PlanejamentoCompraViewModel
             {
                 Id = PlanejamentoCompra.Id,
-                IdPrincipio = PlanejamentoCompra.IdPrincipio,
+                idproduto = PlanejamentoCompra.idproduto ?? 0,
                 IdSafra = PlanejamentoCompra.IdSafra,
                 QtdComprada = PlanejamentoCompra.QtdComprada,
                 QtdComprar = PlanejamentoCompra.QtdComprar,
@@ -63,7 +63,7 @@ namespace FarmPlannerAPI.Services
             if (PlanejamentoCompra != null)
             {
                 PlanejamentoCompra.IdFazenda = dados.IdFazenda;
-                PlanejamentoCompra.IdPrincipio = dados.IdPrincipio;
+                PlanejamentoCompra.idproduto = dados.idproduto;
                 PlanejamentoCompra.IdSafra = dados.IdSafra;
 
                 PlanejamentoCompra.QtdComprada = dados.QtdComprada;
@@ -75,7 +75,7 @@ namespace FarmPlannerAPI.Services
                 PlanejamentoCompra.dataup = DateTime.Now;
 
                 _context.Update(PlanejamentoCompra);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.IdPrincipio.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Alteração  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.idproduto.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 if (commit)
                 {
                     await _context.SaveChangesAsync();
@@ -83,7 +83,7 @@ namespace FarmPlannerAPI.Services
                 return new PlanejamentoCompraViewModel
                 {
                     Id = PlanejamentoCompra.Id,
-                    IdPrincipio = PlanejamentoCompra.IdPrincipio,
+                    idproduto = PlanejamentoCompra.idproduto ?? 0,
                     IdSafra = PlanejamentoCompra.IdSafra,
                     QtdComprada = PlanejamentoCompra.QtdComprada,
                     QtdComprar = PlanejamentoCompra.QtdComprar,
@@ -107,7 +107,7 @@ namespace FarmPlannerAPI.Services
                 };
                 _excluirPlanejamentoCompraValidator.ValidateAndThrow(dados);
                 _context.planejamentoCompras.Remove(PlanejamentoCompra);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.IdPrincipio.ToString(), datalog = DateTime.Now, idconta = idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exclusão  Planejamento de compras " + PlanejamentoCompra.Id.ToString() + "/" + PlanejamentoCompra.IdFazenda.ToString() + "/" + PlanejamentoCompra.IdSafra.ToString() + "/" + PlanejamentoCompra.idproduto.ToString(), datalog = DateTime.Now, idconta = idconta });
                 if (commit)
                 {
                     await _context.SaveChangesAsync();
@@ -115,7 +115,7 @@ namespace FarmPlannerAPI.Services
                 return new PlanejamentoCompraViewModel
                 {
                     Id = PlanejamentoCompra.Id,
-                    IdPrincipio = PlanejamentoCompra.IdPrincipio,
+                    idproduto = PlanejamentoCompra.idproduto ?? 0,
                     IdSafra = PlanejamentoCompra.IdSafra,
                     QtdComprada = PlanejamentoCompra.QtdComprada,
                     QtdComprar = PlanejamentoCompra.QtdComprar,
@@ -136,7 +136,7 @@ namespace FarmPlannerAPI.Services
                 return new PlanejamentoCompraViewModel
                 {
                     Id = PlanejamentoCompra.Id,
-                    IdPrincipio = PlanejamentoCompra.IdPrincipio,
+                    idproduto = PlanejamentoCompra.idproduto ?? 0,
                     IdSafra = PlanejamentoCompra.IdSafra,
                     QtdComprada = PlanejamentoCompra.QtdComprada,
                     QtdComprar = PlanejamentoCompra.QtdComprar,
@@ -149,15 +149,18 @@ namespace FarmPlannerAPI.Services
             else return null;
         }
 
-        public async Task<IEnumerable<ListPlanejamentoCompraViewModel>> ListarPlanejamento(string idconta, int idano, int idorganizacao, int idprincipio, int idsafra, int idfazenda)
+        public async Task<IEnumerable<ListPlanejamentoCompraViewModel>> ListarPlanejamento(string idconta, int idano, int idorganizacao, int idprincipio, int idsafra, int idfazenda, int idproduto)
         {
             var query = _context.planejamentoCompras
-                .Include(m => m.principio).Include(m => m.safra).Include(m => m.safra.anoAgricola)
+                .Include(m => m.produto).
+                 Include(m => m.produto.produtosprincipio)
+                .Include(m => m.safra).Include(m => m.safra.anoAgricola)
                 .Include(m => m.safra.anoAgricola.organizacao)
                 .Include(m => m.safra.anoAgricola.organizacao.conta)
                 .Where((m => (m.safra.anoAgricola.organizacao.idconta == idconta) &&
+                (idprincipio == 0 || m.produto.produtosprincipio.Any(x => x.idprincipio == idprincipio)) &&
                 (m.safra.IdAnoAgricola == idano) &&
-                (idprincipio == 0 || m.IdPrincipio == idprincipio) &&
+                (idproduto == 0 || m.idproduto == idproduto) &&
                 (idsafra == 0 || m.IdSafra == idsafra) &&
                 (m.safra.anoAgricola.IdOrganizacao == idorganizacao) &&
                 (idfazenda == 0 || m.IdFazenda == idfazenda)));
@@ -166,14 +169,14 @@ namespace FarmPlannerAPI.Services
                 .Select(c => new ListPlanejamentoCompraViewModel
                 {
                     Id = c.Id,
-                    IdPrincipio = c.IdPrincipio,
+                    idproduto = c.idproduto ?? 0,
                     IdSafra = c.IdSafra,
                     QtdComprada = c.QtdComprada,
                     QtdComprar = c.QtdComprar,
                     QtdNecessaria = c.QtdNecessaria,
                     QtdEstoque = c.QtdEstoque,
                     Saldo = c.Saldo,
-                    DescPrincipio = c.principio.Descricao,
+                    DescPrincipio = c.produto.Descricao,
                     DescSafra = c.safra.Descricao,
                     DescFazenda = c.fazenda.Descricao,
                     IdFazenda = c.IdFazenda

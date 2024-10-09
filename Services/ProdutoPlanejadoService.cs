@@ -35,7 +35,7 @@ namespace FarmPlannerAPI.Services
                 var ProdutoPlanejado = new ProdutoPlanejado();
 
                 ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
-                ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
+                //   ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
 
                 ProdutoPlanejado.Tamanho = dados.Tamanho;
@@ -49,7 +49,7 @@ namespace FarmPlannerAPI.Services
                 if (commit)
                 {
                     var planej = _context.planejoperacoes.Where(p => p.Id == dados.IdPlanejamento).Include(p => p.configArea).Include(p => p.configArea.talhao).FirstOrDefault();
-                    var p = _context.produtoplanejados.Where(p => p.IdPrincipioAtivo == dados.IdPrincipioAtivo &&
+                    var p = _context.produtoplanejados.Where(p => p.IdProduto == dados.IdProduto &&
                                                                 p.planejamentoOperacao.configArea.IdSafra == planej.configArea.IdSafra &&
                                                                 p.planejamentoOperacao.configArea.talhao.IdFazenda == planej.configArea.talhao.IdFazenda).ToList();
                     decimal qtdplanej = p.Sum(p => p.TotalProduto);
@@ -58,7 +58,7 @@ namespace FarmPlannerAPI.Services
                     {
                         idconta = dados.idconta,
                         IdFazenda = planej.configArea.talhao.IdFazenda,
-                        IdPrincipio = (int)dados.IdPrincipioAtivo,
+                        idproduto = (int)dados.IdProduto,
                         IdSafra = planej.configArea.IdSafra,
                         QtdNecessaria = qtdplanej + dados.TotalProduto,
                         QtdComprada = 0,
@@ -67,7 +67,7 @@ namespace FarmPlannerAPI.Services
                         Saldo = 0,
                         uid = dados.uid
                     };
-                    var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.IdPrincipio == dados.IdPrincipioAtivo).FirstOrDefault();
+                    var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.idproduto == dados.IdProduto).FirstOrDefault();
                     if (compra == null)
                     {
                         _planejcompra.AdicionarPlanejamentoCompra(pp, false);
@@ -87,13 +87,13 @@ namespace FarmPlannerAPI.Services
                         _planejcompra.SalvarPlanejamentoCompra(compra.Id, dados.idconta, pp, false);
                     };
                 }
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdPrincipioAtivo ?? 0.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Inclusão  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 await _context.SaveChangesAsync();
                 return (new ProdutoPlanejadoViewModel
                 {
                     Id = ProdutoPlanejado.Id,
                     IdProduto = ProdutoPlanejado.IdProduto,
-                    IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
+                    //         IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
@@ -113,7 +113,7 @@ namespace FarmPlannerAPI.Services
             if (ProdutoPlanejado != null)
             {
                 ProdutoPlanejado.IdProduto = (dados.IdProduto == 0) ? null : dados.IdProduto;
-                ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
+                //      ProdutoPlanejado.IdPrincipioAtivo = dados.IdPrincipioAtivo;
                 ProdutoPlanejado.Dosagem = dados.Dosagem;
 
                 ProdutoPlanejado.Tamanho = dados.Tamanho;
@@ -125,11 +125,11 @@ namespace FarmPlannerAPI.Services
                 _context.Update(ProdutoPlanejado);
                 await _context.SaveChangesAsync();
                 var planej = _context.planejoperacoes.Where(p => p.Id == dados.IdPlanejamento).Include(p => p.configArea).Include(p => p.configArea.talhao).FirstOrDefault();
-                decimal qtdplanej = _context.produtoplanejados.Where(p => p.IdPrincipioAtivo == dados.IdPrincipioAtivo &&
+                decimal qtdplanej = _context.produtoplanejados.Where(p => p.IdProduto == dados.IdProduto &&
                                                             p.planejamentoOperacao.configArea.IdSafra == planej.configArea.IdSafra &&
                                                             p.planejamentoOperacao.configArea.talhao.IdFazenda == planej.configArea.talhao.IdFazenda).Sum(p => p.TotalProduto);
 
-                var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.IdPrincipio == dados.IdPrincipioAtivo).FirstOrDefault();
+                var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.idproduto == dados.IdProduto).FirstOrDefault();
 
                 PlanejamentoCompraViewModel pp = new PlanejamentoCompraViewModel
                 {
@@ -143,11 +143,11 @@ namespace FarmPlannerAPI.Services
                     idconta = compra.idconta,
                     Id = compra.Id,
                     uid = compra.uid,
-                    IdPrincipio = compra.IdPrincipio
+                    idproduto = compra.idproduto ?? 0
                 };
                 _planejcompra.SalvarPlanejamentoCompra(compra.Id, dados.idconta, pp, false);
 
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Altereção do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdPrincipioAtivo ?? 0.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = dados.uid, transacao = "Altereção do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString(), datalog = DateTime.Now, idconta = dados.idconta });
                 if (commit)
                 {
                     await _context.SaveChangesAsync();
@@ -156,7 +156,7 @@ namespace FarmPlannerAPI.Services
                 {
                     Id = ProdutoPlanejado.Id,
                     IdProduto = ProdutoPlanejado.IdProduto,
-                    IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
+                    //   IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
 
                     Tamanho = ProdutoPlanejado.Tamanho,
@@ -174,7 +174,8 @@ namespace FarmPlannerAPI.Services
             {
                 ProdutoPlanejadoViewModel dados = new ProdutoPlanejadoViewModel
                 {
-                    Id = ProdutoPlanejado.Id
+                    Id = ProdutoPlanejado.Id,
+                    IdProduto=ProdutoPlanejado.IdProduto
                 };
                 _excluirProdutoPlanejadoValidator.ValidateAndThrow(dados);
 
@@ -184,11 +185,11 @@ namespace FarmPlannerAPI.Services
                     await _context.SaveChangesAsync();
                 }
                 var planej = _context.planejoperacoes.Where(p => p.Id == dados.IdPlanejamento).Include(p => p.configArea).Include(p => p.configArea.talhao).FirstOrDefault();
-                decimal qtdplanej = _context.produtoplanejados.Where(p => p.IdPrincipioAtivo == dados.IdPrincipioAtivo &&
+                decimal qtdplanej = _context.produtoplanejados.Where(p => p.IdProduto == dados.IdProduto &&
                                                             p.planejamentoOperacao.configArea.IdSafra == planej.configArea.IdSafra &&
                                                             p.planejamentoOperacao.configArea.talhao.IdFazenda == planej.configArea.talhao.IdFazenda).Sum(p => p.TotalProduto);
 
-                var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.IdPrincipio == dados.IdPrincipioAtivo).FirstOrDefault();
+                var compra = _context.planejamentoCompras.Where(p => p.idconta == dados.idconta && p.IdFazenda == planej.configArea.talhao.IdFazenda && p.IdSafra == planej.configArea.IdSafra && p.idproduto == dados.IdProduto).FirstOrDefault();
 
                 PlanejamentoCompraViewModel pp = new PlanejamentoCompraViewModel
                 {
@@ -202,18 +203,18 @@ namespace FarmPlannerAPI.Services
                     idconta = compra.idconta,
                     Id = compra.Id,
                     uid = compra.uid,
-                    IdPrincipio = compra.IdPrincipio
+                    idproduto = compra.idproduto ?? 0
                 };
 
                 _planejcompra.SalvarPlanejamentoCompra(compra.Id, dados.idconta, pp, false);
-                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exlusão do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdPrincipioAtivo ?? 0.ToString(), datalog = DateTime.Now, idconta = idconta });
+                await _context.farmPlannerLogs.AddAsync(new FarmPlannerLog { uid = uid, transacao = "Exlusão do  produto do Planejamento de operacoes " + ProdutoPlanejado.IdPlanejamento.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString() + "/" + ProdutoPlanejado.IdProduto ?? 0.ToString(), datalog = DateTime.Now, idconta = idconta });
 
                 await _context.SaveChangesAsync();
                 return new ProdutoPlanejadoViewModel
                 {
                     Id = ProdutoPlanejado.Id,
                     IdProduto = ProdutoPlanejado.IdProduto,
-                    IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
+                    //IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
@@ -232,7 +233,7 @@ namespace FarmPlannerAPI.Services
                 {
                     Id = ProdutoPlanejado.Id,
                     IdProduto = ProdutoPlanejado.IdProduto,
-                    IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
+                    //    IdPrincipioAtivo = ProdutoPlanejado.IdPrincipioAtivo,
                     Dosagem = ProdutoPlanejado.Dosagem,
                     Tamanho = ProdutoPlanejado.Tamanho,
                     TotalProduto = ProdutoPlanejado.TotalProduto,
@@ -245,23 +246,23 @@ namespace FarmPlannerAPI.Services
         public async Task<IEnumerable<ListProdutoPlanejadoViewModel>> ListarProdutoPlanejadoByPlanejamento(int idplanejamento, string idconta)
         {
             var query = _context.produtoplanejados
-                .Include(m => m.produto).Include(m => m.principioativo)
+                .Include(m => m.produto)
                 .Where(m => (m.IdPlanejamento == idplanejamento && m.idconta == idconta));
             var ProdutoPlanejados = query
                 .Select(c => new ListProdutoPlanejadoViewModel
                 {
                     Id = c.Id,
                     IdProduto = c.IdProduto,
-                    IdPrincipioAtivo = c.IdPrincipioAtivo,
+                    //       IdPrincipioAtivo = c.IdPrincipioAtivo,
                     Dosagem = c.Dosagem,
 
                     Tamanho = c.Tamanho,
                     TotalProduto = c.TotalProduto,
                     IdPlanejamento = c.IdPlanejamento,
-                    descprincativo = c.principioativo.Descricao,
+                    //   descprincativo = c.principioativo.Descricao,
                     descproduto = c.produto.Descricao ?? "Sem Produto",
-                    descricao = (c.IdProduto == null) ? c.principioativo.Descricao : c.produto.Descricao,
-                    idcodigo = (int)((c.IdProduto == null) ? c.IdPrincipioAtivo : c.IdProduto),
+                    descricao = (c.IdProduto == null) ? " " : c.produto.Descricao,
+                    idcodigo = (int)((c.IdProduto == null) ? 0 : c.IdProduto),
                     idtipo = (c.IdProduto == null) ? "PA" : "PR"
                 }
                 ).ToList();

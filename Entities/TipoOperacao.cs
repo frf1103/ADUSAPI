@@ -9,6 +9,7 @@ namespace FarmPlannerAPI.Entities
         public int Id { get; set; }
 
         public string Descricao { get; set; }
+        public bool? plantio { get; set; } = false;
         public ICollection<Operacao> operacoes { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace FarmPlannerAPI.EntityConfigurations
         {
             builder.ToTable("ProdutosPlanejados");
             builder.Property(x => x.Id).UseIdentityColumn();
-            builder.Property(x => x.IdPrincipioAtivo);
+            //   builder.Property(x => x.IdPrincipioAtivo);
             builder.Property(x => x.IdProduto);
 
             builder.Property(x => x.IdPlanejamento);
@@ -21,7 +21,7 @@ namespace FarmPlannerAPI.EntityConfigurations
             builder.Property(x => x.idconta);
             builder.HasKey(x => new { x.idconta, x.Id });
             builder.HasOne(x => x.produto).WithMany(x => x.produtosplanejados).HasForeignKey(x => new { x.IdProduto, x.idconta }).OnDelete(DeleteBehavior.NoAction);
-            builder.HasOne(x => x.principioativo).WithMany(x => x.produtosplanejados).HasForeignKey(x => new { x.IdPrincipioAtivo }).OnDelete(DeleteBehavior.NoAction);
+            // builder.HasOne(x => x.principioativo).WithMany(x => x.produtosplanejados).HasForeignKey(x => new { x.IdPrincipioAtivo }).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.planejamentoOperacao).WithMany(x => x.produtosplanejados).HasForeignKey(x => new { x.IdPlanejamento, x.idconta }).OnDelete(DeleteBehavior.NoAction); ;
         }
     }

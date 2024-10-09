@@ -13,7 +13,8 @@ namespace FarmPlannerAPI.Entities
         public decimal Tamanho { get; set; }
 
         public int IdPlanejamento { get; set; }
-        public int? IdPrincipioAtivo { get; set; }
+
+        //public int? IdPrincipioAtivo { get; set; }
         public int? IdProduto { get; set; }
 
         [Precision(18, 2)]
@@ -28,8 +29,8 @@ namespace FarmPlannerAPI.Entities
         [ForeignKey("IdProduto,idconta")]
         public Produto? produto { get; set; }
 
-        [ForeignKey("IdPrincipioAtivo,idconta")]
-        public PrincipioAtivo? principioativo { get; set; }
+        //   [ForeignKey("IdPrincipioAtivo,idconta")]
+        //   public PrincipioAtivo? principioativo { get; set; }
 
         public string idconta { get; set; }
 

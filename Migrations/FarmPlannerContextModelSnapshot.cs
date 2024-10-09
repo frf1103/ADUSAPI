@@ -184,7 +184,14 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<DateTime>("DataPagamento")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("DataPedido")
+                        .HasColumnType("datetime2");
+
                     b.Property<decimal>("Descontos")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Frete")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
@@ -1379,9 +1386,6 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int>("IdFazenda")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdPrincipio")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdSafra")
                         .HasColumnType("int");
 
@@ -1411,16 +1415,20 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<DateTime?>("dataup")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("idproduto")
+                        .IsRequired()
+                        .HasColumnType("int");
+
                     b.Property<string>("uid")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("idconta", "Id");
 
-                    b.HasIndex("IdPrincipio");
-
                     b.HasIndex("IdFazenda", "idconta");
 
                     b.HasIndex("IdSafra", "idconta");
+
+                    b.HasIndex("idproduto", "idconta");
 
                     b.ToTable("PlanejamentoCompras", (string)null);
                 });
@@ -1733,10 +1741,10 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<int>("IdPlanejamento")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdPrincipioAtivo")
+                    b.Property<int?>("IdProduto")
                         .HasColumnType("int");
 
-                    b.Property<int?>("IdProduto")
+                    b.Property<int?>("PrincipioAtivoId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Tamanho")
@@ -1758,7 +1766,7 @@ namespace FarmPlannerAPI.Migrations
 
                     b.HasKey("idconta", "Id");
 
-                    b.HasIndex("IdPrincipioAtivo");
+                    b.HasIndex("PrincipioAtivoId");
 
                     b.HasIndex("IdPlanejamento", "idconta");
 
@@ -1952,6 +1960,11 @@ namespace FarmPlannerAPI.Migrations
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("plantio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.HasKey("Id");
 
@@ -2637,12 +2650,6 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.PlanejamentoCompra", b =>
                 {
-                    b.HasOne("FarmPlannerAPI.Entities.PrincipioAtivo", "principio")
-                        .WithMany("planejamentoCompras")
-                        .HasForeignKey("IdPrincipio")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("FarmPlannerAPI.Entities.Conta", "conta")
                         .WithMany("planejamentoCompras")
                         .HasForeignKey("idconta")
@@ -2661,11 +2668,17 @@ namespace FarmPlannerAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("FarmPlannerAPI.Entities.Produto", "produto")
+                        .WithMany("planejamentoCompras")
+                        .HasForeignKey("idproduto", "idconta")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("conta");
 
                     b.Navigation("fazenda");
 
-                    b.Navigation("principio");
+                    b.Navigation("produto");
 
                     b.Navigation("safra");
                 });
@@ -2821,10 +2834,9 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.ProdutoPlanejado", b =>
                 {
-                    b.HasOne("FarmPlannerAPI.Entities.PrincipioAtivo", "principioativo")
+                    b.HasOne("FarmPlannerAPI.Entities.PrincipioAtivo", null)
                         .WithMany("produtosplanejados")
-                        .HasForeignKey("IdPrincipioAtivo")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .HasForeignKey("PrincipioAtivoId");
 
                     b.HasOne("FarmPlannerAPI.Entities.Conta", "conta")
                         .WithMany("produtoPlanejado")
@@ -2846,8 +2858,6 @@ namespace FarmPlannerAPI.Migrations
                     b.Navigation("conta");
 
                     b.Navigation("planejamentoOperacao");
-
-                    b.Navigation("principioativo");
 
                     b.Navigation("produto");
                 });
@@ -3176,8 +3186,6 @@ namespace FarmPlannerAPI.Migrations
 
             modelBuilder.Entity("FarmPlannerAPI.Entities.PrincipioAtivo", b =>
                 {
-                    b.Navigation("planejamentoCompras");
-
                     b.Navigation("produtoorcamento");
 
                     b.Navigation("produtosplanejados");
@@ -3188,6 +3196,8 @@ namespace FarmPlannerAPI.Migrations
             modelBuilder.Entity("FarmPlannerAPI.Entities.Produto", b =>
                 {
                     b.Navigation("entregas");
+
+                    b.Navigation("planejamentoCompras");
 
                     b.Navigation("produtoorcamento");
 

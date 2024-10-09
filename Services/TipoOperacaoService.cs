@@ -24,13 +24,13 @@ namespace FarmPlannerAPI.Services
             _adicionarTipoOperacaoValidator.ValidateAndThrow(dados);
             var TipoOperacao = new TipoOperacao();
             TipoOperacao.Descricao = dados.Descricao;
-
+            TipoOperacao.plantio = dados.plantio;
             await _context.AddAsync(TipoOperacao);
             await _context.SaveChangesAsync();
             return new TipoOperacaoViewModel
             {
                 Descricao = TipoOperacao.Descricao,
-
+                plantio = TipoOperacao.plantio,
                 Id = TipoOperacao.Id,
             };
         }
@@ -41,12 +41,13 @@ namespace FarmPlannerAPI.Services
             if (TipoOperacao != null)
             {
                 TipoOperacao.Descricao = dados.Descricao;
-
+                TipoOperacao.plantio = dados.plantio;
                 _context.Update(TipoOperacao);
                 await _context.SaveChangesAsync();
                 return new TipoOperacaoViewModel
                 {
                     Descricao = TipoOperacao.Descricao,
+                    plantio = TipoOperacao.plantio,
                     Id = TipoOperacao.Id
                 };
             }
@@ -61,6 +62,7 @@ namespace FarmPlannerAPI.Services
                 TipoOperacaoViewModel dados = new TipoOperacaoViewModel
                 {
                     Id = TipoOperacao.Id,
+                    plantio = TipoOperacao.plantio,
                     Descricao = TipoOperacao.Descricao
                 };
                 _excluirTipoOperacaoValidator.ValidateAndThrow(dados);
@@ -83,6 +85,7 @@ namespace FarmPlannerAPI.Services
                 return new TipoOperacaoViewModel
                 {
                     Descricao = TipoOperacao.Descricao,
+                    plantio = TipoOperacao.plantio,
                     Id = TipoOperacao.Id
                 };
             }
@@ -97,6 +100,7 @@ namespace FarmPlannerAPI.Services
                 .Select(c => new TipoOperacaoViewModel
                 {
                     Id = c.Id,
+                    plantio = c.plantio,
                     Descricao = c.Descricao
                 }
                 ).ToList();
