@@ -1,14 +1,14 @@
-﻿using FarmPlannerAPI.Context;
-using FarmPlannerAPICore.Models.Parceiro;
+﻿using ADUSAPI.Context;
+using ADUSAPICore.Models.Parceiro;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Validators.Parceiro
+namespace ADUSAPI.Validators.Parceiro
 {
     public class ParceiroValidator : AbstractValidator<ParceiroViewModel>
     {
-        private readonly FarmPlannerContext _context;
+        private readonly ADUSContext _context;
 
-        public ParceiroValidator(FarmPlannerContext context)
+        public ParceiroValidator(ADUSContext context)
         {
             _context = context;
 
@@ -27,7 +27,7 @@ namespace FarmPlannerAPI.Validators.Parceiro
                 {
                     validateContext.AddFailure("Registro Inválido");
                 }
-                var conta = context.parceiros.Where(c => c.Registro == FBSLIb.StringLib.Somentenumero(parceiro.Registro.ToString()) && c.Id != parceiro.Id).FirstOrDefault();
+                var conta = context.parceiros.Where(c => c.Registro == FBSLIb.StringLib.Somentenumero(parceiro.Registro.ToString()) && c.uid != parceiro.Id).FirstOrDefault();
                 if (conta != null)
                 {
                     validateContext.AddFailure("CPF/CNPJ já existente para outra organização");
@@ -113,12 +113,13 @@ namespace FarmPlannerAPI.Validators.Parceiro
 
     public class ExcluirParceiroValidator : AbstractValidator<ParceiroViewModel>
     {
-        private readonly FarmPlannerContext _context;
+        private readonly ADUSContext _context;
 
-        public ExcluirParceiroValidator(FarmPlannerContext context)
+        public ExcluirParceiroValidator(ADUSContext context)
         {
             _context = context;
 
+            /*
             RuleFor(c => c).Custom((parceiro, validateContext) =>
             {
                 var prod = context.produtos.Where(c => c.IdFabricante == parceiro.Id).FirstOrDefault();
@@ -127,6 +128,7 @@ namespace FarmPlannerAPI.Validators.Parceiro
                     validateContext.AddFailure("Esse parceiro é fabricante de alguns produtos");
                 }
             });
+            */
         }
     }
 }

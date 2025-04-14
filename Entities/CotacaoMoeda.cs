@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FarmPlannerAPI.Entities
+namespace ADUSAPI.Entities
 {
     public class CotacaoMoeda
     {

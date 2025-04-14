@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FarmPlannerAPI.Entities
+namespace ADUSAPI.Entities
 {
     public class Municipio
     {
@@ -15,6 +15,6 @@ namespace FarmPlannerAPI.Entities
 
         public int IdUF { get; set; }
         public UF uF { get; set; }
-        public ICollection<Fazenda> fazendas { get; set; }
+        public ICollection<Parceiro> parceiros { get; set; }
     }
 }

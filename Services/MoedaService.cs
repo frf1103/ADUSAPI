@@ -1,18 +1,18 @@
-﻿using FarmPlannerAPI.Context;
-using FarmPlannerAPI.Entities;
-using FarmPlannerAPI.Validators.Moeda;
-using FarmPlannerAPICore.Models.Moeda;
+﻿using ADUSAPI.Context;
+using ADUSAPI.Entities;
+using ADUSAPI.Validators.Moeda;
+using ADUSAPICore.Models.Moeda;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Services
+namespace ADUSAPI.Services
 {
     public class MoedaService
     {
-        private readonly FarmPlannerContext _context;
+        private readonly ADUSContext _context;
         private readonly MoedaValidator _adicionarMoedaValidator;
         private readonly ExcluirMoedaValidator _excluirMoedaValidator;
 
-        public MoedaService(FarmPlannerContext context, MoedaValidator adicionarMoedaValidator, ExcluirMoedaValidator excluirMoedaValidator)
+        public MoedaService(ADUSContext context, MoedaValidator adicionarMoedaValidator, ExcluirMoedaValidator excluirMoedaValidator)
         {
             _context = context;
             _adicionarMoedaValidator = adicionarMoedaValidator;

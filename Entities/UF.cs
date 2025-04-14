@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FarmPlannerAPI.Entities
+namespace ADUSAPI.Entities
 {
     public class UF
     {
@@ -18,6 +18,7 @@ namespace FarmPlannerAPI.Entities
         public string CodigoIBGE { get; set; }
 
         public ICollection<Municipio> Municipios { get; set; }
-        public ICollection<Fazenda> fazendas { get; set; }
+
+        public ICollection<Parceiro> Parceiros { get; set; }
     }
 }

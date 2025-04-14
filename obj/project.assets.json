@@ -1363,7 +1363,7 @@
           }
         }
       },
-      "FarmPlannerAPICore/1.0.0": {
+      "ADUSAPICore/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
@@ -1371,10 +1371,10 @@
           "Microsoft.EntityFrameworkCore": "7.0.20"
         },
         "compile": {
-          "bin/placeholder/FarmPlannerAPICore.dll": {}
+          "bin/placeholder/ADUSAPICore.dll": {}
         },
         "runtime": {
-          "bin/placeholder/FarmPlannerAPICore.dll": {}
+          "bin/placeholder/ADUSAPICore.dll": {}
         }
       },
       "FBSLIb/1.0.0": {
@@ -3944,10 +3944,10 @@
         "version.txt"
       ]
     },
-    "FarmPlannerAPICore/1.0.0": {
+    "ADUSAPICore/1.0.0": {
       "type": "project",
-      "path": "../FarmPlannerAPI.Models/FarmPlannerAPICore.csproj",
-      "msbuildProject": "../FarmPlannerAPI.Models/FarmPlannerAPICore.csproj"
+      "path": "../ADUSAPI.Models/ADUSAPICore.csproj",
+      "msbuildProject": "../ADUSAPI.Models/ADUSAPICore.csproj"
     },
     "FBSLIb/1.0.0": {
       "type": "project",
@@ -3957,8 +3957,8 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "ADUSAPICore >= 1.0.0",
       "FBSLIb >= 1.0.0",
-      "FarmPlannerAPICore >= 1.0.0",
       "FluentValidation.AspNetCore >= 11.3.0",
       "Microsoft.AspNetCore.Cors >= 2.2.0",
       "Microsoft.EntityFrameworkCore.Design >= 7.0.20",
@@ -3972,11 +3972,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\source\\repos\\FarmPlannerAPI\\FarmPlannerAPI.csproj",
-      "projectName": "FarmPlannerAPI",
-      "projectPath": "C:\\Users\\user\\source\\repos\\FarmPlannerAPI\\FarmPlannerAPI.csproj",
+      "projectUniqueName": "C:\\Users\\user\\source\\repos\\ADUS\\ADUSAPI\\ADUSAPI.csproj",
+      "projectName": "ADUSAPI",
+      "projectPath": "C:\\Users\\user\\source\\repos\\ADUS\\ADUSAPI\\ADUSAPI.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\source\\repos\\FarmPlannerAPI\\obj\\",
+      "outputPath": "C:\\Users\\user\\source\\repos\\ADUS\\ADUSAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -3993,11 +3993,11 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "C:\\Users\\user\\source\\repos\\FarmPlannerAPI.Models\\FarmPlannerAPICore.csproj": {
-              "projectPath": "C:\\Users\\user\\source\\repos\\FarmPlannerAPI.Models\\FarmPlannerAPICore.csproj"
+            "C:\\Users\\user\\source\\repos\\ADUS\\ADUSAPI.Models\\ADUSAPICore.csproj": {
+              "projectPath": "C:\\Users\\user\\source\\repos\\ADUS\\ADUSAPI.Models\\ADUSAPICore.csproj"
             },
-            "C:\\Users\\user\\source\\repos\\FBSLIb\\FBSLIb.csproj": {
-              "projectPath": "C:\\Users\\user\\source\\repos\\FBSLIb\\FBSLIb.csproj"
+            "C:\\Users\\user\\source\\repos\\ADUS\\FBSLIb\\FBSLIb.csproj": {
+              "projectPath": "C:\\Users\\user\\source\\repos\\ADUS\\FBSLIb\\FBSLIb.csproj"
             }
           }
         }

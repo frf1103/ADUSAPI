@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration.UserSecrets;
 
-namespace FarmPlannerAPI.Entities
+namespace ADUSAPI.Entities
 {
-    public class FarmPlannerLog
+    public class ADUSLog
     {
         public string idconta { get; set; }
         public int id { get; set; }

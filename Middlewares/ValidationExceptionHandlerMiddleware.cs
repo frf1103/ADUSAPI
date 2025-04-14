@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Middlewares;
+namespace ADUSAPI.Middlewares;
 
 public class ValidationExceptionHandlerMiddleware
 {

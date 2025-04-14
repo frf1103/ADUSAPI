@@ -1,13 +1,13 @@
-﻿using FarmPlannerAPI.Context;
-using FarmPlannerAPICore.Models.Localidades;
+﻿using ADUSAPI.Context;
+using ADUSAPICore.Models.Localidades;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Validators.Localidade
+namespace ADUSAPI.Validators.Localidade
 {
     public class RegiaoValidator : AbstractValidator<RegiaoViewModel>
     {
-        private readonly FarmPlannerContext _context;
-        public RegiaoValidator(FarmPlannerContext context)
+        private readonly ADUSContext _context;
+        public RegiaoValidator(ADUSContext context)
         {
             _context = context;
 

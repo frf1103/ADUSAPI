@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FarmPlannerAPI.Entities;
+namespace ADUSAPI.Entities;
 
 public class Moeda
 {
@@ -9,10 +9,4 @@ public class Moeda
 
     public string Descricao { get; set; }
     public ICollection<CotacaoMoeda> cotacaoMoedas { get; set; }
-
-    public ICollection<Comercializacao> comercializacao { get; set; }
-
-    public ICollection<ProdutoOrcamento> produtosorcamento { get; set; }
-
-    public ICollection<PedidoCompra>? pedidos { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace FarmPlannerAPI.Shared
+﻿namespace ADUSAPI.Shared
 {
     public class Funcoes
     {

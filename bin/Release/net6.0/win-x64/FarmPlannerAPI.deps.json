@@ -7,7 +7,7 @@
   "targets": {
     ".NETCoreApp,Version=v6.0": {},
     ".NETCoreApp,Version=v6.0/win-x64": {
-      "FarmPlannerAPI/1.0.0": {
+      "ADUSAPI/1.0.0": {
         "dependencies": {
           "FBSLIb": "1.0.0",
           "FluentValidation.AspNetCore": "11.3.0",
@@ -18,7 +18,7 @@
           "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x64": "6.0.13"
         },
         "runtime": {
-          "FarmPlannerAPI.dll": {}
+          "ADUSAPI.dll": {}
         }
       },
       "runtimepack.Microsoft.NETCore.App.Runtime.win-x64/6.0.13": {
@@ -2053,7 +2053,7 @@
     }
   },
   "libraries": {
-    "FarmPlannerAPI/1.0.0": {
+    "ADUSAPI/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

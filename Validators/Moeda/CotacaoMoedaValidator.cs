@@ -1,15 +1,15 @@
-﻿using FarmPlannerAPI.Context;
+﻿using ADUSAPI.Context;
 
-using FarmPlannerAPICore.Models.Moeda;
+using ADUSAPICore.Models.Moeda;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Validators.Moeda
+namespace ADUSAPI.Validators.Moeda
 {
     public class CotacaoMoedaValidator : AbstractValidator<CotacaoMoedaViewModel>
     {
 
-        private readonly FarmPlannerContext _context;
-        public CotacaoMoedaValidator(FarmPlannerContext context)
+        private readonly ADUSContext _context;
+        public CotacaoMoedaValidator(ADUSContext context)
         {
             _context = context;
 
@@ -21,8 +21,8 @@ namespace FarmPlannerAPI.Validators.Moeda
     public class ExcluirCotacaoMoedaValidator : AbstractValidator<CotacaoMoedaViewModel>
     {
 
-        private readonly FarmPlannerContext _context;
-        public ExcluirCotacaoMoedaValidator(FarmPlannerContext context)
+        private readonly ADUSContext _context;
+        public ExcluirCotacaoMoedaValidator(ADUSContext context)
         {
             RuleFor(c => c).Custom((tipooper, validateContext) =>
             {

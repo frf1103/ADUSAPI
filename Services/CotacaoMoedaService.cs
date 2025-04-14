@@ -1,19 +1,19 @@
-﻿using FarmPlannerAPI.Context;
-using FarmPlannerAPI.Entities;
-using FarmPlannerAPI.Validators.Moeda;
-using FarmPlannerAPICore.Models.Moeda;
+﻿using ADUSAPI.Context;
+using ADUSAPI.Entities;
+using ADUSAPI.Validators.Moeda;
+using ADUSAPICore.Models.Moeda;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace FarmPlannerAPI.Services
+namespace ADUSAPI.Services
 {
     public class CotacaoMoedaService
     {
-        private readonly FarmPlannerContext _context;
+        private readonly ADUSContext _context;
         private readonly CotacaoMoedaValidator _adicionarCotacaoMoedaValidator;
         private readonly ExcluirCotacaoMoedaValidator _excluirCotacaoMoedaValidator;
 
-        public CotacaoMoedaService(FarmPlannerContext context, CotacaoMoedaValidator adicionarCotacaoMoedaValidator, ExcluirCotacaoMoedaValidator excluirCotacaoMoedaValidator)
+        public CotacaoMoedaService(ADUSContext context, CotacaoMoedaValidator adicionarCotacaoMoedaValidator, ExcluirCotacaoMoedaValidator excluirCotacaoMoedaValidator)
         {
             _context = context;
             _adicionarCotacaoMoedaValidator = adicionarCotacaoMoedaValidator;

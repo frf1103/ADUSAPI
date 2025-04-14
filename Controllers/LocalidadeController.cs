@@ -1,9 +1,8 @@
-﻿using FarmPlannerAPI.Services;
-using FarmPlannerAPICore.Models.Conta;
-using FarmPlannerAPICore.Models.Localidades;
+﻿using ADUSAPI.Services;
+using ADUSAPICore.Models.Localidades;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmPlannerAPI.Controllers
+namespace ADUSAPI.Controllers
 {
     [Route("api/Localidade")]
     [ApiController]
@@ -20,6 +19,20 @@ namespace FarmPlannerAPI.Controllers
         public async Task<IActionResult> ListarUF(string? filtro)
         {
             var reg = await _localidadeservice.ListarUF(filtro);
+            return Ok(reg);
+        }
+
+        [HttpGet("Ufs/{ibge}")]
+        public async Task<IActionResult> ListarUFIBGE(string ibge)
+        {
+            var reg = await _localidadeservice.GetUFByIBGE(ibge);
+            return Ok(reg);
+        }
+
+        [HttpGet("cidadesibge/{ibge}")]
+        public async Task<IActionResult> ListarCidadesIBGE(string ibge)
+        {
+            var reg = await _localidadeservice.GetCidadeByIBGE(ibge);
             return Ok(reg);
         }
 

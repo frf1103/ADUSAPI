@@ -6,7 +6,7 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v6.0": {
-      "FarmPlannerAPI/1.0.0": {
+      "ADUSAPI/1.0.0": {
         "dependencies": {
           "FBSLIb": "1.0.0",
           "FluentValidation.AspNetCore": "11.3.0",
@@ -15,7 +15,7 @@
           "Swashbuckle.AspNetCore": "6.2.3"
         },
         "runtime": {
-          "FarmPlannerAPI.dll": {}
+          "ADUSAPI.dll": {}
         }
       },
       "Azure.Core/1.24.0": {
@@ -751,7 +751,7 @@
     }
   },
   "libraries": {
-    "FarmPlannerAPI/1.0.0": {
+    "ADUSAPI/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

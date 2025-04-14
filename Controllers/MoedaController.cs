@@ -1,8 +1,8 @@
-﻿using FarmPlannerAPI.Services;
-using FarmPlannerAPICore.Models.Moeda;
+﻿using ADUSAPI.Services;
+using ADUSAPICore.Models.Moeda;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmPlannerAPI.Controllers
+namespace ADUSAPI.Controllers
 {
     [Route("api/moeda")]
     [ApiController]

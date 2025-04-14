@@ -1,8 +1,8 @@
-﻿using FarmPlannerAPI.Entities;
+﻿using ADUSAPI.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FarmPlannerAPI.EntityConfigurations
+namespace ADUSAPI.EntityConfigurations
 {
     public class MoedaConfiguration : IEntityTypeConfiguration<Moeda>
     {

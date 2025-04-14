@@ -1,30 +1,21 @@
-﻿using FarmPlannerAPI.Context;
+﻿using ADUSAPI.Context;
 
-using FarmPlannerAPICore.Models.Localidades;
+using ADUSAPICore.Models.Localidades;
 using FluentValidation;
 
-namespace FarmPlannerAPI.Validators.Localidade
+namespace ADUSAPI.Validators.Localidade
 {
     public class ExcluirRegiaoValidator : AbstractValidator<RegiaoViewModel>
     {
-        private readonly FarmPlannerContext _context;
-        public ExcluirRegiaoValidator(FarmPlannerContext context)
+        private readonly ADUSContext _context;
+
+        public ExcluirRegiaoValidator(ADUSContext context)
         {
             _context = context;
 
             RuleFor(c => c).Custom((regiao, validateContext) =>
             {
-
-                var fazendas = context.fazendas.FirstOrDefault(c => c.IdRegiao == regiao.Id);
-                if (fazendas != null)
-                {
-                    validateContext.AddFailure("Existem fazendas pra essa região");
-                }
-
             });
-
         }
-
     }
-
 }

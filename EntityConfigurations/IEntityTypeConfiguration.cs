@@ -1,4 +1,4 @@
-﻿namespace FarmPlannerAPI.EntityConfigurations
+﻿namespace ADUSAPI.EntityConfigurations
 {
     public interface IEntityTypeConfiguration
     {

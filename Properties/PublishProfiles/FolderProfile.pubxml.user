@@ -4,8 +4,8 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 -->
 <Project>
   <PropertyGroup>
-    <_PublishTargetUrl>C:\inetpub\wwwroot\FarmPlanner</_PublishTargetUrl>
-    <History>True|2024-09-27T12:21:21.1018288Z;True|2024-09-10T16:25:54.5796534-03:00;True|2024-08-24T11:21:12.4064081-03:00;True|2024-07-18T14:37:34.9383586-03:00;True|2024-06-27T11:38:24.2773438-03:00;</History>
+    <_PublishTargetUrl>C:\inetpub\wwwroot\ADUS</_PublishTargetUrl>
+    <History>True|2024-11-05T01:33:06.6131096Z;True|2024-11-04T22:31:14.0436742-03:00;True|2024-09-27T09:21:21.1018288-03:00;True|2024-09-10T16:25:54.5796534-03:00;True|2024-08-24T11:21:12.4064081-03:00;True|2024-07-18T14:37:34.9383586-03:00;True|2024-06-27T11:38:24.2773438-03:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
 </Project>

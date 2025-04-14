@@ -1,8 +1,8 @@
-﻿using FarmPlannerAPI.Services;
-using FarmPlannerAPICore.Models.Parceiro;
+﻿using ADUSAPI.Services;
+using ADUSAPICore.Models.Parceiro;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FarmPlannerAPI.Controllers
+namespace ADUSAPI.Controllers
 {
     [Route("api/parceiro")]
     [ApiController]
@@ -22,31 +22,31 @@ namespace FarmPlannerAPI.Controllers
             return Ok(Parceiro);
         }
 
-        [HttpPut("{id}/{idconta}")]
-        public async Task<IActionResult>? EditarParceiro(int id, string idconta, ParceiroViewModel dados)
+        [HttpPut("{id}")]
+        public async Task<IActionResult>? EditarParceiro(string id, ParceiroViewModel dados)
         {
-            var Parceiro = await _Parceiroservice.SalvarParceiro(id, idconta, dados);
+            var Parceiro = await _Parceiroservice.SalvarParceiro(id, dados);
             return Ok(Parceiro);
         }
 
-        [HttpDelete("{id}/{idconta}")]
-        public async Task<IActionResult>? ExcluirParceiro(int id, string idconta)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult>? ExcluirParceiro(string id)
         {
-            var Parceiro = await _Parceiroservice.ExcluirParceiro(id, idconta);
+            var Parceiro = await _Parceiroservice.ExcluirParceiro(id);
             return Ok(Parceiro);
         }
 
-        [HttpGet("{idconta}")]
-        public async Task<IActionResult> ListarParceiro(string idconta, string? filtro)
+        [HttpGet]
+        public async Task<IActionResult> ListarParceiro(string? filtro)
         {
-            var Parceiro = await _Parceiroservice.ListarParceiro(idconta, filtro);
+            var Parceiro = await _Parceiroservice.ListarParceiro(filtro);
             return Ok(Parceiro);
         }
 
-        [HttpGet("{id}/{idconta}")]
-        public async Task<IActionResult> ListarParceiroById(string idconta, int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ListarParceiroById(string id)
         {
-            var Parceiro = await _Parceiroservice.ListarParceiroById(id, idconta);
+            var Parceiro = await _Parceiroservice.ListarParceiroById(id);
             return Ok(Parceiro);
         }
     }
