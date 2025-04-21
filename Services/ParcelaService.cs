@@ -60,7 +60,7 @@ namespace ADUSAPI.Services
                 descontos = conta.descontos,
                 descontoantecipacao = conta.descontoantecipacao,
                 descontoplataforma = conta.descontoplataforma,
-                comissao = conta.comissao,
+                comissao = (double)conta.comissao,
                 numparcela = conta.numparcela,
                 nossonumero = conta.nossonumero,
                 databaixa = conta.databaixa,
@@ -110,7 +110,7 @@ namespace ADUSAPI.Services
                     descontos = conta.descontos,
                     descontoantecipacao = conta.descontoantecipacao,
                     descontoplataforma = conta.descontoplataforma,
-                    comissao = conta.comissao,
+                    comissao = (double)conta.comissao,
                     numparcela = conta.numparcela,
                     nossonumero = conta.nossonumero,
                     databaixa = conta.databaixa,
@@ -147,7 +147,7 @@ namespace ADUSAPI.Services
                     descontos = conta.descontos,
                     descontoantecipacao = conta.descontoantecipacao,
                     descontoplataforma = conta.descontoplataforma,
-                    comissao = conta.comissao,
+                    comissao = (double)conta.comissao,
                     numparcela = conta.numparcela,
                     nossonumero = conta.nossonumero,
                     databaixa = conta.databaixa,
@@ -178,7 +178,7 @@ namespace ADUSAPI.Services
                     descontos = conta.descontos,
                     descontoantecipacao = conta.descontoantecipacao,
                     descontoplataforma = conta.descontoplataforma,
-                    comissao = conta.comissao,
+                    comissao = (double)conta.comissao,
                     numparcela = conta.numparcela,
                     nossonumero = conta.nossonumero,
                     databaixa = conta.databaixa,
@@ -209,7 +209,7 @@ namespace ADUSAPI.Services
                     descontos = conta.descontos,
                     descontoantecipacao = conta.descontoantecipacao,
                     descontoplataforma = conta.descontoplataforma,
-                    comissao = conta.comissao,
+                    comissao = (double)conta.comissao,
                     numparcela = conta.numparcela,
                     nossonumero = conta.nossonumero,
                     databaixa = conta.databaixa,
@@ -229,12 +229,14 @@ namespace ADUSAPI.Services
                 Where((Parcela m) => ((String.IsNullOrWhiteSpace(filtro) || m.observacao.ToUpper().Contains(filtro.ToUpper())) || (String.IsNullOrWhiteSpace(filtro) || (m.idassinatura ?? " ").ToUpper().Contains(filtro.ToUpper())) ||
             (String.IsNullOrWhiteSpace(filtro) || (m.idcheckout ?? " ").ToUpper().Contains(filtro.ToUpper())) ||
             (String.IsNullOrWhiteSpace(filtro) || (m.nossonumero ?? " ").ToUpper().Contains(filtro.ToUpper())))
+            && (idassinatura == "0" || m.idassinatura == idassinatura)
              && ((tipodata == 0 && m.datavencimento >= ini && m.datavencimento <= fim)
              || (tipodata == 1 && m.databaixa >= ini && m.databaixa <= fim))
-             && (status == 3 || (status == 1 && m.databaixa == null) || (status == 2 && m.databaixa != null))
-             && (idparceiro == "0" || m.assinatura.idparceiro == idparceiro)
-             && (forma == 3 || (int)m.idformapagto == forma)
-             && (idassinatura == "0" || m.idassinatura == idassinatura)
+                     && (status == 3 || (status == 0 && m.databaixa == null) || (status == 1 && m.databaixa != null) ||
+                     (status == 2 && m.idcaixa != null))
+                     && (idparceiro == "0" || m.assinatura.idparceiro == idparceiro)
+                        && (forma == 3 || (int)m.idformapagto == forma)
+
             )
                 .Select(c => new ListParcelaViewModel
                 {
@@ -247,7 +249,7 @@ namespace ADUSAPI.Services
                     descontos = c.descontos,
                     descontoantecipacao = c.descontoantecipacao,
                     descontoplataforma = c.descontoplataforma,
-                    comissao = c.comissao,
+                    comissao = (double)c.comissao,
                     numparcela = c.numparcela,
                     nossonumero = c.nossonumero,
                     databaixa = c.databaixa,
@@ -257,7 +259,8 @@ namespace ADUSAPI.Services
                     valorliquido = c.valorliquido,
                     nomeparceiro = c.assinatura.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
-                    valor = c.valor
+                    valor = c.valor,
+                    status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa"
                 }
                 ).ToList();
             return (contas);

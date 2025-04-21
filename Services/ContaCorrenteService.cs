@@ -88,14 +88,19 @@ namespace ADUSAPI.Services
 
         public async Task<IEnumerable<ContaCorrenteViewModel>> Listar(string? filtro, int? bancoId)
         {
+            var condicao = (ContaCorrente m) => (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()))
+            || (String.IsNullOrWhiteSpace(filtro) || m.ContaBanco.ToUpper().Contains(filtro.ToUpper()))
+            || (String.IsNullOrWhiteSpace(filtro) || m.Agencia.ToUpper().Contains(filtro.ToUpper()));
             var query = _context.contascorrentes.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(filtro))
-                query = query.Where(c => c.Descricao.Contains(filtro));
-
+            if (!string.IsNullOrWhiteSpace(filtro)) {
+                query = query.Where((ContaCorrente m) => (String.IsNullOrWhiteSpace(filtro) || m.Descricao.ToUpper().Contains(filtro.ToUpper()))
+                        || (String.IsNullOrWhiteSpace(filtro) || m.ContaBanco.ToUpper().Contains(filtro.ToUpper()))
+                        || (String.IsNullOrWhiteSpace(filtro) || m.Agencia.ToUpper().Contains(filtro.ToUpper())));
+            }
             if (bancoId.HasValue)
                 query = query.Where(c => c.BancoId == bancoId);
-
+            query = query.Include(c => c.Banco);
             return await query.Select(c => new ContaCorrenteViewModel
             {
                 Id = c.Id,
@@ -103,7 +108,8 @@ namespace ADUSAPI.Services
                 Agencia = c.Agencia,
                 ContaBanco = c.ContaBanco,
                 Titular = c.Titular,
-                BancoId = c.BancoId
+                BancoId = c.BancoId,
+                nomebanco = c.Banco.Descricao
             }).ToListAsync();
         }
     }

@@ -7,6 +7,7 @@ using ADUSAPI.Validators.Localidade;
 using ADUSAPI.Validators.Moeda;
 using ADUSAPI.Validators.Parceiro;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,6 +45,10 @@ builder.Services.AddTransient<LocalidadeService>();
 builder.Services.AddTransient<BancoValidator>();
 builder.Services.AddTransient<ExcluirBancoValidator>();
 builder.Services.AddTransient<BancoService>();
+builder.Services.AddTransient<PlanoContaService>();
+builder.Services.AddTransient<TransacaoService>();
+builder.Services.AddTransient<CentroCustoService>();
+builder.Services.AddTransient<MovimentoCaixaService>();
 
 builder.Services.AddTransient<ContaCorrenteValidator>();
 //builder.Services.AddTransient<ExcluirContaCorrenteValidator>();

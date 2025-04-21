@@ -37,6 +37,7 @@ namespace ADUSAPI.EntityConfigurations
             builder.HasOne(x => x.Representante).WithMany(x => x.empresas).HasForeignKey(x => x.IdRepresentante).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.cidade).WithMany(x => x.parceiros).HasForeignKey(x => x.Cidade).OnDelete(DeleteBehavior.NoAction); ;
             builder.HasOne(x => x.uf).WithMany(x => x.Parceiros).HasForeignKey(x => x.UF).OnDelete(DeleteBehavior.NoAction); ;
+            builder.HasMany(tc => tc.movimentoCaixas).WithOne(builder => builder.parceiro).HasForeignKey(m => m.idparceiro).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

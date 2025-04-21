@@ -1,4 +1,5 @@
-﻿using ADUSAPI.Entities;
+﻿using ADUSAPI.Configurations;
+using ADUSAPI.Entities;
 using ADUSAPI.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,11 @@ namespace ADUSAPI.Context
         public DbSet<UF> ufs => Set<UF>();
         public DbSet<Municipio> municipios => Set<Municipio>();
         public DbSet<Parceiro> parceiros => Set<Parceiro>();
+
+        public DbSet<Transacao> transacoes => Set<Transacao>();
         public DbSet<Assinatura> assinaturas => Set<Assinatura>();
+
+        public DbSet<PlanoConta> PlanoContas => Set<PlanoConta>();
         public DbSet<Moeda> moedas => Set<Moeda>();
         public DbSet<Banco> bancos => Set<Banco>();
         public DbSet<ContaCorrente> contascorrentes => Set<ContaCorrente>();
@@ -25,6 +30,10 @@ namespace ADUSAPI.Context
 
         public DbSet<ParametrosGuru> parametrosguru => Set<ParametrosGuru>();
         public DbSet<Parcela> parcelas => Set<Parcela>();
+
+        public DbSet<MovimentoCaixa> movimentoCaixas => Set<MovimentoCaixa>();
+
+        public DbSet<CentroCusto> centroCustos => Set<CentroCusto>();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
@@ -43,6 +52,10 @@ namespace ADUSAPI.Context
             modelBuilder.ApplyConfiguration(new ParcelaConfiguration());
             modelBuilder.ApplyConfiguration(new BancoConfiguration());
             modelBuilder.ApplyConfiguration(new ContaCorrenteConfiguration());
+            modelBuilder.ApplyConfiguration(new PlanoContaConfiguration());
+            modelBuilder.ApplyConfiguration(new TransacaoConfiguration());
+            modelBuilder.ApplyConfiguration(new CentroCustoConfiguration());
+            modelBuilder.ApplyConfiguration(new MovimentoCaixaConfiguration());
         }
     }
 }

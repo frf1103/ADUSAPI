@@ -42,5 +42,7 @@ namespace ADUSAPI.Entities
         public string? observacao { get; set; }
         public int Sexo { get; set; }
         public ICollection<Assinatura>? assinaturas { get; set; }
+
+        public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
     }
 }

@@ -15,5 +15,7 @@
         public int BancoId { get; set; }
 
         public Banco Banco { get; set; } = null!;
+
+        public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
     }
 }

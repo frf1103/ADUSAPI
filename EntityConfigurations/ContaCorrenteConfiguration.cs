@@ -36,6 +36,8 @@ namespace ADUSAPI.EntityConfigurations
                 .WithMany(b => b.ContasCorrentes)
                 .HasForeignKey(cc => cc.BancoId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder.HasMany(tc => tc.movimentoCaixas).WithOne(builder => builder.ContaCorrente).HasForeignKey(m => m.IdContaCorrente).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

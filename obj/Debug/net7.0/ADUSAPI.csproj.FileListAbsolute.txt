@@ -1,10 +1,3 @@
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.csproj.AssemblyReference.cache
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.AssemblyInfoInputs.cache
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.AssemblyInfo.cs
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.csproj.CoreCompileInputs.cache
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.MvcApplicationPartsAssemblyInfo.cs
-C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\appsettings.Development.json
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\appsettings.json
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\estados.json
@@ -68,6 +61,13 @@ C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\ADUSAPICore.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\FBSLIb.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\FBSLIb.pdb
 C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\ADUSAPICore.pdb
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.AssemblyInfoInputs.cache
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.AssemblyInfo.cs
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.MvcApplicationPartsAssemblyInfo.cache
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\staticwebassets\msbuild.ADUSAPI.Microsoft.AspNetCore.StaticWebAssets.props
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\staticwebassets\msbuild.build.ADUSAPI.props
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\staticwebassets\msbuild.buildMultiTargeting.ADUSAPI.props
