@@ -12,5 +12,6 @@ namespace ADUSAPI.Entities
 
         public TipoContra Contrapartida { get; set; }
         public ICollection<MovimentoCaixa>? movs { get; set; }
+        public ICollection<ParametrosGuru>? parametros { get; set; }
     }
 }

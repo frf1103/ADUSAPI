@@ -17,7 +17,7 @@ namespace ADUSAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult>? EditarParametroGuru(int id, ParametrosGuruViewModel dados)
+        public async Task<IActionResult>? EditarParametroGuru(int id, [FromBody] ParametrosGuruViewModel dados)
         {
             var ParametroGuru = await _ParametroGuruservice.SalvarParametrosGuru(id, dados);
             return Ok(ParametroGuru);

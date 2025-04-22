@@ -45,8 +45,8 @@ namespace ADUSAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Adicionar([FromBody] MovimentoCaixaViewModel model)
         {
-            await _service.AdicionarAsync(model);
-            return CreatedAtAction(nameof(Obter), new { id = model.Id }, model);
+            var movc=await _service.AdicionarAsync(model);
+            return Ok(movc);
         }
 
         [HttpPut("{id}")]

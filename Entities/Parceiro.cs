@@ -44,5 +44,7 @@ namespace ADUSAPI.Entities
         public ICollection<Assinatura>? assinaturas { get; set; }
 
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
+
+        public ICollection<ParametrosGuru>? parametros { get; set; }
     }
 }

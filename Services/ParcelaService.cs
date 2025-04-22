@@ -195,7 +195,7 @@ namespace ADUSAPI.Services
         public async Task<ParcelaViewModel>? ListarParcelaByIdCheckout(string id)
         {
             var conta = _context.parcelas
-            .Where(p => p.idcheckout == id).FirstOrDefault();
+            .Where(p => p.nossonumero == id).FirstOrDefault();
             if (conta != null)
             {
                 return new ParcelaViewModel

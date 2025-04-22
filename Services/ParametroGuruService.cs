@@ -26,6 +26,11 @@ namespace ADUSAPI.Services
                 conta.token = dados.token;
                 conta.urlsub = dados.urlsub;
                 conta.urltransac = dados.urltransac;
+                conta.idcategoria = dados.idcategoria;
+                conta.idccusto = dados.idccusto;
+                conta.idconta = dados.idconta;
+                conta.idparceiro = dados.idparceiro;
+                conta.idtransacao = dados.idtransacao;
                 _context.Update(conta);
                 await _context.SaveChangesAsync();
                 return new ParametrosGuruViewModel
@@ -34,7 +39,13 @@ namespace ADUSAPI.Services
                     ultdata = conta.ultdata,
                     urltransac = conta.urltransac,
                     urlsub = conta.urlsub,
-                    token = conta.token
+                    token = conta.token,
+                    idparceiro=conta.idparceiro,
+                    idconta=conta.idconta,
+                    idccusto=conta.idccusto,
+                    idtransacao=conta.idtransacao,
+                    idcategoria=conta.idcategoria
+                    
                 };
             }
             else return null;
@@ -52,7 +63,13 @@ namespace ADUSAPI.Services
                     ultdata = conta.ultdata,
                     urltransac = conta.urltransac,
                     urlsub = conta.urlsub,
-                    token = conta.token
+                    token = conta.token,
+                    idparceiro = conta.idparceiro,
+                    idconta = conta.idconta,
+                    idccusto = conta.idccusto,
+                    idtransacao = conta.idtransacao,
+                    idcategoria = conta.idcategoria
+
                 };
             }
             else return null;

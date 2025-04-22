@@ -103,7 +103,7 @@ public class MovimentoCaixaService
             .FirstOrDefaultAsync();
     }
 
-    public async Task AdicionarAsync(MovimentoCaixaViewModel entidade)
+    public async Task<MovimentoCaixaViewModel> AdicionarAsync(MovimentoCaixaViewModel entidade)
     {
         MovimentoCaixa mc = new MovimentoCaixa
         {
@@ -119,6 +119,19 @@ public class MovimentoCaixaService
         };
         _context.movimentoCaixas.Add(mc);
         await _context.SaveChangesAsync();
+        return new MovimentoCaixaViewModel
+        {
+            Id = mc.Id,
+            IdContaCorrente = mc.IdContaCorrente,
+            DataMov = mc.DataMov,
+            IdCategoria = mc.IdCategoria,
+            IdCentroCusto = mc.IdCentroCusto,
+            idparceiro = mc.idparceiro,
+            IdTransacao = mc.IdTransacao,
+            Valor = mc.Valor,
+            Observacao = mc.Observacao,
+            Sinal = mc.Sinal
+        };
     }
 
     public async Task AtualizarAsync(MovimentoCaixaViewModel entidade)

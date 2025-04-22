@@ -10,5 +10,7 @@ namespace ADUSAPI.Entities
         public string Descricao { get; set; }
 
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
+
+        public ICollection<ParametrosGuru>? parametros { get; set; }
     }
 }

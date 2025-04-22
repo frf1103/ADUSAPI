@@ -17,5 +17,6 @@
         public Banco Banco { get; set; } = null!;
 
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
+        public ICollection<ParametrosGuru>? parametros { get; set; }
     }
 }
