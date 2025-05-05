@@ -26,5 +26,6 @@ namespace ADUSAPI.Entities
         public virtual ContaCorrente ContaCorrente { get; set; }
         public virtual PlanoConta Categoria { get; set; }
         public virtual Parceiro parceiro { get; set; }
+        public string? idmovbanco { get; set; }
     }
 }

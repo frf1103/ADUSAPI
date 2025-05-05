@@ -2,226 +2,172 @@
 using ADUSAPI.Entities;
 using ADUSAPICore.Models.Enum;
 using ADUSAPICore.Models.Parcela;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace ADUSAPI.Services
 {
     public class ParcelaService
     {
         private readonly ADUSContext _context;
-        //   private readonly ParcelaValidator _adicionarParcelaValidator;
-        // private readonly ExcluirParcelaValidator _excluirParcelaValidator;
+        private readonly ILogger<ParcelaService> _logger;
 
-        public ParcelaService(ADUSContext context)
-        //, ParcelaValidator adicionarParcelaValidator)
-        //, ExcluirParcelaValidator excluirParcelaValidator)
+        public ParcelaService(ADUSContext context, ILogger<ParcelaService> logger)
         {
             _context = context;
-            //_adicionarParcelaValidator = adicionarParcelaValidator;
-            //_excluirParcelaValidator = excluirParcelaValidator;
+            _logger = logger;
         }
 
         public async Task<ParcelaViewModel> AdicionarParcela(ParcelaViewModel dados)
         {
-            //_adicionarParcelaValidator.ValidateAndThrow(dados);
-            var conta = new Parcela();
-            conta.id = dados.id;
-            conta.idcheckout = dados.idcheckout;
-            conta.idcaixa = dados.idcaixa;
-            conta.idformapagto = dados.idformapagto;
-            conta.comissao = dados.comissao;
-            conta.databaixa = dados.databaixa;
-            conta.datavencimento = dados.datavencimento;
-            conta.descontoantecipacao = dados.descontoantecipacao;
-            conta.descontoplataforma = dados.descontoplataforma;
-            conta.idassinatura = dados.idassinatura;
-            conta.nossonumero = dados.nossonumero;
-            conta.numparcela = dados.numparcela;
-            conta.plataforma = dados.plataforma;
-            conta.valorliquido = dados.valorliquido;
-            conta.observacao = dados.observacao;
-            conta.acrescimos = dados.acrescimos;
-            conta.descontos = dados.descontos;
-            conta.valor = dados.valor;
-
-            conta.datains = DateTime.Now;
-            await _context.AddAsync(conta);
-            await _context.SaveChangesAsync();
-            return new ParcelaViewModel
+            var parcela = new Parcela
             {
-                id = conta.id,
-                idassinatura = conta.idassinatura,
-                idcheckout = conta.idcheckout,
-                idcaixa = conta.idcaixa,
-                idformapagto = conta.idformapagto,
-                acrescimos = conta.acrescimos,
-                descontos = conta.descontos,
-                descontoantecipacao = conta.descontoantecipacao,
-                descontoplataforma = conta.descontoplataforma,
-                comissao = (double)conta.comissao,
-                numparcela = conta.numparcela,
-                nossonumero = conta.nossonumero,
-                databaixa = conta.databaixa,
-                datavencimento = conta.datavencimento,
-                observacao = conta.observacao,
-                plataforma = conta.plataforma,
-                valorliquido = conta.valorliquido
+                id = dados.id,
+                idcheckout = dados.idcheckout,
+                idcaixa = dados.idcaixa,
+                idformapagto = dados.idformapagto,
+                comissao = dados.comissao,
+                databaixa = dados.databaixa,
+                datavencimento = dados.datavencimento,
+                descontoantecipacao = dados.descontoantecipacao,
+                descontoplataforma = dados.descontoplataforma,
+                idassinatura = dados.idassinatura,
+                nossonumero = dados.nossonumero,
+                numparcela = dados.numparcela,
+                plataforma = dados.plataforma,
+                valorliquido = dados.valorliquido,
+                observacao = dados.observacao,
+                acrescimos = dados.acrescimos,
+                descontos = dados.descontos,
+                valor = dados.valor,
+                datains = DateTime.Now
             };
-        }
 
-        public async Task<ParcelaViewModel>? SalvarParcela(string id, ParcelaViewModel dados)
-        {
-            //_adicionarParcelaValidator.ValidateAndThrow(dados);
-            var conta = _context.parcelas.Where(p => p.id == id).FirstOrDefault();
-            if (conta != null)
+            try
             {
-                conta.id = dados.id;
-                conta.idcheckout = dados.idcheckout;
-                conta.idcaixa = dados.idcaixa;
-                conta.idformapagto = dados.idformapagto;
-                conta.comissao = dados.comissao;
-                conta.databaixa = dados.databaixa;
-                conta.datavencimento = dados.datavencimento;
-                conta.descontoantecipacao = dados.descontoantecipacao;
-                conta.descontoplataforma = dados.descontoplataforma;
-                conta.idassinatura = dados.idassinatura;
-                conta.nossonumero = dados.nossonumero;
-                conta.numparcela = dados.numparcela;
-                conta.plataforma = dados.plataforma;
-                conta.valorliquido = dados.valorliquido;
-                conta.observacao = dados.observacao;
-                conta.acrescimos = dados.acrescimos;
-                conta.descontos = dados.descontos;
-                conta.valor = dados.valor;
-                conta.dataup = DateTime.Now;
-
-                _context.Update(conta);
+                await _context.AddAsync(parcela);
                 await _context.SaveChangesAsync();
-                return new ParcelaViewModel
-                {
-                    id = conta.id,
-                    idassinatura = conta.idassinatura,
-                    idcheckout = conta.idcheckout,
-                    idcaixa = conta.idcaixa,
-                    idformapagto = conta.idformapagto,
-                    acrescimos = conta.acrescimos,
-                    descontos = conta.descontos,
-                    descontoantecipacao = conta.descontoantecipacao,
-                    descontoplataforma = conta.descontoplataforma,
-                    comissao = (double)conta.comissao,
-                    numparcela = conta.numparcela,
-                    nossonumero = conta.nossonumero,
-                    databaixa = conta.databaixa,
-                    datavencimento = conta.datavencimento,
-                    observacao = conta.observacao,
-                    plataforma = conta.plataforma,
-                    valorliquido = conta.valorliquido,
-                    valor = conta.valor
-                };
+                return MapToViewModel(parcela);
             }
-            else return null;
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogError(dbEx, "Erro ao adicionar parcela. Verifique as FKs: idassinatura={idassinatura}, idcaixa={idcaixa}",
+                    parcela.idassinatura, parcela.idcaixa);
+
+                throw new Exception("Erro ao salvar parcela. Verifique as dependências relacionadas (FKs).");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao adicionar parcela.");
+                throw;
+            }
         }
 
-        public async Task<ParcelaViewModel>? ExcluirParcela(string id)
+        public async Task<ParcelaViewModel?> SalvarParcela(string id, ParcelaViewModel dados)
         {
-            var conta = _context.parcelas.Where(p => p.id == id).FirstOrDefault();
-            if (conta != null)
+            var parcela = await _context.parcelas.FirstOrDefaultAsync(p => p.id == id);
+            if (parcela == null)
             {
-                ParcelaViewModel dados = new ParcelaViewModel
-                {
-                    id = conta.id,
-                };
-                //  _excluirParcelaValidator.ValidateAndThrow(dados);
-                _context.parcelas.Remove(conta);
+                _logger.LogWarning("Parcela com ID {id} não encontrada para edição.", id);
+                return null;
+            }
+
+            try
+            {
+                parcela.idcheckout = dados.idcheckout;
+                parcela.idcaixa = dados.idcaixa;
+                parcela.idformapagto = dados.idformapagto;
+                parcela.comissao = dados.comissao;
+                parcela.databaixa = dados.databaixa;
+                parcela.datavencimento = dados.datavencimento;
+                parcela.descontoantecipacao = dados.descontoantecipacao;
+                parcela.descontoplataforma = dados.descontoplataforma;
+                parcela.idassinatura = dados.idassinatura;
+                parcela.nossonumero = dados.nossonumero;
+                parcela.numparcela = dados.numparcela;
+                parcela.plataforma = dados.plataforma;
+                parcela.valorliquido = dados.valorliquido;
+                parcela.observacao = dados.observacao;
+                parcela.acrescimos = dados.acrescimos;
+                parcela.descontos = dados.descontos;
+                parcela.valor = dados.valor;
+                parcela.dataup = DateTime.Now;
+                parcela.dataestimadapagto = dados.dataestimadapagto;
+
+                _context.Update(parcela);
                 await _context.SaveChangesAsync();
-                return new ParcelaViewModel
-                {
-                    id = conta.id,
-                    idassinatura = conta.idassinatura,
-                    idcheckout = conta.idcheckout,
-                    idcaixa = conta.idcaixa,
-                    idformapagto = conta.idformapagto,
-                    acrescimos = conta.acrescimos,
-                    descontos = conta.descontos,
-                    descontoantecipacao = conta.descontoantecipacao,
-                    descontoplataforma = conta.descontoplataforma,
-                    comissao = (double)conta.comissao,
-                    numparcela = conta.numparcela,
-                    nossonumero = conta.nossonumero,
-                    databaixa = conta.databaixa,
-                    datavencimento = conta.datavencimento,
-                    observacao = conta.observacao,
-                    plataforma = conta.plataforma,
-                    valorliquido = conta.valorliquido,
-                    valor = conta.valor
-                };
+                return MapToViewModel(parcela);
             }
-            else return null;
+            catch (DbUpdateException dbEx)
+            {
+                _logger.LogError(dbEx, "Erro ao editar parcela com ID {id}.", id);
+                throw;
+            }
         }
 
-        public async Task<ParcelaViewModel>? ListarParcelaById(string id)
+        public async Task<ParcelaViewModel?> ExcluirParcela(string id)
         {
-            var conta = _context.parcelas
-            .Where(p => p.id == id).FirstOrDefault();
-            if (conta != null)
+            var parcela = await _context.parcelas.FirstOrDefaultAsync(p => p.id == id);
+            if (parcela == null)
             {
-                return new ParcelaViewModel
-                {
-                    id = conta.id,
-                    idassinatura = conta.idassinatura,
-                    idcheckout = conta.idcheckout,
-                    idcaixa = conta.idcaixa,
-                    idformapagto = conta.idformapagto,
-                    acrescimos = conta.acrescimos,
-                    descontos = conta.descontos,
-                    descontoantecipacao = conta.descontoantecipacao,
-                    descontoplataforma = conta.descontoplataforma,
-                    comissao = (double)conta.comissao,
-                    numparcela = conta.numparcela,
-                    nossonumero = conta.nossonumero,
-                    databaixa = conta.databaixa,
-                    datavencimento = conta.datavencimento,
-                    observacao = conta.observacao,
-                    plataforma = conta.plataforma,
-                    valorliquido = conta.valorliquido,
-                    valor = conta.valor
-                };
+                _logger.LogWarning("Tentativa de exclusão de parcela não encontrada. ID: {id}", id);
+                return null;
             }
-            else return null;
+
+            try
+            {
+                _context.parcelas.Remove(parcela);
+                await _context.SaveChangesAsync();
+                return MapToViewModel(parcela);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao excluir parcela ID {id}.", id);
+                throw;
+            }
         }
 
-        public async Task<ParcelaViewModel>? ListarParcelaByIdCheckout(string id)
+        public async Task<ParcelaViewModel?> ListarParcelaById(string id)
         {
-            var conta = _context.parcelas
-            .Where(p => p.nossonumero == id).FirstOrDefault();
-            if (conta != null)
-            {
-                return new ParcelaViewModel
-                {
-                    id = conta.id,
-                    idassinatura = conta.idassinatura,
-                    idcheckout = conta.idcheckout,
-                    idcaixa = conta.idcaixa,
-                    idformapagto = conta.idformapagto,
-                    acrescimos = conta.acrescimos,
-                    descontos = conta.descontos,
-                    descontoantecipacao = conta.descontoantecipacao,
-                    descontoplataforma = conta.descontoplataforma,
-                    comissao = (double)conta.comissao,
-                    numparcela = conta.numparcela,
-                    nossonumero = conta.nossonumero,
-                    databaixa = conta.databaixa,
-                    datavencimento = conta.datavencimento,
-                    observacao = conta.observacao,
-                    plataforma = conta.plataforma,
-                    valorliquido = conta.valorliquido,
-                    valor = conta.valor
-                };
-            }
-            else return null;
+            var parcela = await _context.parcelas.Include(p => p.assinatura).FirstOrDefaultAsync(p => p.id == id);
+            return parcela != null ? MapToViewModel(parcela) : null;
         }
+
+        public async Task<ParcelaViewModel?> ListarParcelaByAssinatura(string idassinatura, int? numeroparcela = 0)
+        {
+            var parcela = await _context.parcelas.FirstOrDefaultAsync(p => p.idassinatura == idassinatura && (numeroparcela == 0 || p.numparcela == numeroparcela));
+            return parcela != null ? MapToViewModel(parcela) : null;
+        }
+
+        public async Task<ParcelaViewModel?> ListarParcelaByIdCheckout(string id)
+        {
+            var parcela = await _context.parcelas.Include(p => p.assinatura).FirstOrDefaultAsync(p => p.nossonumero == id);
+            return parcela != null ? MapToViewModel(parcela) : null;
+        }
+
+        private ParcelaViewModel MapToViewModel(Parcela parcela) => new()
+        {
+            id = parcela.id,
+            idassinatura = parcela.idassinatura,
+            idcheckout = parcela.idcheckout,
+            idcaixa = parcela.idcaixa,
+            idformapagto = parcela.idformapagto,
+            acrescimos = parcela.acrescimos,
+            descontos = parcela.descontos,
+            descontoantecipacao = parcela.descontoantecipacao,
+            descontoplataforma = parcela.descontoplataforma,
+            comissao = parcela.comissao,
+            numparcela = parcela.numparcela,
+            nossonumero = parcela.nossonumero,
+            databaixa = parcela.databaixa,
+            datavencimento = parcela.datavencimento,
+            observacao = parcela.observacao,
+            plataforma = parcela.plataforma,
+            valorliquido = parcela.valorliquido,
+            valor = parcela.valor,
+            idparceiro = (parcela.assinatura != null) ? parcela.assinatura.idparceiro : null,
+            dataestimadapagto = parcela.dataestimadapagto
+        };
 
         public async Task<IEnumerable<ListParcelaViewModel>> ListarParcela(DateTime ini, DateTime fim, int tipodata, string idparceiro, int forma, string? filtro, int status, string idassinatura)
         {
@@ -249,7 +195,7 @@ namespace ADUSAPI.Services
                     descontos = c.descontos,
                     descontoantecipacao = c.descontoantecipacao,
                     descontoplataforma = c.descontoplataforma,
-                    comissao = (double)c.comissao,
+                    comissao = c.comissao,
                     numparcela = c.numparcela,
                     nossonumero = c.nossonumero,
                     databaixa = c.databaixa,
@@ -260,10 +206,53 @@ namespace ADUSAPI.Services
                     nomeparceiro = c.assinatura.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
                     valor = c.valor,
-                    status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa"
+                    status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
+                    dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto
                 }
                 ).ToList();
             return (contas);
+        }
+
+        public async Task<IEnumerable<visaogeralviewmodel>> visaogeralcarteira(DateTime ini, DateTime fim, string idparceiro)
+        {
+            var hoje = DateTime.Today;
+
+            var query = _context.parcelas
+                .Include(p => p.assinatura)
+                    .ThenInclude(a => a.parceiro)
+                .Where(p =>
+                    p.datavencimento >= ini &&
+                    p.datavencimento <= fim &&
+                    (idparceiro == "0" || p.assinatura.idparceiro.ToString() == idparceiro)
+                )
+                .GroupBy(p => new
+                {
+                    p.assinatura.parceiro.uid,
+                    p.assinatura.parceiro.RazaoSocial,
+                    p.idformapagto,  // sem .ToString()
+                    p.plataforma     // sem .ToString()
+                })
+                .Select(g => new visaogeralviewmodel
+                {
+                    idParceiro = g.Key.uid,
+                    nomeParceiro = g.Key.RazaoSocial,
+                    formaPagamento = g.Key.idformapagto.ToString(),
+                    plataForma = g.Key.plataforma,
+                    valorLiquido = g.Sum(p => p.valorliquido),
+                    valorPago = g.Where(p => p.databaixa != null).Sum(p => p.valor),
+                    valorVencidas = g.Where(p => p.databaixa == null && p.datavencimento < hoje).Sum(p => p.valor),
+                    valorAVencer = g.Where(p => p.databaixa == null && p.datavencimento >= hoje).Sum(p => p.valor),
+                    comissaoPaga = g.Where(p => p.idcaixa != null).Sum(p => p.comissao),
+                    taxaAntecipacao = g.Sum(p => p.descontoantecipacao),
+                    taxaPlataforma = g.Sum(p => p.descontoplataforma),
+                    valorRecebido = g.Where(p => p.idcaixa != null).Sum(p => p.valorliquido),
+                    valortotal = g.Sum(p => p.valor),
+                    arvores = (int)g.Sum(p => p.valor) / 47 / 84,
+                    acompensar = g.Where(p => p.idcaixa == null && p.databaixa != null).Sum(p => p.valor)
+                })
+                .ToList();
+
+            return (query);
         }
     }
 }

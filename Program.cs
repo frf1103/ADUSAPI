@@ -49,6 +49,7 @@ builder.Services.AddTransient<PlanoContaService>();
 builder.Services.AddTransient<TransacaoService>();
 builder.Services.AddTransient<CentroCustoService>();
 builder.Services.AddTransient<MovimentoCaixaService>();
+builder.Services.AddTransient<TransacBancoService>();
 
 builder.Services.AddTransient<ContaCorrenteValidator>();
 //builder.Services.AddTransient<ExcluirContaCorrenteValidator>();

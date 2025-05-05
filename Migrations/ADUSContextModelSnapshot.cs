@@ -80,6 +80,10 @@ namespace ADUSAPI.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("plataforma")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<double>("preco")
                         .HasPrecision(18, 2)
                         .HasColumnType("float(18)");
@@ -256,6 +260,10 @@ namespace ADUSAPI.Migrations
                     b.Property<decimal>("Valor")
                         .HasColumnType("numeric(18,2)");
 
+                    b.Property<string>("idmovbanco")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
                     b.Property<string>("idparceiro")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -400,9 +408,6 @@ namespace ADUSAPI.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("nvarchar(8)");
 
-                    b.Property<int>("Cidade")
-                        .HasColumnType("int");
-
                     b.Property<string>("Complemento")
                         .HasColumnType("nvarchar(max)");
 
@@ -455,9 +460,6 @@ namespace ADUSAPI.Migrations
                     b.Property<int>("TipodePessoa")
                         .HasColumnType("int");
 
-                    b.Property<int>("UF")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("datains")
                         .HasColumnType("datetime2");
 
@@ -467,16 +469,22 @@ namespace ADUSAPI.Migrations
                     b.Property<string>("email")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("idCidade")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idUF")
+                        .HasColumnType("int");
+
                     b.Property<string>("observacao")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("uid");
 
-                    b.HasIndex("Cidade");
-
                     b.HasIndex("IdRepresentante");
 
-                    b.HasIndex("UF");
+                    b.HasIndex("idCidade");
+
+                    b.HasIndex("idUF");
 
                     b.ToTable("Parceiros", (string)null);
                 });
@@ -487,15 +495,18 @@ namespace ADUSAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<double>("acrescimos")
+                    b.Property<decimal>("acrescimos")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
-                    b.Property<double>("comissao")
+                    b.Property<decimal>("comissao")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<DateTime?>("databaixa")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("dataestimadapagto")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("datains")
@@ -507,17 +518,17 @@ namespace ADUSAPI.Migrations
                     b.Property<DateTime>("datavencimento")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("descontoantecipacao")
+                    b.Property<decimal>("descontoantecipacao")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
-                    b.Property<double>("descontoplataforma")
+                    b.Property<decimal>("descontoplataforma")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
-                    b.Property<double>("descontos")
+                    b.Property<decimal>("descontos")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.Property<string>("idassinatura")
                         .IsRequired()
@@ -549,13 +560,13 @@ namespace ADUSAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("valor")
+                    b.Property<decimal>("valor")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
-                    b.Property<double>("valorliquido")
+                    b.Property<decimal>("valorliquido")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("numeric(18,2)");
 
                     b.HasKey("id");
 
@@ -590,6 +601,37 @@ namespace ADUSAPI.Migrations
                     b.HasIndex("IdMae");
 
                     b.ToTable("PlanoConta", (string)null);
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.TransacBanco", b =>
+                {
+                    b.Property<string>("idtransacbanco")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<int>("idbanco")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idcategoria")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idcentrocusto")
+                        .HasColumnType("int");
+
+                    b.Property<int>("idtransacao")
+                        .HasColumnType("int");
+
+                    b.HasKey("idtransacbanco", "idbanco");
+
+                    b.HasIndex("idbanco");
+
+                    b.HasIndex("idcategoria");
+
+                    b.HasIndex("idcentrocusto");
+
+                    b.HasIndex("idtransacao");
+
+                    b.ToTable("TransacBanco", (string)null);
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.Transacao", b =>
@@ -773,20 +815,20 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Parceiro", b =>
                 {
-                    b.HasOne("ADUSAPI.Entities.Municipio", "cidade")
-                        .WithMany("parceiros")
-                        .HasForeignKey("Cidade")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("ADUSAPI.Entities.Parceiro", "Representante")
                         .WithMany("empresas")
                         .HasForeignKey("IdRepresentante")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("ADUSAPI.Entities.Municipio", "cidade")
+                        .WithMany("parceiros")
+                        .HasForeignKey("idCidade")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("ADUSAPI.Entities.UF", "uf")
                         .WithMany("Parceiros")
-                        .HasForeignKey("UF")
+                        .HasForeignKey("idUF")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
@@ -818,6 +860,40 @@ namespace ADUSAPI.Migrations
                     b.Navigation("Mae");
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.TransacBanco", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Banco", "banco")
+                        .WithMany("transacs")
+                        .HasForeignKey("idbanco")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ADUSAPI.Entities.PlanoConta", "planoConta")
+                        .WithMany("transacs")
+                        .HasForeignKey("idcategoria")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ADUSAPI.Entities.CentroCusto", "centroCusto")
+                        .WithMany("transacs")
+                        .HasForeignKey("idcentrocusto")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ADUSAPI.Entities.Transacao", "transacao")
+                        .WithMany("transacs")
+                        .HasForeignKey("idtransacao")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("banco");
+
+                    b.Navigation("centroCusto");
+
+                    b.Navigation("planoConta");
+
+                    b.Navigation("transacao");
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
                     b.Navigation("parcelas");
@@ -826,6 +902,8 @@ namespace ADUSAPI.Migrations
             modelBuilder.Entity("ADUSAPI.Entities.Banco", b =>
                 {
                     b.Navigation("ContasCorrentes");
+
+                    b.Navigation("transacs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.CentroCusto", b =>
@@ -833,6 +911,8 @@ namespace ADUSAPI.Migrations
                     b.Navigation("movimentoCaixas");
 
                     b.Navigation("parametros");
+
+                    b.Navigation("transacs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.ContaCorrente", b =>
@@ -870,6 +950,8 @@ namespace ADUSAPI.Migrations
                     b.Navigation("movimentoCaixas");
 
                     b.Navigation("parametros");
+
+                    b.Navigation("transacs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.Transacao", b =>
@@ -877,6 +959,8 @@ namespace ADUSAPI.Migrations
                     b.Navigation("movs");
 
                     b.Navigation("parametros");
+
+                    b.Navigation("transacs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.UF", b =>

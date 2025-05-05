@@ -1,7 +1,8 @@
 ﻿using ADUSAPI.Context;
 using ADUSAPI.Entities;
-using ADUSAPICore.Models;
-using ADUSClient.MovimentoCaixa;
+
+using ADUSAPICore.Models.MovimentoCaixa;
+
 using Microsoft.EntityFrameworkCore;
 
 public class MovimentoCaixaService
@@ -21,7 +22,8 @@ public class MovimentoCaixaService
         string? idParceiro = null,
         string? idContaCorrente = null,
         int? idCategoria = null,
-        string? descricao = null)
+        string? descricao = null,
+        string? idmovbanco = null)
     {
         var query = _context.movimentoCaixas
             .Include(m => m.Transacao)
@@ -52,7 +54,10 @@ public class MovimentoCaixaService
             query = query.Where(m => m.IdCategoria == idCategoria.Value);
 
         if (!string.IsNullOrWhiteSpace(descricao))
-            query = query.Where(m => m.Observacao.Contains(descricao));
+            query = query.Where(m => m.Observacao.Contains(descricao) || m.idmovbanco.Contains(descricao));
+
+        if (!string.IsNullOrWhiteSpace(idmovbanco))
+            query = query.Where(m => m.idmovbanco == idmovbanco);
 
         return await query
             .OrderByDescending(m => m.DataMov)
@@ -72,7 +77,8 @@ public class MovimentoCaixaService
                 DescContaCorrente = m.ContaCorrente.Descricao,
                 DescCategoria = m.Categoria.Descricao,
                 idparceiro = m.idparceiro,
-                nomeparceiro = m.parceiro.RazaoSocial
+                nomeparceiro = m.parceiro.RazaoSocial,
+                idmovbanco = m.idmovbanco
             }).ToListAsync();
     }
 
@@ -83,6 +89,7 @@ public class MovimentoCaixaService
             .Include(m => m.CentroCusto)
             .Include(m => m.ContaCorrente)
             .Include(m => m.Categoria)
+            .Include(m => m.parceiro)
             .Where(m => m.Id == id)
             .Select(m => new MovimentoCaixaViewModel
             {
@@ -98,7 +105,10 @@ public class MovimentoCaixaService
                 DescTransacao = m.Transacao.Descricao,
                 DescCentroCusto = m.CentroCusto.Descricao,
                 DescContaCorrente = m.ContaCorrente.Descricao,
-                DescCategoria = m.Categoria.Descricao
+                DescCategoria = m.Categoria.Descricao,
+                idparceiro = m.idparceiro,
+                nomeparceiro = m.parceiro.RazaoSocial,
+                idmovbanco = m.idmovbanco
             })
             .FirstOrDefaultAsync();
     }
@@ -115,7 +125,8 @@ public class MovimentoCaixaService
             IdTransacao = entidade.IdTransacao,
             Valor = entidade.Valor,
             Observacao = entidade.Observacao,
-            Sinal = entidade.Sinal
+            Sinal = entidade.Sinal,
+            idmovbanco = entidade.idmovbanco
         };
         _context.movimentoCaixas.Add(mc);
         await _context.SaveChangesAsync();
@@ -130,7 +141,8 @@ public class MovimentoCaixaService
             IdTransacao = mc.IdTransacao,
             Valor = mc.Valor,
             Observacao = mc.Observacao,
-            Sinal = mc.Sinal
+            Sinal = mc.Sinal,
+            idmovbanco = mc.idmovbanco
         };
     }
 
@@ -148,6 +160,7 @@ public class MovimentoCaixaService
             mc.Valor = entidade.Valor;
             mc.IdCategoria = entidade.IdCategoria;
             mc.IdTransacao = entidade.IdTransacao;
+            mc.idmovbanco = entidade.idmovbanco;
             _context.movimentoCaixas.Update(mc);
             await _context.SaveChangesAsync();
         }
@@ -161,5 +174,61 @@ public class MovimentoCaixaService
             _context.movimentoCaixas.Remove(entidade);
             await _context.SaveChangesAsync();
         }
+    }
+
+    public async Task<IEnumerable<ExtratoConta>> ExtratoConta(DateTime ini, DateTime fim, string idconta)
+    {
+        var hoje = DateTime.Today;
+        var saldoAnterior = _context.movimentoCaixas
+     .Where(m => m.IdContaCorrente == idconta && m.DataMov < ini)
+     .Sum(m => m.Sinal == "C" ? m.Valor : -1 * m.Valor);
+
+        var resultado = new ExtratoConta
+        {
+            datamov = ini.AddDays(-1),
+            saldo = saldoAnterior,
+            debito = null,
+            credito = null,
+            historico = "SALDO ANTERIOR",
+            sinal = "C",
+            tipo = "0",
+            valor = 0
+        };
+        var query = _context.movimentoCaixas.Where(m => m.IdContaCorrente == idconta && m.DataMov >= ini && m.DataMov <= fim)
+            .Include(m => m.Transacao)
+            .Select(e => new ExtratoConta
+            {
+                valor = e.Valor,
+                credito = null,
+                debito = null,
+                sinal = e.Sinal,
+                datamov = e.DataMov,
+                historico = e.Transacao.Descricao + " " + e.Observacao.Trim(),
+                idmovbanco = e.idmovbanco,
+                tipo = "1",
+                saldo = 0
+            }
+            ).ToList().OrderBy(e => e.datamov).ThenBy(e => e.idmovbanco);
+        var extratoFinal = new List<ExtratoConta> { resultado };
+        decimal saldoAtual = saldoAnterior;
+        foreach (var item in query)
+        {
+            if (item.sinal == "C")
+            {
+                saldoAtual += item.valor;
+                item.credito = item.valor;
+                item.debito = null;
+            }
+            else
+            {
+                saldoAtual -= item.valor;
+                item.debito = item.valor;
+                item.credito = null;
+            }
+
+            item.saldo = saldoAtual;
+            extratoFinal.Add(item);
+        }
+        return extratoFinal;
     }
 }

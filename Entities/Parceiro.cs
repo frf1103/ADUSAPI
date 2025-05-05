@@ -21,8 +21,8 @@ namespace ADUSAPI.Entities
         public string? Complemento { get; set; }
 
         public string Bairro { get; set; }
-        public int UF { get; set; }
-        public int Cidade { get; set; }
+        public int idUF { get; set; }
+        public int idCidade { get; set; }
         public string? Profissao { get; set; }
         public TipoEstadoCivil EstadoCivil { get; set; }
         public string? IdRepresentante { get; set; }

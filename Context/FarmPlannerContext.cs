@@ -22,6 +22,8 @@ namespace ADUSAPI.Context
         public DbSet<Assinatura> assinaturas => Set<Assinatura>();
 
         public DbSet<PlanoConta> PlanoContas => Set<PlanoConta>();
+
+        public DbSet<TransacBanco> transacsbco => Set<TransacBanco>();
         public DbSet<Moeda> moedas => Set<Moeda>();
         public DbSet<Banco> bancos => Set<Banco>();
         public DbSet<ContaCorrente> contascorrentes => Set<ContaCorrente>();
@@ -56,6 +58,8 @@ namespace ADUSAPI.Context
             modelBuilder.ApplyConfiguration(new TransacaoConfiguration());
             modelBuilder.ApplyConfiguration(new CentroCustoConfiguration());
             modelBuilder.ApplyConfiguration(new MovimentoCaixaConfiguration());
+
+            modelBuilder.ApplyConfiguration(new TransacBancoConfiguration());
         }
     }
 }

@@ -50,10 +50,24 @@ namespace ADUSAPI.Controllers
             return Ok(Parcela);
         }
 
+        [HttpGet("byAssinatura")]
+        public async Task<IActionResult> ListarParcelaByAssinatura(string id, int parcela)
+        {
+            var Parcela = await _Parcelaservice.ListarParcelaByAssinatura(id, parcela);
+            return Ok(Parcela);
+        }
+
         [HttpGet("checkout/{id}")]
         public async Task<IActionResult> ListarParcelaByIdCheckout(string id)
         {
             var Parcela = await _Parcelaservice.ListarParcelaByIdCheckout(id);
+            return Ok(Parcela);
+        }
+
+        [HttpGet("visaogeral/{idparceiro}/{ini}/{fim}")]
+        public async Task<IActionResult> VisaoGeral(string idparceiro, DateTime ini, DateTime fim)
+        {
+            var Parcela = await _Parcelaservice.visaogeralcarteira(ini, fim, idparceiro);
             return Ok(Parcela);
         }
     }

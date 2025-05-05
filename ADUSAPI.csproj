@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>    
+    <ProjectReference Include="..\ADUSClient\ADUSClient.csproj" />    
     <ProjectReference Include="..\FBSLIb\FBSLIb.csproj" />    
     <ProjectReference Include="..\ADUSAPI.Models\ADUSAPICore.csproj" />    
   </ItemGroup>

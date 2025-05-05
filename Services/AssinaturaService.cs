@@ -36,10 +36,19 @@ namespace ADUSAPI.Services
             conta.idparceiro = dados.idparceiro;
             conta.idplataforma = dados.idplataforma;
             conta.status = dados.status;
+            conta.plataforma = dados.plataforma;
             conta.qtd = dados.qtd;
+
             conta.datains = DateTime.Now;
-            await _context.AddAsync(conta);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _context.AddAsync(conta);
+                await _context.SaveChangesAsync();
+            }
+            catch
+            {
+                var j = 1;
+            }
             return new AssinaturaViewModel
             {
                 id = conta.id,
@@ -51,7 +60,8 @@ namespace ADUSAPI.Services
                 idplataforma = conta.idplataforma,
                 idparceiro = conta.idparceiro,
                 idformapagto = conta.idformapagto,
-                status = conta.status
+                status = conta.status,
+                plataforma = conta.plataforma
             };
         }
 
@@ -69,6 +79,7 @@ namespace ADUSAPI.Services
                 conta.observacao = dados.observacao;
                 conta.idformapagto = dados.idformapagto;
                 conta.idparceiro = dados.idparceiro;
+                conta.plataforma = dados.plataforma;
                 conta.idplataforma = dados.idplataforma;
                 conta.qtd = dados.qtd;
                 conta.status = dados.status;
@@ -87,7 +98,8 @@ namespace ADUSAPI.Services
                     idplataforma = conta.idplataforma,
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
-                    status = conta.status
+                    status = conta.status,
+                    plataforma = conta.plataforma
                 };
             }
             else return null;
@@ -109,7 +121,8 @@ namespace ADUSAPI.Services
                     idplataforma = conta.idplataforma,
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
-                    status = conta.status
+                    status = conta.status,
+                    plataforma = conta.plataforma
                 };
                 //  _excluirAssinaturaValidator.ValidateAndThrow(dados);
                 _context.assinaturas.Remove(conta);
@@ -125,7 +138,8 @@ namespace ADUSAPI.Services
                     idplataforma = conta.idplataforma,
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
-                    status = conta.status
+                    status = conta.status,
+                    plataforma = conta.plataforma
                 };
             }
             else return null;
@@ -148,7 +162,8 @@ namespace ADUSAPI.Services
                     idplataforma = conta.idplataforma,
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
-                    status = conta.status
+                    status = conta.status,
+                    plataforma = conta.plataforma
                 };
             }
             else return null;
@@ -174,7 +189,8 @@ namespace ADUSAPI.Services
                     status = c.status,
                     nomeparceiro = c.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
-                    descstatus = c.status.ToString()
+                    descstatus = c.status.ToString(),
+                    plataforma = c.plataforma
                 }
                 ).ToList();
             return (contas);

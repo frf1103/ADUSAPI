@@ -15,25 +15,25 @@ namespace ADUSAPI.Entities
         public string plataforma { get; set; }
 
         [Precision(18, 2)]
-        public double valor { get; set; }
+        public decimal valor { get; set; }
 
         [Precision(18, 2)]
-        public double comissao { get; set; }
+        public decimal comissao { get; set; }
 
         [Precision(18, 2)]
-        public double descontoplataforma { get; set; }
+        public decimal descontoplataforma { get; set; }
 
         [Precision(18, 2)]
-        public double descontoantecipacao { get; set; }
+        public decimal descontoantecipacao { get; set; }
 
         [Precision(18, 2)]
-        public double valorliquido { get; set; }
+        public decimal valorliquido { get; set; }
 
         [Precision(18, 2)]
-        public double acrescimos { get; set; }
+        public decimal acrescimos { get; set; }
 
         [Precision(18, 2)]
-        public double descontos { get; set; }
+        public decimal descontos { get; set; }
 
         public string? observacao { get; set; }
 
@@ -43,5 +43,6 @@ namespace ADUSAPI.Entities
         public Assinatura assinatura { get; set; }
         public DateTime datains { get; set; }
         public DateTime? dataup { get; set; }
+        public DateTime? dataestimadapagto { get; set; }
     }
 }

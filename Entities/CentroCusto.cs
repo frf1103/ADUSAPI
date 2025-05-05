@@ -12,5 +12,6 @@ namespace ADUSAPI.Entities
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
 
         public ICollection<ParametrosGuru>? parametros { get; set; }
+        public ICollection<TransacBanco>? transacs { get; set; }
     }
 }

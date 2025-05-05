@@ -26,8 +26,8 @@ namespace ADUSAPI.Services
             var conta = new Parceiro();
 
             conta.uid = dados.Id;
-            conta.UF = dados.uf;
-            conta.Cidade = dados.Cidade;
+            conta.idUF = dados.iduf;
+            conta.idCidade = dados.idCidade;
             conta.EstadoCivil = dados.EstadoCivil;
             conta.Bairro = dados.Bairro;
 
@@ -54,8 +54,8 @@ namespace ADUSAPI.Services
             return new ParceiroViewModel
             {
                 Id = conta.uid,
-                uf = conta.UF,
-                Cidade = conta.Cidade,
+                iduf = conta.idUF,
+                idCidade = conta.idCidade,
                 EstadoCivil = conta.EstadoCivil,
                 Bairro = conta.Bairro,
 
@@ -85,8 +85,8 @@ namespace ADUSAPI.Services
             var conta = _context.parceiros.Where(p => p.uid == id).FirstOrDefault();
             if (conta != null)
             {
-                conta.UF = dados.uf;
-                conta.Cidade = dados.Cidade;
+                conta.idUF = dados.iduf;
+                conta.idCidade = dados.idCidade;
                 conta.EstadoCivil = dados.EstadoCivil;
                 conta.Bairro = dados.Bairro;
 
@@ -113,8 +113,8 @@ namespace ADUSAPI.Services
                 return new ParceiroViewModel
                 {
                     Id = conta.uid,
-                    uf = conta.UF,
-                    Cidade = conta.Cidade,
+                    iduf = conta.idUF,
+                    idCidade = conta.idCidade,
                     EstadoCivil = conta.EstadoCivil,
                     Bairro = conta.Bairro,
 
@@ -148,8 +148,8 @@ namespace ADUSAPI.Services
                 ParceiroViewModel dados = new ParceiroViewModel
                 {
                     Id = conta.uid,
-                    uf = conta.UF,
-                    Cidade = conta.Cidade,
+                    iduf = conta.idUF,
+                    idCidade = conta.idCidade,
                     EstadoCivil = conta.EstadoCivil,
                     Bairro = conta.Bairro,
 
@@ -176,8 +176,8 @@ namespace ADUSAPI.Services
                 return new ParceiroViewModel
                 {
                     Id = conta.uid,
-                    uf = conta.UF,
-                    Cidade = conta.Cidade,
+                    iduf = conta.idUF,
+                    idCidade = conta.idCidade,
                     EstadoCivil = conta.EstadoCivil,
                     Bairro = conta.Bairro,
 
@@ -213,8 +213,8 @@ namespace ADUSAPI.Services
                 {
                     Id = conta.uid,
 
-                    uf = conta.UF,
-                    Cidade = conta.Cidade,
+                    iduf = conta.idUF,
+                    idCidade = conta.idCidade,
                     EstadoCivil = conta.EstadoCivil,
                     Bairro = conta.Bairro,
 
@@ -249,8 +249,8 @@ namespace ADUSAPI.Services
                 .Select(c => new ListParceiroViewModel
                 {
                     Id = c.uid.ToString(),
-                    uf = c.UF,
-                    Cidade = c.Cidade,
+                    iduf = c.idUF,
+                    idCidade = c.idCidade,
                     EstadoCivil = c.EstadoCivil,
                     Bairro = c.Bairro,
                     cep = c.CEP,
@@ -274,7 +274,7 @@ namespace ADUSAPI.Services
                     descestadocivil = c.EstadoCivil.ToString(),
                     desctipo = c.TipodePessoa.ToString()
                 }
-                ).ToList().OrderBy(c=>c.RazaoSocial) ;
+                ).ToList().OrderBy(c => c.RazaoSocial);
             return (contas);
         }
     }

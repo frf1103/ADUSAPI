@@ -26,6 +26,8 @@ namespace ADUSAPI.Entities
         public Parceiro parceiro { get; set; }
 
         public string? observacao { get; set; }
+
+        public string? plataforma { get; set; }
         public DateTime datains { get; set; }
         public DateTime? dataup { get; set; }
 

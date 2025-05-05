@@ -27,6 +27,10 @@ namespace ADUSAPI.Configurations
                 .HasColumnType("datetime")
                 .IsRequired();
 
+            builder.Property(mc => mc.idmovbanco)
+                .HasMaxLength(256)
+                .IsRequired(false);
+
             // Relacionamentos
         }
     }

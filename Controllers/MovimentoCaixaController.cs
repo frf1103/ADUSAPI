@@ -1,7 +1,7 @@
 ﻿using ADUSAPI.Entities;
 using ADUSAPI.Services;
-using ADUSClient;
-using ADUSClient.MovimentoCaixa;
+using ADUSAPICore.Models.MovimentoCaixa;
+using ADUSAPICore.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ADUSAPI.Controllers
@@ -26,9 +26,10 @@ namespace ADUSAPI.Controllers
             [FromQuery] string? idParceiro,
             [FromQuery] string? idContaCorrente,
             [FromQuery] int? idCategoria,
-            [FromQuery] string? descricao)
+            [FromQuery] string? descricao,
+            [FromQuery] string? idmovbanco)
         {
-            var resultado = await _service.ListarAsync(dataInicio, dataFim, idTransacao, idCentroCusto, idParceiro, idContaCorrente, idCategoria, descricao);
+            var resultado = await _service.ListarAsync(dataInicio, dataFim, idTransacao, idCentroCusto, idParceiro, idContaCorrente, idCategoria, descricao, idmovbanco);
             return Ok(resultado);
         }
 
@@ -45,7 +46,7 @@ namespace ADUSAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Adicionar([FromBody] MovimentoCaixaViewModel model)
         {
-            var movc=await _service.AdicionarAsync(model);
+            var movc = await _service.AdicionarAsync(model);
             return Ok(movc);
         }
 
@@ -64,6 +65,16 @@ namespace ADUSAPI.Controllers
         {
             await _service.RemoverAsync(id);
             return NoContent();
+        }
+
+        [HttpGet("extrato/{ini}/{fim}/{conta}")]
+        public async Task<ActionResult<ExtratoConta>> ExtratoConta(DateTime ini, DateTime fim, string conta)
+        {
+            var registro = await _service.ExtratoConta(ini, fim, conta);
+            if (registro == null)
+                return NotFound();
+
+            return Ok(registro);
         }
     }
 }

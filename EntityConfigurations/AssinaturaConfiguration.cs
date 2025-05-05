@@ -16,6 +16,7 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(x => x.status);
             builder.Property(x => x.datavenda);
             builder.Property(x => x.idparceiro);
+            builder.Property(x => x.plataforma).HasMaxLength(30).IsRequired(false);
             builder.Property(x => x.idplataforma).HasMaxLength(100).IsRequired(false);
             builder.Property(x => x.observacao).HasMaxLength(500).IsRequired(false);
             builder.Property(x => x.datains);

@@ -18,5 +18,7 @@ namespace ADUSAPI.Entities
         public string Codigo { get; set; }
 
         public ICollection<ContaCorrente> ContasCorrentes { get; set; } = new List<ContaCorrente>();
+
+        public ICollection<TransacBanco>? transacs { get; set; }
     }
 }
