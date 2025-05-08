@@ -38,19 +38,19 @@ public class MovimentoCaixaService
         if (dataFim.HasValue)
             query = query.Where(m => m.DataMov <= dataFim.Value);
 
-        if (idTransacao.HasValue)
+        if (idTransacao.HasValue && idTransacao != 0)
             query = query.Where(m => m.IdTransacao == idTransacao.Value);
 
-        if (idCentroCusto.HasValue)
+        if (idCentroCusto.HasValue && idCentroCusto != 0)
             query = query.Where(m => m.IdCentroCusto == idCentroCusto.Value);
 
-        if (!string.IsNullOrEmpty(idParceiro))
+        if (!string.IsNullOrEmpty(idParceiro) && idParceiro != "0")
             query = query.Where(m => m.idparceiro == idParceiro);
 
-        if (idContaCorrente != null)
+        if (idContaCorrente != null && idContaCorrente != "0")
             query = query.Where(m => m.IdContaCorrente == idContaCorrente);
 
-        if (idCategoria.HasValue)
+        if (idCategoria.HasValue && idCategoria != 0)
             query = query.Where(m => m.IdCategoria == idCategoria.Value);
 
         if (!string.IsNullOrWhiteSpace(descricao))
@@ -203,10 +203,12 @@ public class MovimentoCaixaService
                 debito = null,
                 sinal = e.Sinal,
                 datamov = e.DataMov,
-                historico = e.Transacao.Descricao + " " + e.Observacao.Trim(),
+                historico = e.Observacao ?? " ".Trim() + " ID: " + e.idmovbanco ?? " ".Trim(),
                 idmovbanco = e.idmovbanco,
                 tipo = "1",
-                saldo = 0
+                saldo = 0,
+                desctransacao = e.Transacao.Descricao,
+                nomeparceiro = e.parceiro.RazaoSocial
             }
             ).ToList().OrderBy(e => e.datamov).ThenBy(e => e.idmovbanco);
         var extratoFinal = new List<ExtratoConta> { resultado };

@@ -31,6 +31,12 @@ namespace ADUSAPI.Services
                 conta.idconta = dados.idconta;
                 conta.idparceiro = dados.idparceiro;
                 conta.idtransacao = dados.idtransacao;
+                conta.idcategoriaant = dados.idcategoriaant;
+                conta.idcategoriataxa = dados.idcategoriataxa;
+                conta.idtransacaoant = dados.idtransacaoant;
+                conta.idtransacaotaxa = dados.idtransacaotaxa;
+                conta.idtransacaocomiss = dados.idtransacaocomiss;
+                conta.idcategoriacomiss = dados.idcategoriacomiss;
                 _context.Update(conta);
                 await _context.SaveChangesAsync();
                 return new ParametrosGuruViewModel
@@ -40,12 +46,17 @@ namespace ADUSAPI.Services
                     urltransac = conta.urltransac,
                     urlsub = conta.urlsub,
                     token = conta.token,
-                    idparceiro=conta.idparceiro,
-                    idconta=conta.idconta,
-                    idccusto=conta.idccusto,
-                    idtransacao=conta.idtransacao,
-                    idcategoria=conta.idcategoria
-                    
+                    idparceiro = conta.idparceiro,
+                    idconta = conta.idconta,
+                    idccusto = conta.idccusto,
+                    idtransacao = conta.idtransacao,
+                    idcategoria = conta.idcategoria,
+                    idcategoriaant = conta.idcategoriaant,
+                    idcategoriataxa = conta.idcategoriataxa,
+                    idtransacaotaxa = conta.idtransacaotaxa,
+                    idtransacaoant = conta.idtransacaoant,
+                    idtransacaocomiss = conta.idtransacaocomiss,
+                    idcategoriacomiss = conta.idcategoriacomiss
                 };
             }
             else return null;
@@ -68,8 +79,13 @@ namespace ADUSAPI.Services
                     idconta = conta.idconta,
                     idccusto = conta.idccusto,
                     idtransacao = conta.idtransacao,
-                    idcategoria = conta.idcategoria
-
+                    idcategoria = conta.idcategoria,
+                    idcategoriaant = conta.idcategoriaant,
+                    idcategoriataxa = conta.idcategoriataxa,
+                    idtransacaotaxa = conta.idtransacaotaxa,
+                    idtransacaoant = conta.idtransacaoant,
+                    idtransacaocomiss = conta.idtransacaocomiss,
+                    idcategoriacomiss = conta.idcategoriacomiss
                 };
             }
             else return null;

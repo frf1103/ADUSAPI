@@ -1,5 +1,6 @@
 ﻿using ADUSAPI.Context;
 using ADUSAPI.Entities;
+using ADUSAPI.Migrations;
 using ADUSAPI.Validators.Assinatura;
 using ADUSAPICore.Models.Assinatura;
 using FluentValidation;
@@ -87,6 +88,42 @@ namespace ADUSAPI.Services
 
                 _context.Update(conta);
                 await _context.SaveChangesAsync();
+                return new AssinaturaViewModel
+                {
+                    id = conta.id,
+                    datavenda = conta.datavenda,
+                    qtd = conta.qtd,
+                    preco = conta.preco,
+                    valor = conta.valor,
+                    observacao = conta.observacao,
+                    idplataforma = conta.idplataforma,
+                    idparceiro = conta.idparceiro,
+                    idformapagto = conta.idformapagto,
+                    status = conta.status,
+                    plataforma = conta.plataforma
+                };
+            }
+            else return null;
+        }
+
+        public async Task<AssinaturaViewModel>? CancelarAssinatura(string id, string motivo)
+        {
+            var conta = _context.assinaturas.Where(p => p.id == id).FirstOrDefault();
+            if (conta != null)
+            {
+                conta.status = ADUSAPICore.Models.Enum.StatusAssinatura.Cancelada;
+                conta.observacao = conta.observacao.Trim() + " CANCELAMENTO: " + motivo;
+                _context.Update(conta);
+                var parcelasremove = await _context.parcelas
+                .Where(p => p.idassinatura == id && p.databaixa == null)
+                .ToListAsync();
+                if (parcelasremove != null)
+                    _context.parcelas.RemoveRange(parcelasremove);
+                await _context.SaveChangesAsync();
+
+                /*   await _context.parcelas
+                   .Where(p => p.idassinatura == id && p.databaixa!=null)
+                   .ExecuteDeleteAsync(); */
                 return new AssinaturaViewModel
                 {
                     id = conta.id,

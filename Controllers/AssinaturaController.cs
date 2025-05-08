@@ -29,6 +29,13 @@ namespace ADUSAPI.Controllers
             return Ok(Assinatura);
         }
 
+        [HttpGet("cancelar/{id}")]
+        public async Task<IActionResult>? CancelarAssinatura(string id, string motivo)
+        {
+            var Assinatura = await _Assinaturaservice.CancelarAssinatura(id, motivo);
+            return Ok(Assinatura);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult>? ExcluirAssinatura(string id)
         {

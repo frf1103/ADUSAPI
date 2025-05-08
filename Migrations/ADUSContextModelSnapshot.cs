@@ -322,6 +322,15 @@ namespace ADUSAPI.Migrations
                     b.Property<int?>("idcategoria")
                         .HasColumnType("int");
 
+                    b.Property<int?>("idcategoriaant")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idcategoriacomiss")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idcategoriataxa")
+                        .HasColumnType("int");
+
                     b.Property<int?>("idccusto")
                         .HasColumnType("int");
 
@@ -332,6 +341,15 @@ namespace ADUSAPI.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("idtransacao")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idtransacaoant")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idtransacaocomiss")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("idtransacaotaxa")
                         .HasColumnType("int");
 
                     b.Property<string>("token")
@@ -356,6 +374,12 @@ namespace ADUSAPI.Migrations
 
                     b.HasIndex("idcategoria");
 
+                    b.HasIndex("idcategoriaant");
+
+                    b.HasIndex("idcategoriacomiss");
+
+                    b.HasIndex("idcategoriataxa");
+
                     b.HasIndex("idccusto");
 
                     b.HasIndex("idconta");
@@ -363,6 +387,12 @@ namespace ADUSAPI.Migrations
                     b.HasIndex("idparceiro");
 
                     b.HasIndex("idtransacao");
+
+                    b.HasIndex("idtransacaoant");
+
+                    b.HasIndex("idtransacaocomiss");
+
+                    b.HasIndex("idtransacaotaxa");
 
                     b.ToTable("ParametrosGuru", (string)null);
 
@@ -782,6 +812,21 @@ namespace ADUSAPI.Migrations
                         .HasForeignKey("idcategoria")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("ADUSAPI.Entities.PlanoConta", "catergoriaant")
+                        .WithMany("parametrosAnt")
+                        .HasForeignKey("idcategoriaant")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ADUSAPI.Entities.PlanoConta", "catergoriacomiss")
+                        .WithMany("parametroscomiss")
+                        .HasForeignKey("idcategoriacomiss")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ADUSAPI.Entities.PlanoConta", "catergoriataxa")
+                        .WithMany("parametrosTaxa")
+                        .HasForeignKey("idcategoriataxa")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("ADUSAPI.Entities.CentroCusto", "CentroCusto")
                         .WithMany("parametros")
                         .HasForeignKey("idccusto")
@@ -802,6 +847,21 @@ namespace ADUSAPI.Migrations
                         .HasForeignKey("idtransacao")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("ADUSAPI.Entities.Transacao", "TransacaoAnt")
+                        .WithMany("parametrosant")
+                        .HasForeignKey("idtransacaoant")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ADUSAPI.Entities.Transacao", "TransacaoComiss")
+                        .WithMany("parametroscomiss")
+                        .HasForeignKey("idtransacaocomiss")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("ADUSAPI.Entities.Transacao", "TransacaoTaxa")
+                        .WithMany("parametrostaxa")
+                        .HasForeignKey("idtransacaotaxa")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Categoria");
 
                     b.Navigation("CentroCusto");
@@ -809,6 +869,18 @@ namespace ADUSAPI.Migrations
                     b.Navigation("ContaCorrente");
 
                     b.Navigation("Transacao");
+
+                    b.Navigation("TransacaoAnt");
+
+                    b.Navigation("TransacaoComiss");
+
+                    b.Navigation("TransacaoTaxa");
+
+                    b.Navigation("catergoriaant");
+
+                    b.Navigation("catergoriacomiss");
+
+                    b.Navigation("catergoriataxa");
 
                     b.Navigation("parceiro");
                 });
@@ -951,6 +1023,12 @@ namespace ADUSAPI.Migrations
 
                     b.Navigation("parametros");
 
+                    b.Navigation("parametrosAnt");
+
+                    b.Navigation("parametrosTaxa");
+
+                    b.Navigation("parametroscomiss");
+
                     b.Navigation("transacs");
                 });
 
@@ -959,6 +1037,12 @@ namespace ADUSAPI.Migrations
                     b.Navigation("movs");
 
                     b.Navigation("parametros");
+
+                    b.Navigation("parametrosant");
+
+                    b.Navigation("parametroscomiss");
+
+                    b.Navigation("parametrostaxa");
 
                     b.Navigation("transacs");
                 });

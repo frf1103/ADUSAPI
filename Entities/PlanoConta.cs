@@ -17,5 +17,8 @@
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
         public ICollection<ParametrosGuru>? parametros { get; set; }
         public ICollection<TransacBanco>? transacs { get; set; }
+        public ICollection<ParametrosGuru>? parametrosTaxa { get; set; }
+        public ICollection<ParametrosGuru>? parametrosAnt { get; set; }
+        public ICollection<ParametrosGuru>? parametroscomiss { get; set; }
     }
 }

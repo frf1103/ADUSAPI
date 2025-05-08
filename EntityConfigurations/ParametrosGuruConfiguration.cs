@@ -19,11 +19,24 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(x => x.idconta);
             builder.Property(x => x.idccusto);
             builder.Property(x => x.idparceiro);
+            builder.Property(x => x.idcategoriaant);
+            builder.Property(x => x.idcategoriataxa);
+            builder.Property(x => x.idcategoriacomiss);
+            builder.Property(x => x.idtransacaotaxa);
+            builder.Property(x => x.idtransacaoant);
+            builder.Property(x => x.idtransacaocomiss);
+            builder.Property(x => x.idtransacaoant);
             builder.HasOne(x => x.Transacao).WithMany(x => x.parametros).HasForeignKey(x => x.idtransacao).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.parceiro).WithMany(x => x.parametros).HasForeignKey(x => x.idparceiro).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.ContaCorrente).WithMany(x => x.parametros).HasForeignKey(x => x.idconta).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.Categoria).WithMany(x => x.parametros).HasForeignKey(x => x.idcategoria).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.CentroCusto).WithMany(x => x.parametros).HasForeignKey(x => x.idccusto).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.catergoriataxa).WithMany(x => x.parametrosTaxa).HasForeignKey(x => x.idcategoriataxa).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.catergoriaant).WithMany(x => x.parametrosAnt).HasForeignKey(x => x.idcategoriaant).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.TransacaoTaxa).WithMany(x => x.parametrostaxa).HasForeignKey(x => x.idtransacaotaxa).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.TransacaoAnt).WithMany(x => x.parametrosant).HasForeignKey(x => x.idtransacaoant).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.TransacaoComiss).WithMany(x => x.parametroscomiss).HasForeignKey(x => x.idtransacaocomiss).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.catergoriacomiss).WithMany(x => x.parametroscomiss).HasForeignKey(x => x.idcategoriacomiss).OnDelete(DeleteBehavior.NoAction);
 
             builder.HasData(
                 new ParametrosGuru
