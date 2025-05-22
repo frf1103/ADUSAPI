@@ -32,5 +32,9 @@ namespace ADUSAPI.Entities
         public DateTime? dataup { get; set; }
 
         public ICollection<Parcela>? parcelas { get; set; }
+
+        
+        public Convite? convite { get; set; }
+        
     }
 }

@@ -37,9 +37,9 @@ namespace ADUSAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListarParceiro(string? filtro)
+        public async Task<IActionResult> ListarParceiro(string? filtro, bool isassinante, bool isbanco, bool iscoprodutor, bool isafiliado, string? idcoprodutor = "")
         {
-            var Parceiro = await _Parceiroservice.ListarParceiro(filtro);
+            var Parceiro = await _Parceiroservice.ListarParceiro(filtro, isassinante, isbanco, iscoprodutor, isafiliado, idcoprodutor);
             return Ok(Parceiro);
         }
 
@@ -47,6 +47,13 @@ namespace ADUSAPI.Controllers
         public async Task<IActionResult> ListarParceiroById(string id)
         {
             var Parceiro = await _Parceiroservice.ListarParceiroById(id);
+            return Ok(Parceiro);
+        }
+
+        [HttpGet("email/{id}")]
+        public async Task<IActionResult> ListarParceiroByEmailk(string id)
+        {
+            var Parceiro = await _Parceiroservice.ListarParceiroByEmail(id);
             return Ok(Parceiro);
         }
     }

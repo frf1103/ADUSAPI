@@ -1,5 +1,6 @@
 ﻿using ADUSAPI.Entities.Enum.ADUSAPI.Entities.Enum;
 using ADUSAPICore.Models.Enum;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ADUSAPI.Entities
@@ -41,10 +42,27 @@ namespace ADUSAPI.Entities
         public string? email { get; set; }
         public string? observacao { get; set; }
         public int Sexo { get; set; }
+        public bool? isassinante { get; set; } = true;
+        public bool? isbanco { get; set; } = false;
+        public bool? iscoprodutor { get; set; } = false;
+        public bool? isafiliado { get; set; } = false;
+        public string? idcoprodutor { get; set; }
+
+        [Precision(5, 2)]
+        public decimal? percomissao { get; set; }
+
         public ICollection<Assinatura>? assinaturas { get; set; }
 
         public ICollection<MovimentoCaixa>? movimentoCaixas { get; set; }
 
         public ICollection<ParametrosGuru>? parametros { get; set; }
+        public ICollection<Parceiro>? afiliados { get; set; }
+        public Parceiro? coprodutor { get; set; }
+
+        public string? iduser { get; set; }
+
+        public ICollection<Convite>? convites { get; set; }
+
+        public string urlafiliado { get; set; }
     }
 }

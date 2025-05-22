@@ -1,5 +1,4 @@
-﻿using ADUSAPI.Configurations;
-using ADUSAPI.Entities;
+﻿using ADUSAPI.Entities;
 using ADUSAPI.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +36,8 @@ namespace ADUSAPI.Context
 
         public DbSet<CentroCusto> centroCustos => Set<CentroCusto>();
 
+        public DbSet<Convite> convites => Set<Convite>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
             optionBuilder.UseSqlServer(_configuration.GetConnectionString("ADUS"));
@@ -58,7 +59,7 @@ namespace ADUSAPI.Context
             modelBuilder.ApplyConfiguration(new TransacaoConfiguration());
             modelBuilder.ApplyConfiguration(new CentroCustoConfiguration());
             modelBuilder.ApplyConfiguration(new MovimentoCaixaConfiguration());
-
+            modelBuilder.ApplyConfiguration(new ConviteConfiguration());
             modelBuilder.ApplyConfiguration(new TransacBancoConfiguration());
         }
     }

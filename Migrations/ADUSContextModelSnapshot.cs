@@ -182,6 +182,56 @@ namespace ADUSAPI.Migrations
                     b.ToTable("ContaCorrente", (string)null);
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.Convite", b =>
+                {
+                    b.Property<string>("IdConvite")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataExpiracao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Fone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdAfiliado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IdPlataforma")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titular")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("idassinatura")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("idformapgto")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("IdConvite");
+
+                    b.HasIndex("IdAfiliado");
+
+                    b.HasIndex("idassinatura")
+                        .IsUnique()
+                        .HasFilter("[idassinatura] IS NOT NULL");
+
+                    b.ToTable("Convites", (string)null);
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.CotacaoMoeda", b =>
                 {
                     b.Property<int>("Id")
@@ -505,8 +555,43 @@ namespace ADUSAPI.Migrations
                     b.Property<int>("idUF")
                         .HasColumnType("int");
 
+                    b.Property<string>("idcoprodutor")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("iduser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("isafiliado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool?>("isassinante")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool?>("isbanco")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool?>("iscoprodutor")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("observacao")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("percomissao")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("urlafiliado")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.HasKey("uid");
 
@@ -515,6 +600,8 @@ namespace ADUSAPI.Migrations
                     b.HasIndex("idCidade");
 
                     b.HasIndex("idUF");
+
+                    b.HasIndex("idcoprodutor");
 
                     b.ToTable("Parceiros", (string)null);
                 });
@@ -740,6 +827,24 @@ namespace ADUSAPI.Migrations
                     b.Navigation("Banco");
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.Convite", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "afiliado")
+                        .WithMany("convites")
+                        .HasForeignKey("IdAfiliado")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ADUSAPI.Entities.Assinatura", "assinatura")
+                        .WithOne("convite")
+                        .HasForeignKey("ADUSAPI.Entities.Convite", "idassinatura")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("afiliado");
+
+                    b.Navigation("assinatura");
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.CotacaoMoeda", b =>
                 {
                     b.HasOne("ADUSAPI.Entities.Moeda", "moeda")
@@ -904,9 +1009,16 @@ namespace ADUSAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "coprodutor")
+                        .WithMany("afiliados")
+                        .HasForeignKey("idcoprodutor")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Representante");
 
                     b.Navigation("cidade");
+
+                    b.Navigation("coprodutor");
 
                     b.Navigation("uf");
                 });
@@ -968,6 +1080,8 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
+                    b.Navigation("convite");
+
                     b.Navigation("parcelas");
                 });
 
@@ -1006,7 +1120,11 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Parceiro", b =>
                 {
+                    b.Navigation("afiliados");
+
                     b.Navigation("assinaturas");
+
+                    b.Navigation("convites");
 
                     b.Navigation("empresas");
 

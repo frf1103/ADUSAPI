@@ -34,10 +34,19 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(x => x.datains).IsRequired(false);
             builder.Property(x => x.dataup).IsRequired(false);
             builder.Property(x => x.Sexo).IsRequired(true).HasMaxLength(1);
+            builder.Property(x => x.isafiliado).IsRequired(false).HasDefaultValue(false);
+            builder.Property(x => x.iscoprodutor).IsRequired(false).HasDefaultValue(false);
+            builder.Property(x => x.isbanco).IsRequired(false).HasDefaultValue(false);
+            builder.Property(x => x.isassinante).IsRequired(false).HasDefaultValue(true);
+            builder.Property(x => x.idcoprodutor).IsRequired(false);
+            builder.Property(x => x.percomissao).IsRequired(false);
+            builder.Property(x => x.iduser).IsRequired(false);
+            builder.Property(x => x.urlafiliado).HasMaxLength(300);
             builder.HasOne(x => x.Representante).WithMany(x => x.empresas).HasForeignKey(x => x.IdRepresentante).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.cidade).WithMany(x => x.parceiros).HasForeignKey(x => x.idCidade).OnDelete(DeleteBehavior.NoAction); ;
             builder.HasOne(x => x.uf).WithMany(x => x.Parceiros).HasForeignKey(x => x.idUF).OnDelete(DeleteBehavior.NoAction); ;
             builder.HasMany(tc => tc.movimentoCaixas).WithOne(builder => builder.parceiro).HasForeignKey(m => m.idparceiro).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.coprodutor).WithMany(x => x.afiliados).HasForeignKey(x => x.idcoprodutor).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
