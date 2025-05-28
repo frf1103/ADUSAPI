@@ -178,7 +178,7 @@ namespace ADUSAPI.Services
             && (idassinatura == "0" || m.idassinatura == idassinatura)
              && ((tipodata == 0 && m.datavencimento >= ini && m.datavencimento <= fim)
              || (tipodata == 1 && m.databaixa >= ini && m.databaixa <= fim))
-                     && (status == 3 || (status == 0 && m.databaixa == null) || (status == 1 && m.databaixa != null) ||
+                     && (status == 3 || (status == 0 && m.databaixa == null && m.idcaixa == null) || (status == 1 && m.databaixa != null) ||
                      (status == 2 && m.idcaixa != null))
                      && (idparceiro == "0" || m.assinatura.idparceiro == idparceiro)
                         && (forma == 3 || (int)m.idformapagto == forma)
@@ -206,7 +206,7 @@ namespace ADUSAPI.Services
                     nomeparceiro = c.assinatura.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
                     valor = c.valor,
-                    status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
+                    status = (c.databaixa == null && c.idcaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
                     dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto
                 }
                 ).ToList();
@@ -240,7 +240,7 @@ namespace ADUSAPI.Services
                     plataForma = g.Key.plataforma,
                     valorLiquido = g.Sum(p => p.valorliquido),
                     valorPago = g.Where(p => p.databaixa != null).Sum(p => p.valor),
-                    valorVencidas = g.Where(p => p.databaixa == null && p.datavencimento < hoje).Sum(p => p.valor),
+                    valorVencidas = g.Where(p => p.databaixa == null && p.datavencimento < hoje && (p.idcaixa == null || p.idcaixa == 0)).Sum(p => p.valor),
                     valorAVencer = g.Where(p => p.databaixa == null && p.datavencimento >= hoje).Sum(p => p.valor),
                     comissaoPaga = g.Where(p => p.idcaixa != null).Sum(p => p.comissao),
                     taxaAntecipacao = g.Sum(p => p.descontoantecipacao),
