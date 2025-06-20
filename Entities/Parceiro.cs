@@ -64,5 +64,9 @@ namespace ADUSAPI.Entities
         public ICollection<Convite>? convites { get; set; }
 
         public string urlafiliado { get; set; }
+
+        public ICollection<Assinatura>? assinaturasfil { get; set; }
+
+        public string? idwallet { get; set; }
     }
 }

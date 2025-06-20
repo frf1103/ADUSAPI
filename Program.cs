@@ -55,6 +55,7 @@ builder.Services.AddTransient<ContaCorrenteValidator>();
 //builder.Services.AddTransient<ExcluirContaCorrenteValidator>();
 builder.Services.AddTransient<ContaCorrenteService>();
 builder.Services.AddTransient<ConviteService>();
+builder.Services.AddTransient<CartaoAssinaturaService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",

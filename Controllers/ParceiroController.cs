@@ -50,6 +50,13 @@ namespace ADUSAPI.Controllers
             return Ok(Parceiro);
         }
 
+        [HttpGet("registro/{id}")]
+        public async Task<IActionResult> ListarParceiroByRegistro(string id)
+        {
+            var Parceiro = await _Parceiroservice.ListarParceiroByRegistro(id);
+            return Ok(Parceiro);
+        }
+
         [HttpGet("email/{id}")]
         public async Task<IActionResult> ListarParceiroByEmailk(string id)
         {

@@ -50,6 +50,15 @@ namespace ADUSAPI.Controllers
             return Ok(Assinatura);
         }
 
+        [HttpGet("listarbyafiliado/{idafiliado}/{ini}/{fim}/{status}/{idparceiro}/{forma}")]
+        public async Task<IActionResult> ListarAssinatura(string idafiliado,DateTime ini, DateTime fim, int status, string idparceiro, int forma, string? filtro)
+        {
+            var Assinatura = await _Assinaturaservice.ListarAssinaturaByAfiliado(ini, fim, idparceiro, status, forma, filtro,idafiliado);
+            return Ok(Assinatura);
+        }
+
+
+
         [HttpGet("{id}")]
         public async Task<IActionResult> ListarAssinaturaById(string id)
         {

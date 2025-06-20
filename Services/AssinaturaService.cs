@@ -39,6 +39,7 @@ namespace ADUSAPI.Services
             conta.status = dados.status;
             conta.plataforma = dados.plataforma;
             conta.qtd = dados.qtd;
+            conta.idafiliado = dados.idafiliado;
 
             conta.datains = DateTime.Now;
             try
@@ -62,7 +63,8 @@ namespace ADUSAPI.Services
                 idparceiro = conta.idparceiro,
                 idformapagto = conta.idformapagto,
                 status = conta.status,
-                plataforma = conta.plataforma
+                plataforma = conta.plataforma,
+                idafiliado = conta.idafiliado
             };
         }
 
@@ -85,6 +87,7 @@ namespace ADUSAPI.Services
                 conta.qtd = dados.qtd;
                 conta.status = dados.status;
                 conta.dataup = DateTime.Now;
+                conta.idafiliado = dados.idafiliado;
 
                 _context.Update(conta);
                 await _context.SaveChangesAsync();
@@ -100,7 +103,8 @@ namespace ADUSAPI.Services
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
                     status = conta.status,
-                    plataforma = conta.plataforma
+                    plataforma = conta.plataforma,
+                    idafiliado = conta.idafiliado
                 };
             }
             else return null;
@@ -136,7 +140,8 @@ namespace ADUSAPI.Services
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
                     status = conta.status,
-                    plataforma = conta.plataforma
+                    plataforma = conta.plataforma,
+                    idafiliado = conta.idafiliado
                 };
             }
             else return null;
@@ -176,7 +181,8 @@ namespace ADUSAPI.Services
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
                     status = conta.status,
-                    plataforma = conta.plataforma
+                    plataforma = conta.plataforma,
+                    idafiliado = conta.idafiliado
                 };
             }
             else return null;
@@ -200,7 +206,8 @@ namespace ADUSAPI.Services
                     idparceiro = conta.idparceiro,
                     idformapagto = conta.idformapagto,
                     status = conta.status,
-                    plataforma = conta.plataforma
+                    plataforma = conta.plataforma,
+                    idafiliado = conta.idafiliado
                 };
             }
             else return null;
@@ -211,7 +218,7 @@ namespace ADUSAPI.Services
             var condicao = (Assinatura m) => ((String.IsNullOrWhiteSpace(filtro) || m.observacao.ToUpper().Contains(filtro.ToUpper())) || (String.IsNullOrWhiteSpace(filtro) || (m.idplataforma ?? " ").ToUpper().Contains(filtro.ToUpper()))
             ) && (m.datavenda >= ini && m.datavenda <= fim && (idparceiro == "0" || m.idparceiro == idparceiro) && (status == 3 || (int)m.status == status) && (forma == 3 || (int)m.idformapagto == forma));
             var query = _context.assinaturas.AsQueryable();
-            var contas = query.Include(m => m.parceiro).Where(condicao)
+            var contas = query.Include(m => m.parceiro).Include(m => m.afiliado).Where(condicao)
                 .Select(c => new ListAssinaturaViewModel
                 {
                     id = c.id,
@@ -227,7 +234,38 @@ namespace ADUSAPI.Services
                     nomeparceiro = c.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
                     descstatus = c.status.ToString(),
-                    plataforma = c.plataforma
+                    plataforma = c.plataforma,
+                    idafiliado = c.idafiliado,
+                    nomeafiliado = c.afiliado.RazaoSocial
+                }
+                ).ToList();
+            return (contas);
+        }
+
+        public async Task<IEnumerable<ListAssinaturaViewModel>> ListarAssinaturaByAfiliado(DateTime ini, DateTime fim, string idparceiro, int status, int forma, string idafiliado, string? filtro)
+        {
+            var condicao = (Assinatura m) => ((String.IsNullOrWhiteSpace(filtro) || m.observacao.ToUpper().Contains(filtro.ToUpper())) || (String.IsNullOrWhiteSpace(filtro) || (m.idplataforma ?? " ").ToUpper().Contains(filtro.ToUpper()))
+            ) && (m.idafiliado == idafiliado) && (m.datavenda >= ini && m.datavenda <= fim && (idparceiro == "0" || m.idparceiro == idparceiro) && (status == 3 || (int)m.status == status) && (forma == 3 || (int)m.idformapagto == forma));
+            var query = _context.assinaturas.AsQueryable();
+            var contas = query.Include(m => m.parceiro).Include(m => m.afiliado).Where(condicao)
+                .Select(c => new ListAssinaturaViewModel
+                {
+                    id = c.id,
+                    datavenda = c.datavenda,
+                    qtd = c.qtd,
+                    preco = c.preco,
+                    valor = c.valor,
+                    observacao = c.observacao,
+                    idplataforma = c.idplataforma,
+                    idparceiro = c.idparceiro,
+                    idformapagto = c.idformapagto,
+                    status = c.status,
+                    nomeparceiro = c.parceiro.RazaoSocial,
+                    descforma = c.idformapagto.ToString(),
+                    descstatus = c.status.ToString(),
+                    plataforma = c.plataforma,
+                    idafiliado = c.idafiliado,
+                    nomeafiliado = c.afiliado.RazaoSocial
                 }
                 ).ToList();
             return (contas);

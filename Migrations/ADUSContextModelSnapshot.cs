@@ -65,6 +65,9 @@ namespace ADUSAPI.Migrations
                     b.Property<DateTime>("datavenda")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("idafiliado")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("idformapagto")
                         .HasColumnType("int");
 
@@ -100,6 +103,8 @@ namespace ADUSAPI.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("idafiliado");
+
                     b.HasIndex("idparceiro");
 
                     b.ToTable("Assinaturas", (string)null);
@@ -126,6 +131,43 @@ namespace ADUSAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Bancos", (string)null);
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.CartaoAssinatura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Bandeira")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IdAssinatura")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IdToken")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UltimosDigitos")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAssinatura");
+
+                    b.ToTable("cartoes");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.CentroCusto", b =>
@@ -561,6 +603,10 @@ namespace ADUSAPI.Migrations
                     b.Property<string>("iduser")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("idwallet")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<bool?>("isafiliado")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
@@ -589,7 +635,6 @@ namespace ADUSAPI.Migrations
                         .HasColumnType("decimal(5,2)");
 
                     b.Property<string>("urlafiliado")
-                        .IsRequired()
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
@@ -807,13 +852,31 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "afiliado")
+                        .WithMany("assinaturasfil")
+                        .HasForeignKey("idafiliado")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("ADUSAPI.Entities.Parceiro", "parceiro")
                         .WithMany("assinaturas")
                         .HasForeignKey("idparceiro")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("afiliado");
+
                     b.Navigation("parceiro");
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.CartaoAssinatura", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Assinatura", "Assinatura")
+                        .WithMany("cartoes")
+                        .HasForeignKey("IdAssinatura")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assinatura");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.ContaCorrente", b =>
@@ -1080,6 +1143,8 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
+                    b.Navigation("cartoes");
+
                     b.Navigation("convite");
 
                     b.Navigation("parcelas");
@@ -1123,6 +1188,8 @@ namespace ADUSAPI.Migrations
                     b.Navigation("afiliados");
 
                     b.Navigation("assinaturas");
+
+                    b.Navigation("assinaturasfil");
 
                     b.Navigation("convites");
 

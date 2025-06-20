@@ -41,7 +41,8 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(x => x.idcoprodutor).IsRequired(false);
             builder.Property(x => x.percomissao).IsRequired(false);
             builder.Property(x => x.iduser).IsRequired(false);
-            builder.Property(x => x.urlafiliado).HasMaxLength(300);
+            builder.Property(x => x.urlafiliado).HasMaxLength(300).IsRequired(false);
+            builder.Property(x => x.idwallet).IsRequired(false).HasMaxLength(100);
             builder.HasOne(x => x.Representante).WithMany(x => x.empresas).HasForeignKey(x => x.IdRepresentante).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.cidade).WithMany(x => x.parceiros).HasForeignKey(x => x.idCidade).OnDelete(DeleteBehavior.NoAction); ;
             builder.HasOne(x => x.uf).WithMany(x => x.Parceiros).HasForeignKey(x => x.idUF).OnDelete(DeleteBehavior.NoAction); ;

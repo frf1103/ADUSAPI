@@ -56,7 +56,8 @@ namespace ADUSAPI.Services
             conta.iscoprodutor = dados.iscoprodutor;
             conta.percomissao = dados.percomissao;
             conta.idcoprodutor = dados.idcoprodutor;
-            conta.urlafiliado=dados.urlafiliado;
+            conta.urlafiliado = dados.urlafiliado;
+            conta.idwallet = dados.idwallet;
             await _context.AddAsync(conta);
             await _context.SaveChangesAsync();
             return new ParceiroViewModel
@@ -90,7 +91,7 @@ namespace ADUSAPI.Services
                 iscoprodutor = conta.iscoprodutor,
                 percomissao = conta.percomissao,
                 idcoprodutor = conta.idcoprodutor,
-                urlafiliado=conta.urlafiliado
+                urlafiliado = conta.urlafiliado
             };
         }
 
@@ -130,6 +131,7 @@ namespace ADUSAPI.Services
                 conta.percomissao = dados.percomissao;
                 conta.idcoprodutor = dados.idcoprodutor;
                 conta.urlafiliado = dados.urlafiliado;
+                conta.idwallet = dados.idwallet;
                 _context.Update(conta);
                 await _context.SaveChangesAsync();
                 return new ParceiroViewModel
@@ -163,7 +165,8 @@ namespace ADUSAPI.Services
                     iscoprodutor = conta.iscoprodutor,
                     percomissao = conta.percomissao,
                     idcoprodutor = conta.idcoprodutor,
-                    urlafiliado=conta.urlafiliado
+                    urlafiliado = conta.urlafiliado,
+                    idwallet = conta.idwallet
                 };
             }
             else return null;
@@ -204,7 +207,7 @@ namespace ADUSAPI.Services
                     iscoprodutor = conta.iscoprodutor,
                     percomissao = conta.percomissao,
                     idcoprodutor = conta.idcoprodutor,
-                    urlafiliado=conta.urlafiliado
+                    urlafiliado = conta.urlafiliado
                 };
                 _excluirParceiroValidator.ValidateAndThrow(dados);
                 _context.parceiros.Remove(conta);
@@ -286,7 +289,55 @@ namespace ADUSAPI.Services
                     idcoprodutor = conta.idcoprodutor,
                     nomecidade = conta.cidade.Nome,
                     nomeuf = conta.uf.Sigla,
-                    urlafiliado=conta.urlafiliado
+                    urlafiliado = conta.urlafiliado,
+                    idwallet = conta.idwallet
+                };
+            }
+            else return null;
+        }
+
+        public async Task<ParceiroViewModel>? ListarParceiroByRegistro(string id)
+        {
+            var conta = _context.parceiros.Include(x => x.cidade).Include(x => x.uf)
+            .Where(p => p.Registro == id).FirstOrDefault();
+            if (conta != null)
+            {
+                return new ParceiroViewModel
+                {
+                    Id = conta.uid,
+
+                    iduf = conta.idUF,
+                    idCidade = conta.idCidade,
+                    EstadoCivil = conta.EstadoCivil,
+                    Bairro = conta.Bairro,
+
+                    cep = conta.CEP,
+                    Fantasia = conta.Fantasia,
+                    RazaoSocial = conta.RazaoSocial,
+                    TipodePessoa = conta.TipodePessoa,
+                    Registro = conta.Registro,
+
+                    Logradouro = conta.Logradouro,
+                    Numero = conta.Numero,
+                    Profissao = conta.Profissao,
+                    IdRepresentante = conta.IdRepresentante,
+                    DtNascimento = conta.DtNascimento,
+                    Complemento = conta.Complemento,
+                    observacao = conta.observacao,
+                    Fone1 = conta.Fone1,
+                    Fone2 = conta.Fone2,
+                    email = conta.email,
+                    Sexo = conta.Sexo,
+                    isafiliado = conta.isafiliado,
+                    isassinante = conta.isassinante,
+                    isbanco = conta.isbanco,
+                    iscoprodutor = conta.iscoprodutor,
+                    percomissao = conta.percomissao,
+                    idcoprodutor = conta.idcoprodutor,
+                    nomecidade = conta.cidade.Nome,
+                    nomeuf = conta.uf.Sigla,
+                    urlafiliado = conta.urlafiliado,
+                    idwallet = conta.idwallet
                 };
             }
             else return null;
@@ -332,7 +383,7 @@ namespace ADUSAPI.Services
                     idcoprodutor = conta.idcoprodutor,
                     nomecidade = conta.cidade.Nome,
                     nomeuf = conta.uf.Sigla,
-                    urlafiliado=conta.urlafiliado
+                    urlafiliado = conta.urlafiliado
                 };
             }
             else return null;
@@ -409,7 +460,7 @@ namespace ADUSAPI.Services
                     iscoprodutor = c.iscoprodutor,
                     percomissao = c.percomissao,
                     idcoprodutor = c.idcoprodutor,
-                    urlafiliado=c.urlafiliado
+                    urlafiliado = c.urlafiliado
                 }
                 ).ToList().OrderBy(c => c.RazaoSocial);
             return (contas);

@@ -38,6 +38,8 @@ namespace ADUSAPI.Context
 
         public DbSet<Convite> convites => Set<Convite>();
 
+        public DbSet<CartaoAssinatura> cartoes => Set<CartaoAssinatura>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
             optionBuilder.UseSqlServer(_configuration.GetConnectionString("ADUS"));
@@ -61,6 +63,7 @@ namespace ADUSAPI.Context
             modelBuilder.ApplyConfiguration(new MovimentoCaixaConfiguration());
             modelBuilder.ApplyConfiguration(new ConviteConfiguration());
             modelBuilder.ApplyConfiguration(new TransacBancoConfiguration());
+            modelBuilder.ApplyConfiguration(new CartaoAssinaturaConfiguration());
         }
     }
 }

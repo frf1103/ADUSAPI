@@ -1,6 +1,6 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Convite;
-using ADUSClient.Convite;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ADUSAPI.Controllers

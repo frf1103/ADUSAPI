@@ -31,10 +31,14 @@ namespace ADUSAPI.Entities
         public DateTime datains { get; set; }
         public DateTime? dataup { get; set; }
 
+        public string? idafiliado { get; set; }
+
         public ICollection<Parcela>? parcelas { get; set; }
 
-        
         public Convite? convite { get; set; }
-        
+
+        public ICollection<CartaoAssinatura>? cartoes { get; set; }
+
+        public Parceiro? afiliado { get; set; }
     }
 }

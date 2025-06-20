@@ -2,7 +2,6 @@
 using ADUSAPI.Entities;
 using ADUSAPI.Migrations;
 using ADUSAPICore.Models.Convite;
-using ADUSClient.Convite;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
