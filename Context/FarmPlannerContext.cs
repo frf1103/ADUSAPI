@@ -40,6 +40,10 @@ namespace ADUSAPI.Context
 
         public DbSet<CartaoAssinatura> cartoes => Set<CartaoAssinatura>();
 
+        public DbSet<LogCheckout> logscheckout => Set<LogCheckout>();
+
+        public DbSet<WebhookAsaas> webhookAsaas => Set<WebhookAsaas>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionBuilder)
         {
             optionBuilder.UseSqlServer(_configuration.GetConnectionString("ADUS"));
@@ -64,6 +68,8 @@ namespace ADUSAPI.Context
             modelBuilder.ApplyConfiguration(new ConviteConfiguration());
             modelBuilder.ApplyConfiguration(new TransacBancoConfiguration());
             modelBuilder.ApplyConfiguration(new CartaoAssinaturaConfiguration());
+            modelBuilder.ApplyConfiguration(new LogCheckoutConfiguration());
+            modelBuilder.ApplyConfiguration(new WebhookAsaasConfiguration());
         }
     }
 }

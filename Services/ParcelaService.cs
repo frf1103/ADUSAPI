@@ -40,7 +40,8 @@ namespace ADUSAPI.Services
                 acrescimos = dados.acrescimos,
                 descontos = dados.descontos,
                 valor = dados.valor,
-                datains = DateTime.Now
+                datains = DateTime.Now,
+                dataestimadapagto = dados.dataestimadapagto
             };
 
             try
@@ -62,6 +63,36 @@ namespace ADUSAPI.Services
                 throw;
             }
         }
+
+        /*
+        public async Task<ParcelaViewModel> BaixarParcela(string idparcela,string idconta,DateTime dbaixa)
+        {
+            var parcela = await _context.parcelas.FindAsync(idparcela);
+            if (parcela != null)
+            {
+                try
+                {
+                    parcela.databaixa = dbaixa;
+
+                    await _context.AddAsync(parcela);
+                    await _context.SaveChangesAsync();
+                    return MapToViewModel(parcela);
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _logger.LogError(dbEx, "Erro ao adicionar parcela. Verifique as FKs: idassinatura={idassinatura}, idcaixa={idcaixa}",
+                        parcela.idassinatura, parcela.idcaixa);
+
+                    throw new Exception("Erro ao salvar parcela. Verifique as dependências relacionadas (FKs).");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Erro inesperado ao adicionar parcela.");
+                    throw;
+                }
+            }
+        }
+        */
 
         public async Task<ParcelaViewModel?> SalvarParcela(string id, ParcelaViewModel dados)
         {
@@ -253,6 +284,14 @@ namespace ADUSAPI.Services
                 .ToList();
 
             return (query);
+        }
+
+        public async Task<Int32> GetParcela(string idsub)
+        {
+            var maxParcela = await _context.parcelas
+                            .Where(x => x.idassinatura == idsub)
+                            .MaxAsync(x => (int?)x.numparcela) ?? 0;
+            return maxParcela + 1;
         }
     }
 }
