@@ -70,5 +70,12 @@ namespace ADUSAPI.Controllers
             var Parcela = await _Parcelaservice.visaogeralcarteira(ini, fim, idparceiro);
             return Ok(Parcela);
         }
+
+        [HttpGet("envio/{ini}/{fim}")]
+        public async Task<IActionResult> PendentesEnvio(DateTime ini, DateTime fim, string? idassinatura, int? idforma)
+        {
+            var Parcela = await _Parcelaservice.ParcelasPendentesEnvio(ini, fim, idassinatura, idforma);
+            return Ok(Parcela);
+        }
     }
 }

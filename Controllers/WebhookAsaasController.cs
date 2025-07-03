@@ -56,7 +56,7 @@ namespace ADUSAPI.Controllers
                 try
                 {
                     string paymentId = root.GetProperty("payment").GetProperty("id").GetString();
-                    string subscriptionId = root.GetProperty("payment").TryGetProperty("subscription", out var sub) ? sub.GetString() : null;
+                    string subscriptionId = root.GetProperty("payment").TryGetProperty("externalReference", out var sub) ? sub.GetString() : null;
                     if (subscriptionId == null)
                     {
                         subscriptionId = root.GetProperty("payment").TryGetProperty("externalReference", out var xsub) ? xsub.GetString() : null;
@@ -71,7 +71,7 @@ namespace ADUSAPI.Controllers
                         string billingType = root.GetProperty("payment").GetProperty("billingType").GetString();
 
                         //item.TryGetProperty("invoiceUrl", out var url) ? url.GetString() : null,
-                        int numparcela = root.GetProperty("payment").TryGetProperty("installmentNumber", out var nump) && nump.ValueKind == JsonValueKind.Number ? nump.GetInt32() : await _parcelaService.GetParcela(subscriptionId);
+                        int numparcela = root.GetProperty("payment").TryGetProperty("installmentNumber", out var nump) && nump.ValueKind == JsonValueKind.Number ? nump.GetInt32() : 0;
                         DateTime dueDate = root.GetProperty("payment").GetProperty("dueDate").GetDateTime();
                         DateTime? estimatedCreditDate = root.GetProperty("payment").TryGetProperty("estimatedCreditDate", out var ec) && ec.ValueKind == JsonValueKind.String
                             ? ec.GetDateTime()
@@ -101,17 +101,18 @@ namespace ADUSAPI.Controllers
                         };
 
                         await _logService.Adicionar(log);
-
+                        
                         if (billingType != "CREDIT_CARD")
                         {
-                            if (eventType == "PAYMENT_CREATED")
+                            if (eventType == "PAYMENT_CREATED" && 1==0)
                             {
-                                var p = await _parcelaService.ListarParcelaById(paymentId);
-                                if (p == null)
+                                var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
+                                var sb = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                if (p == null && sb != null)
                                 {
                                     var parcela = new ParcelaViewModel
                                     {
-                                        id = paymentId,
+                                        id = Guid.NewGuid().ToString(),
                                         idassinatura = subscriptionId,
                                         idcheckout = paymentId,
                                         nossonumero = paymentId,
@@ -142,7 +143,7 @@ namespace ADUSAPI.Controllers
                             {
                                 if (eventType == "PAYMENT_CONFIRMED" || eventType == "PAYMENT_RECEIVED")
                                 {
-                                    var p = await _parcelaService.ListarParcelaById(paymentId);
+                                    var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
                                     p.databaixa = paymentDate;
                                     p.dataestimadapagto = estimatedCreditDate;
                                     if (p.idcaixa == 0 || p.idcaixa == null)
@@ -161,7 +162,7 @@ namespace ADUSAPI.Controllers
                                             idmovbanco = root.GetProperty("payment").GetProperty("id").GetString()
                                         });
                                         p.idcaixa = respc.Id;
-                                        var x = await _parcelaService.SalvarParcela(paymentId, p);
+                                        var x = await _parcelaService.SalvarParcela(p.id, p);
 
                                         if (comissoes.Length > 0)
                                         {
@@ -202,20 +203,21 @@ namespace ADUSAPI.Controllers
                                     }
                                     else
                                     {
-                                        var x = await _parcelaService.SalvarParcela(paymentId, p);
+                                        var x = await _parcelaService.SalvarParcela(p.id, p);
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            if (eventType == "PAYMENT_CREATED")
+                            if (eventType == "PAYMENT_CREATED" && (1==0 || numparcela>0))
                             {
                                 var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
                                 if (ass != null)
                                 {
-                                    var p = await _parcelaService.ListarParcelaById(paymentId);
-                                    if (p == null)
+                                    var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
+                                    var sb = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                    if (p == null && sb != null)
                                     {
                                         var parcela = new ParcelaViewModel
                                         {
@@ -254,8 +256,15 @@ namespace ADUSAPI.Controllers
                                     var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
                                     if (ass != null)
                                     {
-                                        var p = await _parcelaService.ListarParcelaById(paymentId);
-                                        if (p == null)
+                                        var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
+                                        if (p != null)
+                                        {
+                                            p.databaixa = paymentDate;
+                                            var x = await _parcelaService.SalvarParcela(p.id, p);
+
+                                        }
+                                        /*
+                                        else
                                         {
                                             var parcela = new ParcelaViewModel
                                             {
@@ -266,7 +275,7 @@ namespace ADUSAPI.Controllers
                                                 idparceiro = idParceiro,
                                                 datavencimento = dueDate,
                                                 valor = value,
-                                                valorliquido = value,
+                                                valorliquido = netvalue - (decimal)0.10 * value,
                                                 databaixa = paymentDate,
                                                 plataforma = "Asaas",
                                                 idformapagto = billingType switch
@@ -285,12 +294,9 @@ namespace ADUSAPI.Controllers
                                             };
 
                                             await _parcelaService.AdicionarParcela(parcela);
+
                                         }
-                                        else
-                                        {
-                                            p.databaixa = paymentDate;
-                                            var x = await _parcelaService.SalvarParcela(paymentId, p);
-                                        }
+                                        */
                                     }
                                 }
                                 else
@@ -300,7 +306,7 @@ namespace ADUSAPI.Controllers
                                         var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
                                         if (ass != null)
                                         {
-                                            var p = await _parcelaService.ListarParcelaById(paymentId);
+                                            var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
                                             p.dataestimadapagto = estimatedCreditDate;
                                             if (p.idcaixa == 0 || p.idcaixa == null)
                                             {
@@ -319,7 +325,7 @@ namespace ADUSAPI.Controllers
                                                     idmovbanco = root.GetProperty("payment").GetProperty("id").GetString()
                                                 });
                                                 p.idcaixa = respc.Id;
-                                                var x = await _parcelaService.SalvarParcela(paymentId, p);
+                                                var x = await _parcelaService.SalvarParcela(p.id, p);
 
                                                 //Comissoes
                                                 if (comissoes.Length > 0)
@@ -362,7 +368,7 @@ namespace ADUSAPI.Controllers
                                             }
                                             else
                                             {
-                                                var x = await _parcelaService.SalvarParcela(paymentId, p);
+                                                var x = await _parcelaService.SalvarParcela(p.id, p);
                                             }
                                         }
                                     }
@@ -383,7 +389,7 @@ namespace ADUSAPI.Controllers
                             PayloadEnviado = " ",
                             RetornoApi = " ",
                             StatusHttp = "501",
-                            Erro = "Cliente "+customerId
+                            Erro = "Cliente " + customerId
                         };
 
                         return StatusCode(501, "Cliente inexistente");

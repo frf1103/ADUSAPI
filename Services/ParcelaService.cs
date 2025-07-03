@@ -4,6 +4,7 @@ using ADUSAPICore.Models.Enum;
 using ADUSAPICore.Models.Parcela;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace ADUSAPI.Services
 {
@@ -292,6 +293,30 @@ namespace ADUSAPI.Services
                             .Where(x => x.idassinatura == idsub)
                             .MaxAsync(x => (int?)x.numparcela) ?? 0;
             return maxParcela + 1;
+        }
+
+        public async Task<List<ListParcelaViewModel>> ParcelasPendentesEnvio(DateTime ini, DateTime fim, string idassinatura, int? idforma = 3)
+        {
+            var contas = await _context.parcelas.Include(p => p.assinatura).Include(x => x.assinatura.parceiro)
+                .Where(p => string.IsNullOrEmpty(p.nossonumero) && p.datavencimento >= ini && p.datavencimento <= fim && (string.IsNullOrEmpty(idassinatura) || p.idassinatura == idassinatura)
+                && (idforma == 3 || (int)p.idformapagto == idforma))
+                .Select(p => new ListParcelaViewModel
+                {
+                    id = p.id,
+                    idassinatura = p.idassinatura,
+                    idafiliado = p.assinatura.idafiliado,
+                    datavencimento = p.datavencimento,
+                    idformapagto = p.idformapagto,
+                    nomeparceiro = p.assinatura.parceiro.RazaoSocial,
+                    descforma = p.idformapagto.ToString(),
+                    registro = p.assinatura.parceiro.Registro,
+                    QuantidadeArvores = p.assinatura.qtd,
+                    valor=p.valor,
+                    billingType = (p.idformapagto == FormaPagto.Cartao) ? "CREDIT_CARD" : p.idformapagto.ToString().ToUpper(),
+                    cctoken = p.assinatura.cartoes.
+                    Where(c => c.Ativo).Select(c => c.IdToken).FirstOrDefault()
+                }).ToListAsync();
+            return contas;
         }
     }
 }
