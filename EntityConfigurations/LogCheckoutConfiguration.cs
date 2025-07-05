@@ -19,7 +19,10 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(e => e.PayloadEnviado);
             builder.Property(e => e.RetornoApi);
             builder.Property(e => e.StatusHttp).HasMaxLength(20);
+            builder.Property(e => e.idparcela).IsRequired(false);
             builder.Property(e => e.Erro).IsRequired(false);
+
+            builder.HasOne(x => x.parcela).WithMany(c => c.logs).HasForeignKey(x => x.idparcela).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

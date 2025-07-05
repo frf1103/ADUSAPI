@@ -251,7 +251,8 @@ namespace ADUSAPI.Services
 
         public async Task<ParceiroViewModel>? ListarParceiroById(string id)
         {
-            var conta = _context.parceiros.Include(x => x.cidade).Include(x => x.uf)
+            var conta = _context.parceiros.Include(x => x.cidade).Include(x => x.uf).
+                Include(x => x.coprodutor)
             .Where(p => p.uid == id).FirstOrDefault();
             if (conta != null)
             {
@@ -290,7 +291,9 @@ namespace ADUSAPI.Services
                     nomecidade = conta.cidade.Nome,
                     nomeuf = conta.uf.Sigla,
                     urlafiliado = conta.urlafiliado,
-                    idwallet = conta.idwallet
+                    idwallet = conta.idwallet,
+                    idwalletcoprodutor = conta.coprodutor.idwallet,
+                    percomissaocoprodutor = conta.coprodutor.percomissao
                 };
             }
             else return null;

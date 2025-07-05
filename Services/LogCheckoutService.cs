@@ -30,20 +30,34 @@ namespace ADUSAPI.Services
                 UrlRequisicao = vm.UrlRequisicao,
                 Erro = vm.Erro,
                 RetornoApi = vm.RetornoApi,
-                DataHora = DateTime.Now
+                DataHora = DateTime.Now,
+                idparcela = vm.idparcela
             };
 
             _context.logscheckout.Add(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<LogCheckoutViewModel>> Listar(DateTime ini, DateTime fim, string filtro)
+        public async Task<object> ListarLogsAsync(DateTime ini, DateTime fim, string? filtro, int pageIndex, int pageSize)
         {
-            return await _context.logscheckout
-                .Where(x => x.DataHora >= ini && x.DataHora <= fim
-                && (string.IsNullOrWhiteSpace(filtro) || x.NomeCliente.ToUpper().Contains(filtro.ToUpper())))
-                .AsNoTracking()
+            var query = _context.logscheckout
+                .Where(x => x.DataHora >= ini && x.DataHora < fim.AddDays(1));
+
+            if (!string.IsNullOrWhiteSpace(filtro))
+            {
+                query = query.Where(x =>
+                    x.NomeCliente.Contains(filtro) ||
+                    x.idparcela.Contains(filtro) ||
+                    x.PayloadEnviado.Contains(filtro)
+                    );
+            }
+
+            var totalCount = await query.CountAsync();
+
+            var logs = await query
                 .OrderByDescending(x => x.DataHora)
+                .Skip(pageIndex * pageSize)
+                .Take(pageSize)
                 .Select(x => new LogCheckoutViewModel
                 {
                     Id = x.Id,
@@ -55,8 +69,18 @@ namespace ADUSAPI.Services
                     StatusHttp = x.StatusHttp,
                     RetornoApi = x.RetornoApi,
                     Erro = x.Erro,
-                    DataHora = x.DataHora
-                }).ToListAsync();
+                    DataHora = x.DataHora,
+                    idparcela = x.idparcela
+                })
+                .ToListAsync();
+
+            return new
+            {
+                TotalCount = totalCount,
+                PageIndex = pageIndex,
+                PageSize = pageSize,
+                Data = logs
+            };
         }
 
         public async Task<LogCheckoutViewModel> GetById(int id)

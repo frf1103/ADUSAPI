@@ -346,7 +346,12 @@ namespace ADUSAPI.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<string>("idparcela")
+                        .HasColumnType("nvarchar(100)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("idparcela");
 
                     b.ToTable("LogCheckout", (string)null);
                 });
@@ -1024,6 +1029,16 @@ namespace ADUSAPI.Migrations
                     b.Navigation("moeda");
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.LogCheckout", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Parcela", "parcela")
+                        .WithMany("logs")
+                        .HasForeignKey("idparcela")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("parcela");
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.MovimentoCaixa", b =>
                 {
                     b.HasOne("ADUSAPI.Entities.PlanoConta", "Categoria")
@@ -1303,6 +1318,11 @@ namespace ADUSAPI.Migrations
                     b.Navigation("movimentoCaixas");
 
                     b.Navigation("parametros");
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.Parcela", b =>
+                {
+                    b.Navigation("logs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.PlanoConta", b =>

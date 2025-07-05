@@ -44,5 +44,7 @@ namespace ADUSAPI.Entities
         public DateTime datains { get; set; }
         public DateTime? dataup { get; set; }
         public DateTime? dataestimadapagto { get; set; }
+
+        public ICollection<LogCheckout>? logs { get; set; }
     }
 }

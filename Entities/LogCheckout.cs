@@ -14,5 +14,7 @@ namespace ADUSAPI.Entities
         public DateTime DataHora { get; set; }
         public string StatusHttp { get; set; }
         public string? Erro { get; set; }
+        public string? idparcela { get; set; }
+        public Parcela? parcela { get; set; }
     }
 }

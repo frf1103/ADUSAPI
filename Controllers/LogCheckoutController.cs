@@ -18,10 +18,10 @@ namespace ADUSAPI.Controllers
             _service = service;
         }
 
-        [HttpGet("listar/{ini}/{fim}/{filtro}")]
-        public async Task<IActionResult> Listar(DateTime ini, DateTime fim, string? filtro)
+        [HttpGet("listar/{ini}/{fim}/{pageIndex}/{pageSize}")]
+        public async Task<IActionResult> Listar(DateTime ini, DateTime fim, string? filtro, int pageIndex, int pageSize)
         {
-            var logs = await _service.Listar(ini, fim, filtro);
+            var logs = await _service.ListarLogsAsync(ini, fim, filtro, pageIndex, pageSize);
             return Ok(logs);
         }
 
