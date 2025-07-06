@@ -175,7 +175,7 @@ namespace ADUSAPI.Controllers
                                                     IdCentroCusto = _asaasSettings.idccusto,
                                                     IdContaCorrente = _asaasSettings.idconta,
                                                     IdTransacao = _asaasSettings.idtransacaocomiss,
-                                                    idparceiro = _asaasSettings.idparceiro,
+                                                    idparceiro = idParceiro,
                                                     Valor = com.GetProperty("totalValue").GetDecimal(),
                                                     Sinal = "D",
                                                     Observacao = "PAGTO COMISSAO",

@@ -236,7 +236,7 @@ namespace ADUSAPI.Services
                     descstatus = c.status.ToString(),
                     plataforma = c.plataforma,
                     idafiliado = c.idafiliado,
-                    nomeafiliado = c.afiliado.RazaoSocial
+                    nomeafiliado = (c.afiliado!=null)?c.afiliado.RazaoSocial:" "
                 }
                 ).ToList();
             return (contas);

@@ -292,8 +292,8 @@ namespace ADUSAPI.Services
                     nomeuf = conta.uf.Sigla,
                     urlafiliado = conta.urlafiliado,
                     idwallet = conta.idwallet,
-                    idwalletcoprodutor = conta.coprodutor.idwallet,
-                    percomissaocoprodutor = conta.coprodutor.percomissao
+                    idwalletcoprodutor = conta.coprodutor != null ? conta.coprodutor.idwallet : " ",
+                    percomissaocoprodutor = conta.coprodutor != null ? conta.coprodutor.percomissao : 0
                 };
             }
             else return null;
