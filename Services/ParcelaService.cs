@@ -201,7 +201,7 @@ namespace ADUSAPI.Services
             dataestimadapagto = parcela.dataestimadapagto
         };
 
-        public async Task<IEnumerable<ListParcelaViewModel>> ListarParcela(DateTime ini, DateTime fim, int tipodata, string idparceiro, int forma, string? filtro, int status, string idassinatura)
+        public async Task<IEnumerable<ListParcelaViewModel>> ListarParcela(DateTime ini, DateTime fim, int tipodata, string idparceiro, int forma, string? filtro, int status, string idassinatura, int? checkout = 2)
         {
             var contas = _context.parcelas.Include(m => m.assinatura).Include(m => m.assinatura.parceiro).
                 Where((Parcela m) => ((String.IsNullOrWhiteSpace(filtro) || m.observacao.ToUpper().Contains(filtro.ToUpper())) || (String.IsNullOrWhiteSpace(filtro) || (m.idassinatura ?? " ").ToUpper().Contains(filtro.ToUpper())) ||
@@ -210,12 +210,14 @@ namespace ADUSAPI.Services
             && (idassinatura == "0" || m.idassinatura == idassinatura)
              && ((tipodata == 0 && m.datavencimento >= ini && m.datavencimento <= fim)
              || (tipodata == 1 && m.databaixa >= ini && m.databaixa <= fim))
-                     && (status == 3 || (status == 0 && m.databaixa == null) || (status == 1 && m.databaixa != null) ||
+                     && (status == 3 || (status == 0 && m.databaixa == null)
+                     || (status == 1 && m.databaixa != null && m.idcaixa == null) ||
                      (status == 2 && m.idcaixa != null))
                      && (idparceiro == "0" || m.assinatura.idparceiro == idparceiro)
                         && (forma == 3 || (int)m.idformapagto == forma)
-
-            )
+                        && (checkout == 2 ||
+                        (checkout == 1 && !String.IsNullOrWhiteSpace(m.nossonumero)) ||
+                        (checkout == 0 && String.IsNullOrWhiteSpace(m.nossonumero))))
                 .Select(c => new ListParcelaViewModel
                 {
                     id = c.id,
@@ -239,7 +241,8 @@ namespace ADUSAPI.Services
                     descforma = c.idformapagto.ToString(),
                     valor = c.valor,
                     status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
-                    dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto
+                    dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto,
+                    ischeckout = !String.IsNullOrWhiteSpace(c.nossonumero)
                 }
                 ).ToList();
             return (contas);
@@ -311,7 +314,7 @@ namespace ADUSAPI.Services
                     descforma = p.idformapagto.ToString(),
                     registro = p.assinatura.parceiro.Registro,
                     QuantidadeArvores = p.assinatura.qtd,
-                    valor=p.valor,
+                    valor = p.valor,
                     billingType = (p.idformapagto == FormaPagto.Cartao) ? "CREDIT_CARD" : p.idformapagto.ToString().ToUpper(),
                     cctoken = p.assinatura.cartoes.
                     Where(c => c.Ativo).Select(c => c.IdToken).FirstOrDefault()

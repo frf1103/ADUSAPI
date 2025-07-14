@@ -36,10 +36,10 @@ namespace ADUSAPI.Controllers
             return Ok(Parcela);
         }
 
-        [HttpGet("listar/{ini}/{fim}/{status}/{idparceiro}/{forma}/{tipodata}/{idassinatura}")]
-        public async Task<IActionResult> ListarParcela(DateTime ini, DateTime fim, int tipodata, int status, string idparceiro, int forma, string idassinatura, string? filtro)
+        [HttpGet("listar/{ini}/{fim}/{status}/{idparceiro}/{forma}/{tipodata}/{idassinatura}/{checkout}")]
+        public async Task<IActionResult> ListarParcela(DateTime ini, DateTime fim, int tipodata, int status, string idparceiro, int forma, string idassinatura, string? filtro, int? checkout = 2)
         {
-            var Parcela = await _Parcelaservice.ListarParcela(ini, fim, tipodata, idparceiro, forma, filtro, status, idassinatura);
+            var Parcela = await _Parcelaservice.ListarParcela(ini, fim, tipodata, idparceiro, forma, filtro, status, idassinatura, checkout);
             return Ok(Parcela);
         }
 
