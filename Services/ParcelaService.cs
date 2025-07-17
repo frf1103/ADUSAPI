@@ -4,6 +4,7 @@ using ADUSAPICore.Models.Enum;
 using ADUSAPICore.Models.Parcela;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace ADUSAPI.Services
 {
@@ -40,7 +41,8 @@ namespace ADUSAPI.Services
                 acrescimos = dados.acrescimos,
                 descontos = dados.descontos,
                 valor = dados.valor,
-                datains = DateTime.Now
+                datains = DateTime.Now,
+                dataestimadapagto = dados.dataestimadapagto
             };
 
             try
@@ -62,6 +64,36 @@ namespace ADUSAPI.Services
                 throw;
             }
         }
+
+        /*
+        public async Task<ParcelaViewModel> BaixarParcela(string idparcela,string idconta,DateTime dbaixa)
+        {
+            var parcela = await _context.parcelas.FindAsync(idparcela);
+            if (parcela != null)
+            {
+                try
+                {
+                    parcela.databaixa = dbaixa;
+
+                    await _context.AddAsync(parcela);
+                    await _context.SaveChangesAsync();
+                    return MapToViewModel(parcela);
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    _logger.LogError(dbEx, "Erro ao adicionar parcela. Verifique as FKs: idassinatura={idassinatura}, idcaixa={idcaixa}",
+                        parcela.idassinatura, parcela.idcaixa);
+
+                    throw new Exception("Erro ao salvar parcela. Verifique as dependências relacionadas (FKs).");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Erro inesperado ao adicionar parcela.");
+                    throw;
+                }
+            }
+        }
+        */
 
         public async Task<ParcelaViewModel?> SalvarParcela(string id, ParcelaViewModel dados)
         {
@@ -145,6 +177,16 @@ namespace ADUSAPI.Services
             return parcela != null ? MapToViewModel(parcela) : null;
         }
 
+        public async Task<ParcelaViewModel?> ListarParcelaDisponivel(string idassinatura)
+        {
+            var parcela = await _context.parcelas
+                .Include(p => p.assinatura)
+                .Where(p => p.nossonumero == null && p.idassinatura == idassinatura)
+                .OrderBy(p => p.datavencimento)           // <--- ordena pela data mais antiga
+                .FirstOrDefaultAsync();
+            return parcela != null ? MapToViewModel(parcela) : null;
+        }
+
         private ParcelaViewModel MapToViewModel(Parcela parcela) => new()
         {
             id = parcela.id,
@@ -169,7 +211,7 @@ namespace ADUSAPI.Services
             dataestimadapagto = parcela.dataestimadapagto
         };
 
-        public async Task<IEnumerable<ListParcelaViewModel>> ListarParcela(DateTime ini, DateTime fim, int tipodata, string idparceiro, int forma, string? filtro, int status, string idassinatura)
+        public async Task<IEnumerable<ListParcelaViewModel>> ListarParcela(DateTime ini, DateTime fim, int tipodata, string idparceiro, int forma, string? filtro, int status, string idassinatura, int? checkout = 2)
         {
             var contas = _context.parcelas.Include(m => m.assinatura).Include(m => m.assinatura.parceiro).
                 Where((Parcela m) => ((String.IsNullOrWhiteSpace(filtro) || m.observacao.ToUpper().Contains(filtro.ToUpper())) || (String.IsNullOrWhiteSpace(filtro) || (m.idassinatura ?? " ").ToUpper().Contains(filtro.ToUpper())) ||
@@ -178,12 +220,14 @@ namespace ADUSAPI.Services
             && (idassinatura == "0" || m.idassinatura == idassinatura)
              && ((tipodata == 0 && m.datavencimento >= ini && m.datavencimento <= fim)
              || (tipodata == 1 && m.databaixa >= ini && m.databaixa <= fim))
-                     && (status == 3 || (status == 0 && m.databaixa == null && m.idcaixa == null) || (status == 1 && m.databaixa != null) ||
+                     && (status == 3 || (status == 0 && m.databaixa == null)
+                     || (status == 1 && m.databaixa != null && m.idcaixa == null) ||
                      (status == 2 && m.idcaixa != null))
                      && (idparceiro == "0" || m.assinatura.idparceiro == idparceiro)
                         && (forma == 3 || (int)m.idformapagto == forma)
-
-            )
+                        && (checkout == 2 ||
+                        (checkout == 1 && !String.IsNullOrWhiteSpace(m.nossonumero)) ||
+                        (checkout == 0 && String.IsNullOrWhiteSpace(m.nossonumero))))
                 .Select(c => new ListParcelaViewModel
                 {
                     id = c.id,
@@ -206,8 +250,9 @@ namespace ADUSAPI.Services
                     nomeparceiro = c.assinatura.parceiro.RazaoSocial,
                     descforma = c.idformapagto.ToString(),
                     valor = c.valor,
-                    status = (c.databaixa == null && c.idcaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
-                    dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto
+                    status = (c.databaixa == null) ? "Pendente" : (c.idcaixa == 0 || c.idcaixa == null) ? "Baixado" : "Caixa",
+                    dataestimadapagto = (c.dataestimadapagto == null) ? DateTime.Parse("31/12/2500") : c.dataestimadapagto,
+                    ischeckout = !String.IsNullOrWhiteSpace(c.nossonumero)
                 }
                 ).ToList();
             return (contas);
@@ -229,8 +274,10 @@ namespace ADUSAPI.Services
                 {
                     p.assinatura.parceiro.uid,
                     p.assinatura.parceiro.RazaoSocial,
-                    p.idformapagto,  // sem .ToString()
-                    p.plataforma     // sem .ToString()
+                    p.idformapagto,
+                    p.plataforma,
+                    p.assinatura.parceiro.Fone1,
+                    p.assinatura.parceiro.email
                 })
                 .Select(g => new visaogeralviewmodel
                 {
@@ -238,6 +285,8 @@ namespace ADUSAPI.Services
                     nomeParceiro = g.Key.RazaoSocial,
                     formaPagamento = g.Key.idformapagto.ToString(),
                     plataForma = g.Key.plataforma,
+                    email = g.Key.email,
+                    fone = g.Key.Fone1,
                     valorLiquido = g.Sum(p => p.valorliquido),
                     valorPago = g.Where(p => p.databaixa != null).Sum(p => p.valor),
                     valorVencidas = g.Where(p => p.databaixa == null && p.datavencimento < hoje && (p.idcaixa == null || p.idcaixa == 0)).Sum(p => p.valor),
@@ -253,6 +302,41 @@ namespace ADUSAPI.Services
                 .ToList();
 
             return (query);
+        }
+
+        public async Task<Int32> GetParcela(string idsub)
+        {
+            var maxParcela = await _context.parcelas
+                            .Where(x => x.idassinatura == idsub)
+                            .MaxAsync(x => (int?)x.numparcela) ?? 0;
+            return maxParcela + 1;
+        }
+
+        public async Task<List<ListParcelaViewModel>> ParcelasPendentesEnvio(DateTime ini, DateTime fim, string idassinatura, int? idforma = 3)
+        {
+            var contas = await _context.parcelas.Include(p => p.assinatura).Include(x => x.assinatura.parceiro)
+                .Where(p => string.IsNullOrEmpty(p.nossonumero) && p.datavencimento >= ini && p.datavencimento <= fim && (string.IsNullOrEmpty(idassinatura) || p.idassinatura == idassinatura)
+                && (idforma == 3 || (int)p.idformapagto == idforma)
+                && (string.IsNullOrEmpty(p.assinatura.idplataforma))
+                )
+
+                .Select(p => new ListParcelaViewModel
+                {
+                    id = p.id,
+                    idassinatura = p.idassinatura,
+                    idafiliado = p.assinatura.idafiliado,
+                    datavencimento = p.datavencimento,
+                    idformapagto = p.idformapagto,
+                    nomeparceiro = p.assinatura.parceiro.RazaoSocial,
+                    descforma = p.idformapagto.ToString(),
+                    registro = p.assinatura.parceiro.Registro,
+                    QuantidadeArvores = p.assinatura.qtd,
+                    valor = p.valor,
+                    billingType = (p.idformapagto == FormaPagto.Cartao) ? "CREDIT_CARD" : p.idformapagto.ToString().ToUpper(),
+                    cctoken = p.assinatura.cartoes.
+                    Where(c => c.Ativo).Select(c => c.IdToken).FirstOrDefault()
+                }).ToListAsync();
+            return contas;
         }
     }
 }

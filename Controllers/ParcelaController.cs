@@ -36,10 +36,10 @@ namespace ADUSAPI.Controllers
             return Ok(Parcela);
         }
 
-        [HttpGet("listar/{ini}/{fim}/{status}/{idparceiro}/{forma}/{tipodata}/{idassinatura}")]
-        public async Task<IActionResult> ListarParcela(DateTime ini, DateTime fim, int tipodata, int status, string idparceiro, int forma, string idassinatura, string? filtro)
+        [HttpGet("listar/{ini}/{fim}/{status}/{idparceiro}/{forma}/{tipodata}/{idassinatura}/{checkout}")]
+        public async Task<IActionResult> ListarParcela(DateTime ini, DateTime fim, int tipodata, int status, string idparceiro, int forma, string idassinatura, string? filtro, int? checkout = 2)
         {
-            var Parcela = await _Parcelaservice.ListarParcela(ini, fim, tipodata, idparceiro, forma, filtro, status, idassinatura);
+            var Parcela = await _Parcelaservice.ListarParcela(ini, fim, tipodata, idparceiro, forma, filtro, status, idassinatura, checkout);
             return Ok(Parcela);
         }
 
@@ -68,6 +68,13 @@ namespace ADUSAPI.Controllers
         public async Task<IActionResult> VisaoGeral(string idparceiro, DateTime ini, DateTime fim)
         {
             var Parcela = await _Parcelaservice.visaogeralcarteira(ini, fim, idparceiro);
+            return Ok(Parcela);
+        }
+
+        [HttpGet("envio/{ini}/{fim}")]
+        public async Task<IActionResult> PendentesEnvio(DateTime ini, DateTime fim, string? idassinatura, int? idforma)
+        {
+            var Parcela = await _Parcelaservice.ParcelasPendentesEnvio(ini, fim, idassinatura, idforma);
             return Ok(Parcela);
         }
     }

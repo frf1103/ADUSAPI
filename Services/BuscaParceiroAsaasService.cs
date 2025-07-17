@@ -57,7 +57,8 @@ namespace ADUSAPI.Services
 
             if (parceiro == null)
             {
-                throw new Exception($"Parceiro com CPF/CNPJ {cpfCnpj} não encontrado na base local.");
+                //throw new Exception($"Parceiro com CPF/CNPJ {cpfCnpj} não encontrado na base local.");
+                return null;
             }
 
             return parceiro.uid;

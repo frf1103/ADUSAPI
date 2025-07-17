@@ -57,6 +57,8 @@ namespace ADUSAPI.Controllers
                 {
                     string paymentId = root.GetProperty("payment").GetProperty("id").GetString();
                     string subscriptionId = root.GetProperty("payment").TryGetProperty("subscription", out var sub) ? sub.GetString() : null;
+                    bool basaas = false;
+                    basaas = (subscriptionId != null);
                     if (subscriptionId == null)
                     {
                         subscriptionId = root.GetProperty("payment").TryGetProperty("externalReference", out var xsub) ? xsub.GetString() : null;
@@ -101,19 +103,20 @@ namespace ADUSAPI.Controllers
                         };
 
                         await _logService.Adicionar(log);
-                        
+
                         if (billingType != "CREDIT_CARD")
                         {
-                            if (eventType == "PAYMENT_CREATED" && 1==0)
+                            if (eventType == "PAYMENT_CREATED" && basaas)
                             {
                                 var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
-                                var sb = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                var sb = await _assinatura.ListarAssinaturaByIdPlataforma(subscriptionId);
                                 if (p == null && sb != null)
                                 {
+                                    numparcela = numparcela == 0 ? await _parcelaService.GetParcela(sb.id) : numparcela;
                                     var parcela = new ParcelaViewModel
                                     {
                                         id = Guid.NewGuid().ToString(),
-                                        idassinatura = subscriptionId,
+                                        idassinatura = sb.id,
                                         idcheckout = paymentId,
                                         nossonumero = paymentId,
                                         idparceiro = idParceiro,
@@ -137,6 +140,22 @@ namespace ADUSAPI.Controllers
                                     };
 
                                     await _parcelaService.AdicionarParcela(parcela);
+                                }
+                                else
+                                {
+                                    log = new LogCheckoutViewModel
+                                    {
+                                        NomeCliente = customerId,
+                                        IpOrigem = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                                        TipoOperacao = eventType,
+                                        UrlRequisicao = "/api/webhookasaas",
+                                        PayloadEnviado = " ",
+                                        RetornoApi = " ",
+                                        StatusHttp = "501",
+                                        Erro = "Assinatura nao encontrada " + subscriptionId
+                                    };
+
+                                    return StatusCode(501, "Assinatura não encontrada " + subscriptionId);
                                 }
                             }
                             else
@@ -210,19 +229,27 @@ namespace ADUSAPI.Controllers
                         }
                         else
                         {
-                            if (eventType == "PAYMENT_CREATED" && (1==0 || numparcela>0))
+                            if (eventType == "PAYMENT_CREATED" && (basaas || numparcela > 0))
                             {
-                                var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                AssinaturaViewModel ass;
+                                if (!basaas)
+                                {
+                                    ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                }
+                                else
+                                {
+                                    ass = await _assinatura.ListarAssinaturaByIdPlataforma(subscriptionId);
+                                }
                                 if (ass != null)
                                 {
                                     var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
-                                    var sb = await _assinatura.ListarAssinaturaById(subscriptionId);
-                                    if (p == null && sb != null)
+                                    numparcela = numparcela == 0 ? await _parcelaService.GetParcela(ass.id) : numparcela;
+                                    if (p == null)
                                     {
                                         var parcela = new ParcelaViewModel
                                         {
                                             id = paymentId,
-                                            idassinatura = subscriptionId,
+                                            idassinatura = ass.id,
                                             idcheckout = paymentId,
                                             nossonumero = paymentId,
                                             idparceiro = idParceiro,
@@ -252,8 +279,17 @@ namespace ADUSAPI.Controllers
                             else
                             {
                                 if (eventType == "PAYMENT_CONFIRMED")
+
                                 {
-                                    var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                    AssinaturaViewModel ass;
+                                    if (!basaas)
+                                    {
+                                        ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                    }
+                                    else
+                                    {
+                                        ass = await _assinatura.ListarAssinaturaByIdPlataforma(subscriptionId);
+                                    }
                                     if (ass != null)
                                     {
                                         var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
@@ -261,7 +297,6 @@ namespace ADUSAPI.Controllers
                                         {
                                             p.databaixa = paymentDate;
                                             var x = await _parcelaService.SalvarParcela(p.id, p);
-
                                         }
                                         /*
                                         else
@@ -294,7 +329,6 @@ namespace ADUSAPI.Controllers
                                             };
 
                                             await _parcelaService.AdicionarParcela(parcela);
-
                                         }
                                         */
                                     }
@@ -303,7 +337,16 @@ namespace ADUSAPI.Controllers
                                 {
                                     if (eventType == "PAYMENT_RECEIVED")
                                     {
-                                        var ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                        AssinaturaViewModel ass;
+                                        if (!basaas)
+                                        {
+                                            ass = await _assinatura.ListarAssinaturaById(subscriptionId);
+                                        }
+                                        else
+                                        {
+                                            ass = await _assinatura.ListarAssinaturaByIdPlataforma(subscriptionId);
+                                        }
+
                                         if (ass != null)
                                         {
                                             var p = await _parcelaService.ListarParcelaByIdCheckout(paymentId);
@@ -388,11 +431,11 @@ namespace ADUSAPI.Controllers
                             UrlRequisicao = "/api/webhookasaas",
                             PayloadEnviado = " ",
                             RetornoApi = " ",
-                            StatusHttp = "501",
+                            StatusHttp = "502",
                             Erro = "Cliente " + customerId
                         };
 
-                        return StatusCode(200, "Cliente inexistente");
+                        return StatusCode(200, "Cliente inexistente" + customerId);
                     }
                 }
                 catch (Exception ex)

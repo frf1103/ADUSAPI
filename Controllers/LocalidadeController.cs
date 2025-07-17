@@ -22,6 +22,13 @@ namespace ADUSAPI.Controllers
             return Ok(reg);
         }
 
+        [HttpGet("Ufs/sigla")]
+        public async Task<IActionResult> ListarUFBySigla(string? filtro)
+        {
+            var reg = await _localidadeservice.ListarUFBySigla(filtro);
+            return Ok(reg);
+        }
+
         [HttpGet("Ufs/{ibge}")]
         public async Task<IActionResult> ListarUFIBGE(string ibge)
         {

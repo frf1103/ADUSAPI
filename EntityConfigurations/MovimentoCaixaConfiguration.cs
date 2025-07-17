@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace ADUSAPI.Configurations
+namespace ADUSAPI.EntityConfigurations
 {
     public class MovimentoCaixaConfiguration : IEntityTypeConfiguration<MovimentoCaixa>
     {

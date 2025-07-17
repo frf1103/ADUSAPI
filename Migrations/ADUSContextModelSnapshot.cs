@@ -65,6 +65,9 @@ namespace ADUSAPI.Migrations
                     b.Property<DateTime>("datavenda")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("idafiliado")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("idformapagto")
                         .HasColumnType("int");
 
@@ -100,6 +103,8 @@ namespace ADUSAPI.Migrations
 
                     b.HasKey("id");
 
+                    b.HasIndex("idafiliado");
+
                     b.HasIndex("idparceiro");
 
                     b.ToTable("Assinaturas", (string)null);
@@ -126,6 +131,43 @@ namespace ADUSAPI.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Bancos", (string)null);
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.CartaoAssinatura", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Bandeira")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IdAssinatura")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("IdToken")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("UltimosDigitos")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdAssinatura");
+
+                    b.ToTable("cartoes");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.CentroCusto", b =>
@@ -182,6 +224,56 @@ namespace ADUSAPI.Migrations
                     b.ToTable("ContaCorrente", (string)null);
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.Convite", b =>
+                {
+                    b.Property<string>("IdConvite")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataExpiracao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Fone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdAfiliado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("IdPlataforma")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titular")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("idassinatura")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("idformapgto")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("IdConvite");
+
+                    b.HasIndex("IdAfiliado");
+
+                    b.HasIndex("idassinatura")
+                        .IsUnique()
+                        .HasFilter("[idassinatura] IS NOT NULL");
+
+                    b.ToTable("Convites", (string)null);
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.CotacaoMoeda", b =>
                 {
                     b.Property<int>("Id")
@@ -205,6 +297,63 @@ namespace ADUSAPI.Migrations
                     b.HasIndex("IdMoeda");
 
                     b.ToTable("CotacoesMoeda", (string)null);
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.LogCheckout", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataHora")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Erro")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IpOrigem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("NomeCliente")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("PayloadEnviado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RetornoApi")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StatusHttp")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("TipoOperacao")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("UrlRequisicao")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("idparcela")
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("idparcela");
+
+                    b.ToTable("LogCheckout", (string)null);
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.Moeda", b =>
@@ -505,8 +654,46 @@ namespace ADUSAPI.Migrations
                     b.Property<int>("idUF")
                         .HasColumnType("int");
 
+                    b.Property<string>("idcoprodutor")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("iduser")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("idwallet")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool?>("isafiliado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool?>("isassinante")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool?>("isbanco")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool?>("iscoprodutor")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
                     b.Property<string>("observacao")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("percomissao")
+                        .HasPrecision(5, 2)
+                        .HasColumnType("decimal(5,2)");
+
+                    b.Property<string>("urlafiliado")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.HasKey("uid");
 
@@ -515,6 +702,8 @@ namespace ADUSAPI.Migrations
                     b.HasIndex("idCidade");
 
                     b.HasIndex("idUF");
+
+                    b.HasIndex("idcoprodutor");
 
                     b.ToTable("Parceiros", (string)null);
                 });
@@ -718,15 +907,86 @@ namespace ADUSAPI.Migrations
                     b.ToTable("UFs", (string)null);
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.WebhookAsaas", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BillingType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("DataRecebimento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Evento")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("JsonCompleto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SubscriptionId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WebhookAsaas", (string)null);
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "afiliado")
+                        .WithMany("assinaturasfil")
+                        .HasForeignKey("idafiliado")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("ADUSAPI.Entities.Parceiro", "parceiro")
                         .WithMany("assinaturas")
                         .HasForeignKey("idparceiro")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.Navigation("afiliado");
+
                     b.Navigation("parceiro");
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.CartaoAssinatura", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Assinatura", "Assinatura")
+                        .WithMany("cartoes")
+                        .HasForeignKey("IdAssinatura")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Assinatura");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.ContaCorrente", b =>
@@ -740,6 +1000,24 @@ namespace ADUSAPI.Migrations
                     b.Navigation("Banco");
                 });
 
+            modelBuilder.Entity("ADUSAPI.Entities.Convite", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "afiliado")
+                        .WithMany("convites")
+                        .HasForeignKey("IdAfiliado")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("ADUSAPI.Entities.Assinatura", "assinatura")
+                        .WithOne("convite")
+                        .HasForeignKey("ADUSAPI.Entities.Convite", "idassinatura")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("afiliado");
+
+                    b.Navigation("assinatura");
+                });
+
             modelBuilder.Entity("ADUSAPI.Entities.CotacaoMoeda", b =>
                 {
                     b.HasOne("ADUSAPI.Entities.Moeda", "moeda")
@@ -749,6 +1027,16 @@ namespace ADUSAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("moeda");
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.LogCheckout", b =>
+                {
+                    b.HasOne("ADUSAPI.Entities.Parcela", "parcela")
+                        .WithMany("logs")
+                        .HasForeignKey("idparcela")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("parcela");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.MovimentoCaixa", b =>
@@ -904,9 +1192,16 @@ namespace ADUSAPI.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("ADUSAPI.Entities.Parceiro", "coprodutor")
+                        .WithMany("afiliados")
+                        .HasForeignKey("idcoprodutor")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.Navigation("Representante");
 
                     b.Navigation("cidade");
+
+                    b.Navigation("coprodutor");
 
                     b.Navigation("uf");
                 });
@@ -968,6 +1263,10 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Assinatura", b =>
                 {
+                    b.Navigation("cartoes");
+
+                    b.Navigation("convite");
+
                     b.Navigation("parcelas");
                 });
 
@@ -1006,13 +1305,24 @@ namespace ADUSAPI.Migrations
 
             modelBuilder.Entity("ADUSAPI.Entities.Parceiro", b =>
                 {
+                    b.Navigation("afiliados");
+
                     b.Navigation("assinaturas");
+
+                    b.Navigation("assinaturasfil");
+
+                    b.Navigation("convites");
 
                     b.Navigation("empresas");
 
                     b.Navigation("movimentoCaixas");
 
                     b.Navigation("parametros");
+                });
+
+            modelBuilder.Entity("ADUSAPI.Entities.Parcela", b =>
+                {
+                    b.Navigation("logs");
                 });
 
             modelBuilder.Entity("ADUSAPI.Entities.PlanoConta", b =>

@@ -1,6 +1,7 @@
 using ADUSAPI.Context;
 using ADUSAPI.Middlewares;
 using ADUSAPI.Services;
+using ADUSAPI.Shared;
 using ADUSAPI.Validators.Assinatura;
 using ADUSAPI.Validators.Banco;
 using ADUSAPI.Validators.Localidade;
@@ -12,6 +13,9 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<ASAASSettings>(builder.Configuration.GetSection("ASAASSettings"));
+
+builder.Services.AddHttpClient();
 // Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -54,7 +58,11 @@ builder.Services.AddTransient<TransacBancoService>();
 builder.Services.AddTransient<ContaCorrenteValidator>();
 //builder.Services.AddTransient<ExcluirContaCorrenteValidator>();
 builder.Services.AddTransient<ContaCorrenteService>();
-
+builder.Services.AddTransient<ConviteService>();
+builder.Services.AddTransient<CartaoAssinaturaService>();
+builder.Services.AddTransient<LogCheckoutService>();
+builder.Services.AddTransient<WebhookAsaasService>();
+builder.Services.AddTransient<BuscarParceiroPorCustomerAsaasService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -87,7 +95,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 

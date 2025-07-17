@@ -22,7 +22,9 @@ namespace ADUSAPI.EntityConfigurations
             builder.Property(x => x.datains);
             builder.Property(x => x.dataup).IsRequired(false);
             builder.HasKey(x => x.id);
+            builder.Property(x => x.idafiliado);
             builder.HasOne(x => x.parceiro).WithMany(x => x.assinaturas).HasForeignKey(x => x.idparceiro).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.afiliado).WithMany(x => x.assinaturasfil).HasForeignKey(x => x.idafiliado).OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
