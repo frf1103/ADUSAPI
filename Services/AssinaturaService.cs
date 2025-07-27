@@ -5,6 +5,7 @@ using ADUSAPI.Validators.Assinatura;
 using ADUSAPICore.Models.Assinatura;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace ADUSAPI.Services
 {
@@ -190,8 +191,8 @@ namespace ADUSAPI.Services
 
         public async Task<AssinaturaViewModel>? ListarAssinaturaById(string id)
         {
-            var conta = _context.assinaturas
-            .Where(p => p.id == id).FirstOrDefault();
+            var conta = await _context.assinaturas
+            .Where(p => p.id == id).FirstOrDefaultAsync();
             if (conta != null)
             {
                 return new AssinaturaViewModel
@@ -213,10 +214,40 @@ namespace ADUSAPI.Services
             else return null;
         }
 
+        public async Task<AssinaturaContratoViewModel>? ListarAssinaturaContratoById(string id)
+        {
+            var conta = await _context.assinaturas.Include(a => a.parceiro).Include(a => a.parceiro.cidade)
+                .Include(a => a.parceiro.uf).Include(a => a.parceiro.Representante)
+            .Where(p => p.id == id).FirstOrDefaultAsync();
+            if (conta != null)
+            {
+                return new AssinaturaContratoViewModel
+                {
+                    comprador = conta.parceiro.RazaoSocial,
+                    enderecocomprador = conta.parceiro.Logradouro + " " + conta.parceiro.Numero + " "
+                    + conta.parceiro.Complemento ?? " " + " " + conta.parceiro.Bairro,
+                    cepcomprador = conta.parceiro.CEP,
+                    emailcomprador = conta.parceiro.email,
+                    fonecomprador = conta.parceiro.Fone1,
+                    municipiocomprador = conta.parceiro.cidade.Nome,
+                    ufcomprador = conta.parceiro.uf.Sigla,
+                    registrocomprador = conta.parceiro.Registro,
+                    qtd = conta.qtd,
+                    valor = (decimal)conta.valor * 84,
+                    formapagto = "84 PARCELAS DE R$" + conta.valor.ToString("N2", new CultureInfo("pt-BR")),
+                    estadocivil = conta.parceiro.EstadoCivil.ToString(),
+                    nomerepresentante = conta.parceiro.Representante == null ? " " : conta.parceiro.Representante.RazaoSocial,
+                    cpfrepresentante = conta.parceiro.Representante == null ? " " : conta.parceiro.Representante.Registro,
+                    datavenda = conta.datavenda.ToString("dd/MM/yyyy")
+                };
+            }
+            else return null;
+        }
+
         public async Task<AssinaturaViewModel>? ListarAssinaturaByIdPlataforma(string id)
         {
-            var conta = _context.assinaturas
-            .Where(p => p.idplataforma == id).FirstOrDefault();
+            var conta = await _context.assinaturas
+            .Where(p => p.idplataforma == id).FirstOrDefaultAsync();
             if (conta != null)
             {
                 return new AssinaturaViewModel

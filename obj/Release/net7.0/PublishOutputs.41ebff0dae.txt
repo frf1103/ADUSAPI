@@ -11,6 +11,7 @@ C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\Azure.Iden
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\FluentValidation.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\FluentValidation.AspNetCore.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\FluentValidation.DependencyInjectionExtensions.dll
+C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\Microsoft.Data.SqlClient.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.dll

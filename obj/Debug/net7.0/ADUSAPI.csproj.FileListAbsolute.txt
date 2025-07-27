@@ -82,3 +82,4 @@ C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\refint\ADUSAPI.dll
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.pdb
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ADUSAPI.genruntimeconfig.cache
 C:\Users\user\source\repos\ADUS\ADUSAPI\obj\Debug\net7.0\ref\ADUSAPI.dll
+C:\Users\user\source\repos\ADUS\ADUSAPI\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

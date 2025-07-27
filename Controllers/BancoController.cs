@@ -1,5 +1,6 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Banco;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ADUSAPI.Controllers

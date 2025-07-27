@@ -63,5 +63,12 @@ namespace ADUSAPI.Controllers
             var Assinatura = await _Assinaturaservice.ListarAssinaturaById(id);
             return Ok(Assinatura);
         }
+
+        [HttpGet("contrato/{id}")]
+        public async Task<IActionResult> ListarAssinaturaContratoById(string id)
+        {
+            var Assinatura = await _Assinaturaservice.ListarAssinaturaContratoById(id);
+            return Ok(Assinatura);
+        }
     }
 }
