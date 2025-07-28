@@ -7,6 +7,7 @@ namespace ADUSAPI.Controllers
 {
     [Route("api/banco")]
     [ApiController]
+    [Authorize]
     public class BancoController : ControllerBase
     {
         private readonly BancoService _bancoService;

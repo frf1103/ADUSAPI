@@ -13,11 +13,13 @@ using System.Drawing;
 using System;
 using ADUSAPI.Migrations;
 using ADUSAPICore.Models.Assinatura;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [ApiController]
     [Route("api/webhookasaas")]
+    [Authorize]
     public class WebhookAsaasController : ControllerBase
     {
         private readonly LogCheckoutService _logService;

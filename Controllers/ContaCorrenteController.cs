@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ADUSAPI.Services;
+using Microsoft.AspNetCore.Authorization;
 
 using ADUSAPICore.Models.Banco;
 
@@ -7,6 +8,7 @@ namespace ADUSAPI.Controllers
 {
     [Route("api/contacorrente")]
     [ApiController]
+    [Authorize]
     public class ContaCorrenteController : ControllerBase
     {
         private readonly ContaCorrenteService _service;

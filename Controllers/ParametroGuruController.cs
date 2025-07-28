@@ -2,11 +2,13 @@
 using ADUSAPICore.Models;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/ParametroGuru")]
     [ApiController]
+    [Authorize]
     public class ParametroGuruController : ControllerBase
     {
         private readonly ParametrosGuruService _ParametroGuruservice;

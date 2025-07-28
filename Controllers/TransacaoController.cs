@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using ADUSAPICore.Models.Transacao;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/transacao")]
     [ApiController]
+    [Authorize]
     public class TransacaoController : ControllerBase
     {
         private readonly TransacaoService _service;

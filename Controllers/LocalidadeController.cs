@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Localidades;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/Localidade")]
     [ApiController]
+    [Authorize]
     public class LocalidadeController : ControllerBase
     {
         private readonly LocalidadeService _localidadeservice;

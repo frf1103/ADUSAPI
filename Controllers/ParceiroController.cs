@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Parceiro;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/parceiro")]
     [ApiController]
+    [Authorize]
     public class ParceiroController : ControllerBase
     {
         private readonly ParceiroService _Parceiroservice;

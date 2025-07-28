@@ -1,14 +1,13 @@
-﻿using ADUSAPI.Entities;
-using ADUSAPI.Services;
+﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Assinatura;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace ADUSAPI.Controllers
 {
     [ApiController]
     [Route("api/ccassina")]
+    [Authorize]
     public class CartaoAssinaturaController : ControllerBase
     {
         private readonly CartaoAssinaturaService _service;

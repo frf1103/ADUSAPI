@@ -4,11 +4,13 @@ using System.Collections.Generic;
 using ADUSAPI.Services;
 using ADUSAPI.Entities;
 using ADUSAPICore.Models.PlanoConta;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/planoconta")]
     [ApiController]
+    [Authorize]
     public class PlanoContaController : ControllerBase
     {
         private readonly PlanoContaService _service;

@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Assinatura;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/Assinatura")]
     [ApiController]
+    [Authorize]
     public class AssinaturaController : ControllerBase
     {
         private readonly AssinaturaService _Assinaturaservice;

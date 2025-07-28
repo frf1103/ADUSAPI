@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.CentroCusto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ADUSAPI.Controllers
 {
     [ApiController]
     [Route("api/centrocusto")]
+    [Authorize]
     public class CentroCustoController : ControllerBase
     {
         private readonly CentroCustoService _service;

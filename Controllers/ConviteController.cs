@@ -2,11 +2,13 @@
 using ADUSAPICore.Models.Convite;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [ApiController]
     [Route("api/convite")]
+    [Authorize]
     public class ConvitesController : ControllerBase
     {
         private readonly ConviteService _service;

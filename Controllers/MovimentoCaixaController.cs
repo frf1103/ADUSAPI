@@ -3,11 +3,13 @@ using ADUSAPI.Services;
 using ADUSAPICore.Models.MovimentoCaixa;
 using ADUSAPICore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [ApiController]
     [Route("api/movimentocaixa")]
+    [Authorize]
     public class MovimentoCaixaController : ControllerBase
     {
         private readonly MovimentoCaixaService _service;

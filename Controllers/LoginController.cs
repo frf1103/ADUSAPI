@@ -56,7 +56,7 @@ namespace ADUSAPI.Controllers
 
             var token = new JwtSecurityToken(
                 claims: new[] { new Claim(ClaimTypes.Name, username) },
-                expires: DateTime.UtcNow.AddMinutes(accessExp),
+                expires: DateTime.UtcNow.AddDays(accessExp),
                 signingCredentials: creds);
 
             var refreshToken = Guid.NewGuid().ToString("N");

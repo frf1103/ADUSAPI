@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Moeda;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/moeda")]
     [ApiController]
+    [Authorize]
     public class MoedaController : ControllerBase
     {
         private readonly MoedaService _Moedaservice;

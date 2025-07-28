@@ -1,11 +1,13 @@
 ﻿using ADUSAPI.Services;
 using ADUSAPICore.Models.Parcela;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/Parcela")]
     [ApiController]
+    [Authorize]
     public class ParcelaController : ControllerBase
     {
         private readonly ParcelaService _Parcelaservice;

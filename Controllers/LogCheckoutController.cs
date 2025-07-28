@@ -4,11 +4,13 @@ using ADUSAPICore.Models.Checkout;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ADUSAPI.Controllers
 {
     [Route("api/logcheckout")]
     [ApiController]
+    [Authorize]
     public class LogCheckoutController : ControllerBase
     {
         private readonly LogCheckoutService _service;
